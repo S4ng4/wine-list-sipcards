@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine List - SipCards Collection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .search-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .search-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .reset-btn {
+            grid-column: 1 / -1;
+            padding: 12px 24px;
+            background: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #e67e22;
+        }
+
+        .wine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .wine-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #667eea;
+            position: relative;
+        }
+
+        .wine-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        .wine-card.featured::before {
+            content: "⭐ Featured";
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f39c12;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .wine-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .wine-producer {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .wine-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .wine-detail {
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .wine-price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: right;
+        }
+
+        .wine-notes {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .wine-pairings {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .pairing-title {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .pairings-list {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .availability {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .unavailable {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .no-results {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 40px;
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .view-sipcard {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .view-sipcard:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍷 Wine List - SipCards Collection</h1>
+        
+        <div class="stats" id="stats">
+            Loading wines...
+        </div>
+
+        <div class="search-container">
+            <div class="search-grid">
+                <div class="search-field">
+                    <label for="searchName">Wine Name</label>
+                    <input type="text" id="searchName" placeholder="Search by name...">
+                </div>
+                
+                <div class="search-field">
+                    <label for="searchProducer">Producer</label>
+                    <input type="text" id="searchProducer" placeholder="Search by producer...">
+                </div>
+                
+                <div class="search-field">
+                    <label for="filterType">Type</label>
+                    <select id="filterType">
+                        <option value="">All types</option>
+                        <option value="Red">Red</option>
+                        <option value="White">White</option>
+                        <option value="Rosé">Rosé</option>
+                        <option value="Sparkling">Sparkling</option>
+                        <option value="Dessert">Dessert</option>
+                    </select>
+                </div>
+                
+                <div class="search-field">
+                    <label for="filterRegion">Region</label>
+                    <select id="filterRegion">
+                        <option value="">All regions</option>
+                    </select>
+                </div>
+                
+                <div class="search-field">
+                    <label for="priceRange">Price Range</label>
+                    <select id="priceRange">
+                        <option value="">All prices</option>
+                        <option value="0-20">$0 - $20</option>
+                        <option value="20-40">$20 - $40</option>
+                        <option value="40-60">$40 - $60</option>
+                        <option value="60-100">$60 - $100</option>
+                        <option value="100+">$100+</option>
+                    </select>
+                </div>
+                
+                <div class="search-field">
+                    <label for="filterAvailability">Availability</label>
+                    <select id="filterAvailability">
+                        <option value="">All wines</option>
+                        <option value="available">Available only</option>
+                        <option value="unavailable">Unavailable only</option>
+                    </select>
+                </div>
+                
+                <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+            </div>
+        </div>
+
+        <div class="wine-grid" id="wineGrid">
+            <!-- Wines will be loaded here dynamically -->
+        </div>
+
+        <div class="no-results" id="noResults" style="display: none;">
+            No wines found matching your search criteria.
+        </div>
+    </div>
+
+    <script>
+        // Sample wine database (replace with your actual data)
+        const wineDatabase = [
+            {
+                id: 1,
+                name: "Barolo DOCG 2018",
+                producer: "Giacomo Conterno",
+                type: "Red",
+                region: "Piedmont",
+                vintage: "2018",
+                alcohol: "14.5%",
+                price: 85,
+                notes: "Elegant and structured, notes of rose and tar",
+                pairings: ["Braised beef", "Aged cheeses", "Wild game"],
+                available: true,
+                featured: true,
+                description: "A Barolo of great elegance and structure from one of Piedmont's historic wineries."
+            },
+            {
+                id: 2,
+                name: "Pinot Grigio DOC",
+                producer: "Alois Lageder",
+                type: "White",
+                region: "Alto Adige",
+                vintage: "2022",
+                alcohol: "12.5%",
+                price: 18,
+                notes: "Fresh and mineral, perfect with seafood",
+                pairings: ["Raw fish", "Mushroom risotto", "Fresh cheese"],
+                available: true,
+                featured: false,
+                description: "High-quality Pinot Grigio from Alto Adige with bright acidity and mineral notes."
+            },
+            {
+                id: 3,
+                name: "Chianti Classico DOCG",
+                producer: "Castello di Brolio",
+                type: "Red",
+                region: "Tuscany",
+                vintage: "2020",
+                alcohol: "13.5%",
+                price: 32,
+                notes: "Traditional Sangiovese, well-balanced",
+                pairings: ["Grilled meats", "Pasta with tomato sauce", "Pecorino cheese"],
+                available: false,
+                featured: false,
+                description: "Classic Chianti from one of Tuscany's most historic estates."
+            },
+            {
+                id: 4,
+                name: "Prosecco di Valdobbiadene DOCG",
+                producer: "Nino Franco",
+                type: "Sparkling",
+                region: "Veneto",
+                vintage: "2023",
+                alcohol: "11%",
+                price: 22,
+                notes: "Fine bubbles, fruity and fresh",
+                pairings: ["Aperitif", "Seafood appetizers", "Light pasta dishes"],
+                available: true,
+                featured: true,
+                description: "Premium Prosecco from the heart of Valdobbiadene with persistent bubbles."
+            },
+            {
+                id: 5,
+                name: "Vermentino di Sardegna DOC",
+                producer: "Argiolas",
+                type: "White",
+                region: "Sardinia",
+                vintage: "2023",
+                alcohol: "13%",
+                price: 16,
+                notes: "Saline and Mediterranean character",
+                pairings: ["Grilled fish", "Seafood salad", "Mediterranean cuisine"],
+                available: true,
+                featured: false,
+                description: "Characteristic Sardinian white wine with mineral salinity and Mediterranean herbs."
+            },
+            {
+                id: 6,
+                name: "Amarone della Valpolicella DOCG",
+                producer: "Allegrini",
+                type: "Red",
+                region: "Veneto",
+                vintage: "2017",
+                alcohol: "15.5%",
+                price: 75,
+                notes: "Rich and complex, dried fruit and spices",
+                pairings: ["Braised meats", "Aged cheeses", "Dark chocolate"],
+                available: true,
+                featured: true,
+                description: "Powerful Amarone with intense concentration and complexity from dried grapes."
+            }
+        ];
+
+        let filteredWines = [...wineDatabase];
+
+        // Populate regions dropdown
+        function populateRegions() {
+            const regions = [...new Set(wineDatabase.map(wine => wine.region))].sort();
+            const regionSelect = document.getElementById('filterRegion');
+            
+            regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region;
+                option.textContent = region;
+                regionSelect.appendChild(option);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = wineDatabase.length;
+            const showing = filteredWines.length;
+            const available = filteredWines.filter(wine => wine.available).length;
+            const avgPrice = filteredWines.reduce((sum, wine) => sum + wine.price, 0) / filteredWines.length || 0;
+            
+            document.getElementById('stats').innerHTML = `
+                Showing ${showing} of ${total} wines | ${available} available | Average price: $${avgPrice.toFixed(2)}
+            `;
+        }
+
+        // Render wines
+        function renderWines(wines) {
+            const grid = document.getElementById('wineGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (wines.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+            } else {
+                grid.style.display = 'grid';
+                noResults.style.display = 'none';
+                
+                grid.innerHTML = wines.map(wine => `
+                    <div class="wine-card ${wine.featured ? 'featured' : ''}">
+                        <div class="wine-name">${wine.name}</div>
+                        <div class="wine-producer">${wine.producer}</div>
+                        <div class="availability ${wine.available ? 'available' : 'unavailable'}">
+                            ${wine.available ? '✓ Available' : '✗ Unavailable'}
+                        </div>
+                        <div class="wine-details">
+                            <div class="wine-detail"><strong>Type:</strong> ${wine.type}</div>
+                            <div class="wine-detail"><strong>Region:</strong> ${wine.region}</div>
+                            <div class="wine-detail"><strong>Vintage:</strong> ${wine.vintage}</div>
+                            <div class="wine-detail"><strong>Alcohol:</strong> ${wine.alcohol}</div>
+                        </div>
+                        <div class="wine-notes">${wine.notes}</div>
+                        <div class="wine-pairings">
+                            <div class="pairing-title">Perfect with:</div>
+                            <div class="pairings-list">${wine.pairings.join(', ')}</div>
+                        </div>
+                        <div class="wine-price">$${wine.price.toFixed(2)}</div>
+                        <button class="view-sipcard" onclick="viewSipCard(${wine.id})">View SipCard</button>
+                    </div>
+                `).join('');
+            }
+            
+            updateStats();
+        }
+
+        // View SipCard function
+        function viewSipCard(wineId) {
+            const wine = wineDatabase.find(w => w.id === wineId);
+            if (wine) {
+                alert(`SipCard for ${wine.name}\n\n${wine.description}\n\nThis feature will show the detailed SipCard image when implemented.`);
+                // Here you would implement the SipCard viewing functionality
+                // For example: open a modal, redirect to a detailed page, etc.
+            }
+        }
+
+        // Filter wines
+        function filterWines() {
+            const nameSearch = document.getElementById('searchName').value.toLowerCase();
+            const producerSearch = document.getElementById('searchProducer').value.toLowerCase();
+            const typeFilter = document.getElementById('filterType').value;
+            const regionFilter = document.getElementById('filterRegion').value;
+            const priceRange = document.getElementById('priceRange').value;
+            const availabilityFilter = document.getElementById('filterAvailability').value;
+
+            filteredWines = wineDatabase.filter(wine => {
+                const matchesName = wine.name.toLowerCase().includes(nameSearch);
+                const matchesProducer = wine.producer.toLowerCase().includes(producerSearch);
+                const matchesType = !typeFilter || wine.type === typeFilter;
+                const matchesRegion = !regionFilter || wine.region === regionFilter;
+                
+                let matchesPrice = true;
+                if (priceRange) {
+                    if (priceRange === '100+') {
+                        matchesPrice = wine.price >= 100;
+                    } else {
+                        const [min, max] = priceRange.split('-').map(Number);
+                        matchesPrice = wine.price >= min && wine.price <= max;
+                    }
+                }
+                
+                let matchesAvailability = true;
+                if (availabilityFilter === 'available') {
+                    matchesAvailability = wine.available;
+                } else if (availabilityFilter === 'unavailable') {
+                    matchesAvailability = !wine.available;
+                }
+                
+                return matchesName && matchesProducer && matchesType && matchesRegion && matchesPrice && matchesAvailability;
+            });
+
+            renderWines(filteredWines);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchProducer').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterRegion').value = '';
+            document.getElementById('priceRange').value = '';
+            document.getElementById('filterAvailability').value = '';
+            
+            filteredWines = [...wineDatabase];
+            renderWines(filteredWines);
+        }
+
+        // Event listeners
+        document.getElementById('searchName').addEventListener('input', filterWines);
+        document.getElementById('searchProducer').addEventListener('input', filterWines);
+        document.getElementById('filterType').addEventListener('change', filterWines);
+        document.getElementById('filterRegion').addEventListener('change', filterWines);
+        document.getElementById('priceRange').addEventListener('change', filterWines);
+        document.getElementById('filterAvailability').addEventListener('change', filterWines);
+
+        // Initialize
+        populateRegions();
+        renderWines(filteredWines);
+    </script>
+</body>
+</html>
