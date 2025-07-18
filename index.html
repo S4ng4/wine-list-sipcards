@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wine List - SipCards Collection</title>
+    <title>Wine Collection - Professional SipCards</title>
     <style>
         * {
             margin: 0;
@@ -12,291 +12,481 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: 2px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 0 20px;
         }
 
-        h1 {
-            text-align: center;
-            color: white;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .search-container {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            backdrop-filter: blur(10px);
+        .search-panel {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
 
         .search-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
-        .search-field {
+        .form-group {
             display: flex;
             flex-direction: column;
         }
 
-        label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #333;
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-size: 0.9rem;
         }
 
-        input, select {
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
+        .form-group input,
+        .form-group select {
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
             transition: border-color 0.3s ease;
         }
 
-        input:focus, select:focus {
+        .form-group input:focus,
+        .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
         }
 
-        .reset-btn {
-            grid-column: 1 / -1;
-            padding: 12px 24px;
-            background: #f39c12;
+        .reset-button {
+            background: #34495e;
             color: white;
             border: none;
-            border-radius: 8px;
+            padding: 0.8rem 2rem;
+            border-radius: 6px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 1rem;
             transition: background 0.3s ease;
+            align-self: flex-end;
         }
 
-        .reset-btn:hover {
-            background: #e67e22;
+        .reset-button:hover {
+            background: #2c3e50;
+        }
+
+        .stats-bar {
+            background: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: 600;
+            color: #2c3e50;
         }
 
         .wine-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
         }
 
         .wine-card {
             background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-left: 5px solid #667eea;
-            position: relative;
+            border-top: 4px solid var(--wine-color, #3498db);
         }
 
         .wine-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
         }
 
-        .wine-card.featured::before {
-            content: "⭐ Featured";
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #f39c12;
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
+        .wine-header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .wine-name {
-            font-size: 1.3rem;
-            font-weight: bold;
+            font-size: 1.4rem;
+            font-weight: 600;
             color: #2c3e50;
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
         }
 
-        .wine-producer {
-            color: #667eea;
-            font-weight: 600;
-            margin-bottom: 8px;
+        .producer-name {
+            font-size: 1.1rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+
+        .vintage-denomination {
+            color: #95a5a6;
+            font-style: italic;
         }
 
         .wine-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 15px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
-        .wine-detail {
+        .detail-item {
             font-size: 0.9rem;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .detail-value {
+            color: #7f8c8d;
+        }
+
+        .tasting-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 0.3rem;
+        }
+
+        .tasting-notes {
+            font-size: 0.9rem;
+            line-height: 1.6;
             color: #555;
         }
 
-        .wine-price {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #27ae60;
-            text-align: right;
+        .radar-analysis {
+            margin-bottom: 1.5rem;
         }
 
-        .wine-notes {
-            font-style: italic;
-            color: #666;
-            margin-bottom: 10px;
+        .radar-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+
+        .radar-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+        }
+
+        .radar-label {
+            font-weight: 500;
+            color: #2c3e50;
             font-size: 0.9rem;
         }
 
-        .wine-pairings {
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+        .radar-bar {
+            flex: 1;
+            margin: 0 1rem;
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            overflow: hidden;
         }
 
-        .pairing-title {
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
+        .radar-fill {
+            height: 100%;
+            background: var(--wine-color, #3498db);
+            transition: width 0.5s ease;
         }
 
-        .pairings-list {
-            font-size: 0.8rem;
-            color: #666;
+        .radar-value {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            min-width: 30px;
+            text-align: right;
         }
 
-        .availability {
-            display: inline-block;
-            padding: 2px 8px;
+        .aroma-profile {
+            margin-bottom: 1.5rem;
+        }
+
+        .aroma-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.8rem;
+        }
+
+        .aroma-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 0.6rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .aroma-type {
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .aroma-value {
+            color: var(--wine-color, #3498db);
+            font-weight: 600;
+        }
+
+        .food-pairings {
+            margin-top: 1.5rem;
+        }
+
+        .pairing-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .pairing-tag {
+            background: #ecf0f1;
+            color: #2c3e50;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid #bdc3c7;
+        }
+
+        .view-sipcard-btn {
+            background: var(--wine-color, #3498db);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: opacity 0.3s ease;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .view-sipcard-btn:hover {
+            opacity: 0.9;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: white;
             border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-bottom: 10px;
+            padding: 2rem;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            width: 100%;
         }
 
-        .available {
-            background: #d4edda;
-            color: #155724;
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #95a5a6;
+            line-height: 1;
         }
 
-        .unavailable {
-            background: #f8d7da;
-            color: #721c24;
+        .modal-close:hover {
+            color: #2c3e50;
+        }
+
+        .modal-header {
+            text-align: center;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .modal-wine-name {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-producer {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-denomination {
+            color: #95a5a6;
+            font-style: italic;
+        }
+
+        .modal-section {
+            margin-bottom: 2rem;
+        }
+
+        .modal-section h3 {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #ecf0f1;
+            padding-bottom: 0.5rem;
+        }
+
+        .technical-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .tech-item {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .tech-label {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .tech-value {
+            color: #555;
         }
 
         .no-results {
             text-align: center;
-            color: white;
+            color: #7f8c8d;
             font-size: 1.2rem;
-            margin-top: 40px;
+            margin-top: 3rem;
         }
 
-        .stats {
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .view-sipcard {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: background 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .view-sipcard:hover {
-            background: #5a67d8;
+        @media (max-width: 768px) {
+            .wine-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wine-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .radar-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🍷 Wine List - SipCards Collection</h1>
-        
-        <div class="stats" id="stats">
-            Loading wines...
+    <div class="header">
+        <div class="container">
+            <h1>Wine Collection</h1>
         </div>
+    </div>
 
-        <div class="search-container">
+    <div class="container">
+        <div class="search-panel">
             <div class="search-grid">
-                <div class="search-field">
-                    <label for="searchName">Wine Name</label>
-                    <input type="text" id="searchName" placeholder="Search by name...">
-                </div>
-                
-                <div class="search-field">
-                    <label for="searchProducer">Producer</label>
+                <div class="form-group">
+                    <label for="searchProducer">Producer Name</label>
                     <input type="text" id="searchProducer" placeholder="Search by producer...">
                 </div>
                 
-                <div class="search-field">
-                    <label for="filterType">Type</label>
-                    <select id="filterType">
-                        <option value="">All types</option>
-                        <option value="Red">Red</option>
-                        <option value="White">White</option>
-                        <option value="Rosé">Rosé</option>
-                        <option value="Sparkling">Sparkling</option>
-                        <option value="Dessert">Dessert</option>
+                <div class="form-group">
+                    <label for="searchWine">Wine Name</label>
+                    <input type="text" id="searchWine" placeholder="Search by wine name...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="filterVintage">Vintage</label>
+                    <select id="filterVintage">
+                        <option value="">All vintages</option>
                     </select>
                 </div>
                 
-                <div class="search-field">
-                    <label for="filterRegion">Region</label>
-                    <select id="filterRegion">
-                        <option value="">All regions</option>
+                <div class="form-group">
+                    <label for="filterDenomination">Denomination</label>
+                    <select id="filterDenomination">
+                        <option value="">All denominations</option>
                     </select>
                 </div>
                 
-                <div class="search-field">
-                    <label for="priceRange">Price Range</label>
-                    <select id="priceRange">
-                        <option value="">All prices</option>
-                        <option value="0-20">$0 - $20</option>
-                        <option value="20-40">$20 - $40</option>
-                        <option value="40-60">$40 - $60</option>
-                        <option value="60-100">$60 - $100</option>
-                        <option value="100+">$100+</option>
+                <div class="form-group">
+                    <label for="filterTheme">Theme</label>
+                    <select id="filterTheme">
+                        <option value="">All themes</option>
                     </select>
                 </div>
                 
-                <div class="search-field">
-                    <label for="filterAvailability">Availability</label>
-                    <select id="filterAvailability">
-                        <option value="">All wines</option>
-                        <option value="available">Available only</option>
-                        <option value="unavailable">Unavailable only</option>
-                    </select>
+                <div class="form-group">
+                    <button class="reset-button" onclick="resetFilters()">Reset Filters</button>
                 </div>
-                
-                <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
             </div>
         </div>
 
+        <div class="stats-bar" id="statsBar">
+            Loading wines...
+        </div>
+
         <div class="wine-grid" id="wineGrid">
-            <!-- Wines will be loaded here dynamically -->
+            <!-- Wines will be loaded here -->
         </div>
 
         <div class="no-results" id="noResults" style="display: none;">
@@ -304,113 +494,134 @@
         </div>
     </div>
 
+    <!-- SipCard Modal -->
+    <div class="modal" id="sipcardModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modalContent">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Sample wine database (replace with your actual data)
+        // Professional wine database using only the specified fields
         const wineDatabase = [
             {
                 id: 1,
-                name: "Barolo DOCG 2018",
-                producer: "Giacomo Conterno",
-                type: "Red",
-                region: "Piedmont",
+                producer_name: "Giacomo Conterno",
                 vintage: "2018",
-                alcohol: "14.5%",
-                price: 85,
-                notes: "Elegant and structured, notes of rose and tar",
-                pairings: ["Braised beef", "Aged cheeses", "Wild game"],
-                available: true,
-                featured: true,
-                description: "A Barolo of great elegance and structure from one of Piedmont's historic wineries."
+                denomination: "Barolo DOCG",
+                grapes: "Nebbiolo 100%",
+                alcohol_content: "14.5%",
+                aging: "30 months in large Slavonian oak casks",
+                serving_temperature: "18-20°C",
+                cellaring_potential: "20-25 years",
+                vintage_description: "2018 was an exceptional vintage in Piedmont, characterized by a warm spring and ideal autumn conditions that allowed for perfect phenolic ripeness while maintaining excellent acidity.",
+                food_pairings: ["Brasato al Barolo", "Aged Parmigiano Reggiano", "Wild boar with juniper", "Truffle dishes", "Mature hard cheeses"],
+                visual_notes: "Deep garnet red with brick reflections. Clear and brilliant with medium intensity, showing the wine's maturity and elegance.",
+                olfactory_notes: "Complex bouquet of rose petals, violet, tar, leather, licorice, and sweet spices. Hints of tobacco and dried herbs emerge with aeration, revealing the wine's sophisticated character.",
+                gustatory_notes: "Full-bodied and elegant on the palate. Well-integrated tannins with excellent structure provide backbone while maintaining finesse. Long, persistent finish with notes of cherry, spices, and mineral undertones.",
+                radar_body: 9,
+                radar_tannins: 8,
+                radar_alcohol: 7,
+                radar_persistence: 9,
+                radar_acidity: 8,
+                radar_complexity: 10,
+                aroma_1_type: "Floral", aroma_1_value: 8,
+                aroma_2_type: "Red Fruit", aroma_2_value: 7,
+                aroma_3_type: "Spices", aroma_3_value: 9,
+                aroma_4_type: "Earthy", aroma_4_value: 8,
+                aroma_5_type: "Leather", aroma_5_value: 7,
+                aroma_6_type: "Tobacco", aroma_6_value: 6,
+                aroma_7_type: "Mineral", aroma_7_value: 8,
+                color: "#8B0000",
+                theme: "Elegant Tradition"
             },
             {
                 id: 2,
-                name: "Pinot Grigio DOC",
-                producer: "Alois Lageder",
-                type: "White",
-                region: "Alto Adige",
-                vintage: "2022",
-                alcohol: "12.5%",
-                price: 18,
-                notes: "Fresh and mineral, perfect with seafood",
-                pairings: ["Raw fish", "Mushroom risotto", "Fresh cheese"],
-                available: true,
-                featured: false,
-                description: "High-quality Pinot Grigio from Alto Adige with bright acidity and mineral notes."
+                producer_name: "Ornellaia",
+                vintage: "2019",
+                denomination: "Bolgheri Superiore DOC",
+                grapes: "Cabernet Sauvignon 56%, Merlot 27%, Petit Verdot 10%, Cabernet Franc 7%",
+                alcohol_content: "14%",
+                aging: "18 months in French oak barriques (70% new), followed by 12 months in bottle",
+                serving_temperature: "16-18°C",
+                cellaring_potential: "15-20 years",
+                vintage_description: "2019 was characterized by a mild winter and spring, followed by a warm summer with excellent day-night temperature variations. Harvest took place under optimal conditions from late August to early October.",
+                food_pairings: ["Grilled Tuscan steak", "Osso buco alla Milanese", "Aged pecorino cheese", "Dark chocolate desserts", "Roasted lamb with herbs"],
+                visual_notes: "Deep ruby red with purple reflections. Intense and concentrated appearance with excellent clarity, showcasing the wine's power and elegance.",
+                olfactory_notes: "Intense and complex nose with notes of blackcurrant, blackberry, cedar, vanilla, and chocolate. Elegant balsamic hints and Mediterranean herbs add layers of complexity.",
+                gustatory_notes: "Full-bodied and harmonious on the palate. Velvety tannins are perfectly integrated with the wine's structure. Long finish with notes of dark fruit, spices, and toasted oak.",
+                radar_body: 9,
+                radar_tannins: 8,
+                radar_alcohol: 7,
+                radar_persistence: 9,
+                radar_acidity: 7,
+                radar_complexity: 9,
+                aroma_1_type: "Dark Fruit", aroma_1_value: 9,
+                aroma_2_type: "Cedar", aroma_2_value: 8,
+                aroma_3_type: "Vanilla", aroma_3_value: 7,
+                aroma_4_type: "Chocolate", aroma_4_value: 6,
+                aroma_5_type: "Herbs", aroma_5_value: 7,
+                aroma_6_type: "Tobacco", aroma_6_value: 6,
+                aroma_7_type: "Balsamic", aroma_7_value: 5,
+                color: "#722F37",
+                theme: "Super Tuscan Excellence"
             },
             {
                 id: 3,
-                name: "Chianti Classico DOCG",
-                producer: "Castello di Brolio",
-                type: "Red",
-                region: "Tuscany",
-                vintage: "2020",
-                alcohol: "13.5%",
-                price: 32,
-                notes: "Traditional Sangiovese, well-balanced",
-                pairings: ["Grilled meats", "Pasta with tomato sauce", "Pecorino cheese"],
-                available: false,
-                featured: false,
-                description: "Classic Chianti from one of Tuscany's most historic estates."
-            },
-            {
-                id: 4,
-                name: "Prosecco di Valdobbiadene DOCG",
-                producer: "Nino Franco",
-                type: "Sparkling",
-                region: "Veneto",
-                vintage: "2023",
-                alcohol: "11%",
-                price: 22,
-                notes: "Fine bubbles, fruity and fresh",
-                pairings: ["Aperitif", "Seafood appetizers", "Light pasta dishes"],
-                available: true,
-                featured: true,
-                description: "Premium Prosecco from the heart of Valdobbiadene with persistent bubbles."
-            },
-            {
-                id: 5,
-                name: "Vermentino di Sardegna DOC",
-                producer: "Argiolas",
-                type: "White",
-                region: "Sardinia",
-                vintage: "2023",
-                alcohol: "13%",
-                price: 16,
-                notes: "Saline and Mediterranean character",
-                pairings: ["Grilled fish", "Seafood salad", "Mediterranean cuisine"],
-                available: true,
-                featured: false,
-                description: "Characteristic Sardinian white wine with mineral salinity and Mediterranean herbs."
-            },
-            {
-                id: 6,
-                name: "Amarone della Valpolicella DOCG",
-                producer: "Allegrini",
-                type: "Red",
-                region: "Veneto",
-                vintage: "2017",
-                alcohol: "15.5%",
-                price: 75,
-                notes: "Rich and complex, dried fruit and spices",
-                pairings: ["Braised meats", "Aged cheeses", "Dark chocolate"],
-                available: true,
-                featured: true,
-                description: "Powerful Amarone with intense concentration and complexity from dried grapes."
+                producer_name: "Dom Pérignon",
+                vintage: "2013",
+                denomination: "Champagne AOC",
+                grapes: "Chardonnay 50%, Pinot Noir 50%",
+                alcohol_content: "12.5%",
+                aging: "7 years on lees with traditional riddling and disgorgement by hand",
+                serving_temperature: "8-10°C",
+                cellaring_potential: "10-15 years",
+                vintage_description: "2013 was a challenging vintage that required precise selection and expertise. Cool conditions throughout the growing season preserved excellent acidity, resulting in a Champagne of remarkable freshness and aging potential.",
+                food_pairings: ["Fresh oysters", "Lobster thermidor", "Caviar service", "Sushi and sashimi", "Aged Comté cheese"],
+                visual_notes: "Brilliant golden color with fine, persistent bubbles forming elegant chains. Crystal clear with excellent mousse formation and remarkable visual appeal.",
+                olfactory_notes: "Complex bouquet of white flowers, citrus, brioche, and almonds. Notes of honey, vanilla, and subtle mineral undertones develop with time in the glass, revealing exceptional complexity.",
+                gustatory_notes: "Elegant and refined on the palate with perfect balance between freshness and richness. The mousse is creamy and persistent. Long, mineral finish with notes of toasted bread and citrus.",
+                radar_body: 7,
+                radar_tannins: 2,
+                radar_alcohol: 6,
+                radar_persistence: 9,
+                radar_acidity: 9,
+                radar_complexity: 10,
+                aroma_1_type: "Citrus", aroma_1_value: 8,
+                aroma_2_type: "White Flowers", aroma_2_value: 9,
+                aroma_3_type: "Brioche", aroma_3_value: 8,
+                aroma_4_type: "Almonds", aroma_4_value: 7,
+                aroma_5_type: "Honey", aroma_5_value: 6,
+                aroma_6_type: "Vanilla", aroma_6_value: 5,
+                aroma_7_type: "Mineral", aroma_7_value: 8,
+                color: "#FFD700",
+                theme: "Luxury Celebration"
             }
         ];
 
         let filteredWines = [...wineDatabase];
 
-        // Populate regions dropdown
-        function populateRegions() {
-            const regions = [...new Set(wineDatabase.map(wine => wine.region))].sort();
-            const regionSelect = document.getElementById('filterRegion');
+        // Populate filter dropdowns
+        function populateFilters() {
+            const vintages = [...new Set(wineDatabase.map(wine => wine.vintage))].sort();
+            const denominations = [...new Set(wineDatabase.map(wine => wine.denomination))].sort();
+            const themes = [...new Set(wineDatabase.map(wine => wine.theme))].sort();
             
-            regions.forEach(region => {
-                const option = document.createElement('option');
-                option.value = region;
-                option.textContent = region;
-                regionSelect.appendChild(option);
+            populateSelect('filterVintage', vintages);
+            populateSelect('filterDenomination', denominations);
+            populateSelect('filterTheme', themes);
+        }
+
+        function populateSelect(elementId, options) {
+            const select = document.getElementById(elementId);
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                select.appendChild(optionElement);
             });
         }
 
@@ -418,12 +629,20 @@
         function updateStats() {
             const total = wineDatabase.length;
             const showing = filteredWines.length;
-            const available = filteredWines.filter(wine => wine.available).length;
-            const avgPrice = filteredWines.reduce((sum, wine) => sum + wine.price, 0) / filteredWines.length || 0;
-            
-            document.getElementById('stats').innerHTML = `
-                Showing ${showing} of ${total} wines | ${available} available | Average price: $${avgPrice.toFixed(2)}
-            `;
+            document.getElementById('statsBar').textContent = `Showing ${showing} of ${total} wines`;
+        }
+
+        // Get aromas for display
+        function getAromas(wine) {
+            const aromas = [];
+            for (let i = 1; i <= 7; i++) {
+                const type = wine[`aroma_${i}_type`];
+                const value = wine[`aroma_${i}_value`];
+                if (type && value) {
+                    aromas.push({ type, value });
+                }
+            }
+            return aromas;
         }
 
         // Render wines
@@ -438,76 +657,210 @@
                 grid.style.display = 'grid';
                 noResults.style.display = 'none';
                 
-                grid.innerHTML = wines.map(wine => `
-                    <div class="wine-card ${wine.featured ? 'featured' : ''}">
-                        <div class="wine-name">${wine.name}</div>
-                        <div class="wine-producer">${wine.producer}</div>
-                        <div class="availability ${wine.available ? 'available' : 'unavailable'}">
-                            ${wine.available ? '✓ Available' : '✗ Unavailable'}
+                grid.innerHTML = wines.map(wine => {
+                    const aromas = getAromas(wine);
+                    
+                    return `
+                        <div class="wine-card" style="--wine-color: ${wine.color}">
+                            <div class="wine-header">
+                                <div class="wine-name">${wine.producer_name}</div>
+                                <div class="producer-name">${wine.vintage}</div>
+                                <div class="vintage-denomination">${wine.denomination}</div>
+                            </div>
+                            
+                            <div class="wine-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Grapes</div>
+                                    <div class="detail-value">${wine.grapes}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Alcohol Content</div>
+                                    <div class="detail-value">${wine.alcohol_content}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Serving Temperature</div>
+                                    <div class="detail-value">${wine.serving_temperature}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Cellaring Potential</div>
+                                    <div class="detail-value">${wine.cellaring_potential}</div>
+                                </div>
+                            </div>
+
+                            <div class="tasting-section">
+                                <div class="section-title">Vintage Description</div>
+                                <div class="tasting-notes">${wine.vintage_description}</div>
+                            </div>
+
+                            <div class="radar-analysis">
+                                <div class="section-title">Profile Analysis</div>
+                                <div class="radar-grid">
+                                    <div class="radar-item">
+                                        <span class="radar-label">Body</span>
+                                        <div class="radar-bar">
+                                            <div class="radar-fill" style="width: ${wine.radar_body * 10}%"></div>
+                                        </div>
+                                        <span class="radar-value">${wine.radar_body}</span>
+                                    </div>
+                                    <div class="radar-item">
+                                        <span class="radar-label">Tannins</span>
+                                        <div class="radar-bar">
+                                            <div class="radar-fill" style="width: ${wine.radar_tannins * 10}%"></div>
+                                        </div>
+                                        <span class="radar-value">${wine.radar_tannins}</span>
+                                    </div>
+                                    <div class="radar-item">
+                                        <span class="radar-label">Acidity</span>
+                                        <div class="radar-bar">
+                                            <div class="radar-fill" style="width: ${wine.radar_acidity * 10}%"></div>
+                                        </div>
+                                        <span class="radar-value">${wine.radar_acidity}</span>
+                                    </div>
+                                    <div class="radar-item">
+                                        <span class="radar-label">Complexity</span>
+                                        <div class="radar-bar">
+                                            <div class="radar-fill" style="width: ${wine.radar_complexity * 10}%"></div>
+                                        </div>
+                                        <span class="radar-value">${wine.radar_complexity}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="aroma-profile">
+                                <div class="section-title">Top Aromas</div>
+                                <div class="aroma-grid">
+                                    ${aromas.slice(0, 4).map(aroma => `
+                                        <div class="aroma-item">
+                                            <span class="aroma-type">${aroma.type}</span>
+                                            <span class="aroma-value">${aroma.value}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+
+                            <button class="view-sipcard-btn" onclick="viewSipCard(${wine.id})">
+                                View Complete SipCard
+                            </button>
                         </div>
-                        <div class="wine-details">
-                            <div class="wine-detail"><strong>Type:</strong> ${wine.type}</div>
-                            <div class="wine-detail"><strong>Region:</strong> ${wine.region}</div>
-                            <div class="wine-detail"><strong>Vintage:</strong> ${wine.vintage}</div>
-                            <div class="wine-detail"><strong>Alcohol:</strong> ${wine.alcohol}</div>
-                        </div>
-                        <div class="wine-notes">${wine.notes}</div>
-                        <div class="wine-pairings">
-                            <div class="pairing-title">Perfect with:</div>
-                            <div class="pairings-list">${wine.pairings.join(', ')}</div>
-                        </div>
-                        <div class="wine-price">$${wine.price.toFixed(2)}</div>
-                        <button class="view-sipcard" onclick="viewSipCard(${wine.id})">View SipCard</button>
-                    </div>
-                `).join('');
+                    `;
+                }).join('');
             }
             
             updateStats();
         }
 
-        // View SipCard function
+        // View SipCard modal
         function viewSipCard(wineId) {
             const wine = wineDatabase.find(w => w.id === wineId);
-            if (wine) {
-                alert(`SipCard for ${wine.name}\n\n${wine.description}\n\nThis feature will show the detailed SipCard image when implemented.`);
-                // Here you would implement the SipCard viewing functionality
-                // For example: open a modal, redirect to a detailed page, etc.
-            }
+            if (!wine) return;
+
+            const aromas = getAromas(wine);
+            const modal = document.getElementById('sipcardModal');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <div class="modal-header">
+                    <div class="modal-wine-name">${wine.producer_name}</div>
+                    <div class="modal-producer">${wine.vintage}</div>
+                    <div class="modal-denomination">${wine.denomination}</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>RADAR Analysis</h3>
+                    <div class="radar-grid">
+                        <div class="radar-item">
+                            <span class="radar-label">Body</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_body * 10}%; background: ${wine.color}"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_body}/10</span>
+                        </div>
+                        <div class="radar-item">
+                            <span class="radar-label">Tannins</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_tannins * 10}%; background: ${wine.color}"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_tannins}/10</span>
+                        </div>
+                        <div class="radar-item">
+                            <span class="radar-label">Alcohol</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_alcohol * 10}%; background: ${wine.color}"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_alcohol}/10</span>
+                        </div>
+                        <div class="radar-item">
+                            <span class="radar-label">Persistence</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_persistence * 10}%; background: ${wine.color}"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_persistence}/10</span>
+                        </div>
+                        <div class="radar-item">
+                            <span class="radar-label">Acidity</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_acidity * 10}%; background: ${wine.color}"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_acidity}/10</span>
+                        </div>
+                        <div class="radar-item">
+                            <span class="radar-label">Complexity</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_complexity * 10}%; background: ${wine.color}"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_complexity}/10</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Aroma Profile</h3>
+                    <div class="aroma-grid">
+                        ${aromas.map(aroma => `
+                            <div class="aroma-item">
+                                <span class="aroma-type">${aroma.type}</span>
+                                <span class="aroma-value" style="color: ${wine.color}">${aroma.value}/10</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Food Pairings</h3>
+                    <div class="pairing-list">
+                        ${wine.food_pairings.map(pairing => `
+                            <span class="pairing-tag">${pairing}</span>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('sipcardModal').style.display = 'none';
         }
 
         // Filter wines
         function filterWines() {
-            const nameSearch = document.getElementById('searchName').value.toLowerCase();
             const producerSearch = document.getElementById('searchProducer').value.toLowerCase();
-            const typeFilter = document.getElementById('filterType').value;
-            const regionFilter = document.getElementById('filterRegion').value;
-            const priceRange = document.getElementById('priceRange').value;
-            const availabilityFilter = document.getElementById('filterAvailability').value;
+            const wineSearch = document.getElementById('searchWine').value.toLowerCase();
+            const vintageFilter = document.getElementById('filterVintage').value;
+            const denominationFilter = document.getElementById('filterDenomination').value;
+            const themeFilter = document.getElementById('filterTheme').value;
 
             filteredWines = wineDatabase.filter(wine => {
-                const matchesName = wine.name.toLowerCase().includes(nameSearch);
-                const matchesProducer = wine.producer.toLowerCase().includes(producerSearch);
-                const matchesType = !typeFilter || wine.type === typeFilter;
-                const matchesRegion = !regionFilter || wine.region === regionFilter;
+                const matchesProducer = wine.producer_name.toLowerCase().includes(producerSearch);
+                const matchesWine = wine.producer_name.toLowerCase().includes(wineSearch) || 
+                                  wine.denomination.toLowerCase().includes(wineSearch);
+                const matchesVintage = !vintageFilter || wine.vintage === vintageFilter;
+                const matchesDenomination = !denominationFilter || wine.denomination === denominationFilter;
+                const matchesTheme = !themeFilter || wine.theme === themeFilter;
                 
-                let matchesPrice = true;
-                if (priceRange) {
-                    if (priceRange === '100+') {
-                        matchesPrice = wine.price >= 100;
-                    } else {
-                        const [min, max] = priceRange.split('-').map(Number);
-                        matchesPrice = wine.price >= min && wine.price <= max;
-                    }
-                }
-                
-                let matchesAvailability = true;
-                if (availabilityFilter === 'available') {
-                    matchesAvailability = wine.available;
-                } else if (availabilityFilter === 'unavailable') {
-                    matchesAvailability = !wine.available;
-                }
-                
-                return matchesName && matchesProducer && matchesType && matchesRegion && matchesPrice && matchesAvailability;
+                return matchesProducer && matchesWine && matchesVintage && 
+                       matchesDenomination && matchesTheme;
             });
 
             renderWines(filteredWines);
@@ -515,28 +868,80 @@
 
         // Reset filters
         function resetFilters() {
-            document.getElementById('searchName').value = '';
             document.getElementById('searchProducer').value = '';
-            document.getElementById('filterType').value = '';
-            document.getElementById('filterRegion').value = '';
-            document.getElementById('priceRange').value = '';
-            document.getElementById('filterAvailability').value = '';
+            document.getElementById('searchWine').value = '';
+            document.getElementById('filterVintage').value = '';
+            document.getElementById('filterDenomination').value = '';
+            document.getElementById('filterTheme').value = '';
             
             filteredWines = [...wineDatabase];
             renderWines(filteredWines);
         }
 
         // Event listeners
-        document.getElementById('searchName').addEventListener('input', filterWines);
         document.getElementById('searchProducer').addEventListener('input', filterWines);
-        document.getElementById('filterType').addEventListener('change', filterWines);
-        document.getElementById('filterRegion').addEventListener('change', filterWines);
-        document.getElementById('priceRange').addEventListener('change', filterWines);
-        document.getElementById('filterAvailability').addEventListener('change', filterWines);
+        document.getElementById('searchWine').addEventListener('input', filterWines);
+        document.getElementById('filterVintage').addEventListener('change', filterWines);
+        document.getElementById('filterDenomination').addEventListener('change', filterWines);
+        document.getElementById('filterTheme').addEventListener('change', filterWines);
+
+        // Close modal when clicking outside
+        document.getElementById('sipcardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
 
         // Initialize
-        populateRegions();
+        populateFilters();
         renderWines(filteredWines);
     </script>
 </body>
 </html>
+                    <h3>Technical Information</h3>
+                    <div class="technical-grid">
+                        <div class="tech-item">
+                            <div class="tech-label">Grapes</div>
+                            <div class="tech-value">${wine.grapes}</div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-label">Alcohol Content</div>
+                            <div class="tech-value">${wine.alcohol_content}</div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-label">Aging</div>
+                            <div class="tech-value">${wine.aging}</div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-label">Serving Temperature</div>
+                            <div class="tech-value">${wine.serving_temperature}</div>
+                        </div>
+                        <div class="tech-item">
+                            <div class="tech-label">Cellaring Potential</div>
+                            <div class="tech-value">${wine.cellaring_potential}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Vintage Description</h3>
+                    <p>${wine.vintage_description}</p>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Tasting Notes</h3>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Visual Notes:</strong><br>
+                        ${wine.visual_notes}
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Olfactory Notes:</strong><br>
+                        ${wine.olfactory_notes}
+                    </div>
+                    <div>
+                        <strong>Gustatory Notes:</strong><br>
+                        ${wine.gustatory_notes}
+                    </div>
+                </div>
+
+                <div class="modal-section">
