@@ -4,32 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wine Collection - Professional SipCards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-gold: #D4B456;
+            --primary-gold-hover: #E0C472;
+            --primary-wine: #8E1C38;
+            --accent-red: #E27285;
+            --spiral-cream: #E6D7B9;
+            --text-color: #333;
+            --bg-white: #ffffff;
+            --bg-light: #f8f8f8;
+            --accent-light: #f0f0f0;
+        }
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f8f9fa;
-            color: #333;
+            margin: 0;
+            background-color: var(--bg-white);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
             line-height: 1.6;
         }
 
+        .geometric-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4b456' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg width='52' height='26' viewBox='0 0 52 26' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238e1c38' fill-opacity='0.03'%3E%3Cpath d='M10 10c0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6h2c0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4 3.314 0 6 2.686 6 6 0 2.21 1.79 4 4 4v2c-3.314 0-6-2.686-6-6 0-2.21-1.79-4-4-4-3.314 0-6-2.686-6-6zm25.464-1.95l8.486 8.486-1.414 1.414-8.486-8.486 1.414-1.414z' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.7;
+            z-index: -1;
+        }
+
         .header {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
             color: white;
-            padding: 2rem 0;
-            margin-bottom: 2rem;
+            padding: 3rem 0;
+            margin-bottom: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 180, 86, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
         }
 
         .header h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: 300;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--primary-gold);
+            margin-bottom: 0.5rem;
             letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .header h1:hover {
+            color: var(--primary-gold-hover);
+            transform: scale(1.02);
+        }
+
+        .header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--spiral-cream);
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
         }
 
         .container {
@@ -39,18 +102,38 @@
         }
 
         .search-panel {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border-top: 4px solid var(--primary-gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 180, 86, 0.03) 0%, rgba(142, 28, 56, 0.03) 100%);
+            z-index: 0;
+        }
+
+        .search-panel-content {
+            position: relative;
+            z-index: 1;
         }
 
         .search-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .form-group {
@@ -59,191 +142,278 @@
         }
 
         .form-group label {
+            font-family: 'Cinzel', serif;
             font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #2c3e50;
-            font-size: 0.9rem;
+            margin-bottom: 0.8rem;
+            color: var(--primary-wine);
+            font-size: 1rem;
+            letter-spacing: 1px;
         }
 
         .form-group input,
         .form-group select {
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            padding: 1rem;
+            border: 2px solid var(--spiral-cream);
+            border-radius: 15px;
             font-size: 1rem;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #3498db;
-            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(212, 180, 86, 0.2);
+            transform: translateY(-2px);
         }
 
         .reset-button {
-            background: #34495e;
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
             color: white;
             border: none;
-            padding: 0.8rem 2rem;
-            border-radius: 6px;
+            padding: 1rem 2rem;
+            border-radius: 15px;
             cursor: pointer;
             font-size: 1rem;
-            transition: background 0.3s ease;
-            align-self: flex-end;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reset-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 180, 86, 0.3), transparent);
+            transition: left 0.7s ease;
         }
 
         .reset-button:hover {
-            background: #2c3e50;
+            background: linear-gradient(135deg, #7a2433 0%, var(--primary-wine) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15), 0 0 15px var(--primary-gold);
+        }
+
+        .reset-button:hover::before {
+            left: 100%;
         }
 
         .stats-bar {
-            background: white;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
             text-align: center;
+            font-family: 'Cinzel', serif;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--primary-wine);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
         }
 
         .wine-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 2rem;
+            gap: 2.5rem;
+            margin-bottom: 3rem;
         }
 
         .wine-card {
-            background: white;
-            border-radius: 12px;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-top: 4px solid var(--wine-color, #3498db);
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary-gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wine-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 180, 86, 0.02) 0%, rgba(142, 28, 56, 0.02) 100%);
+            z-index: 0;
         }
 
         .wine-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 30px var(--primary-gold);
+            border-top-color: var(--accent-red);
+        }
+
+        .wine-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-wine), var(--accent-red));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .wine-card:hover::after {
+            transform: scaleX(1);
+        }
+
+        .wine-card-content {
+            position: relative;
+            z-index: 1;
         }
 
         .wine-header {
-            border-bottom: 1px solid #eee;
-            padding-bottom: 1rem;
-            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--spiral-cream);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
         }
 
         .wine-name {
-            font-size: 1.4rem;
-            font-weight: 600;
-            color: #2c3e50;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--primary-wine);
             margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .wine-card:hover .wine-name {
+            color: var(--primary-gold);
         }
 
         .producer-name {
-            font-size: 1.1rem;
-            color: #7f8c8d;
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--accent-red);
             margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
         .vintage-denomination {
-            color: #95a5a6;
+            color: var(--text-color);
             font-style: italic;
+            font-size: 1rem;
         }
 
         .wine-details {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .detail-item {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            padding: 0.5rem 0;
         }
 
         .detail-label {
+            font-family: 'Cinzel', serif;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--primary-wine);
+            margin-bottom: 0.3rem;
         }
 
         .detail-value {
-            color: #7f8c8d;
+            color: var(--text-color);
         }
 
         .tasting-section {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .section-title {
+            font-family: 'Cinzel', serif;
             font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 0.8rem;
-            font-size: 1rem;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 0.3rem;
+            color: var(--primary-wine);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--spiral-cream);
+            padding-bottom: 0.5rem;
+            letter-spacing: 1px;
         }
 
         .tasting-notes {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #555;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: var(--text-color);
+            font-style: italic;
         }
 
         .radar-analysis {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .radar-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 0.8rem;
+            gap: 1rem;
         }
 
         .radar-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.5rem 0;
+            padding: 0.8rem 0;
         }
 
         .radar-label {
+            font-family: 'Cinzel', serif;
             font-weight: 500;
-            color: #2c3e50;
+            color: var(--primary-wine);
             font-size: 0.9rem;
         }
 
         .radar-bar {
             flex: 1;
             margin: 0 1rem;
-            height: 6px;
-            background: #ecf0f1;
-            border-radius: 3px;
+            height: 8px;
+            background: var(--spiral-cream);
+            border-radius: 4px;
             overflow: hidden;
+            position: relative;
         }
 
         .radar-fill {
             height: 100%;
-            background: var(--wine-color, #3498db);
+            background: linear-gradient(90deg, var(--primary-wine), var(--primary-gold));
             transition: width 0.5s ease;
+            border-radius: 4px;
         }
 
         .radar-value {
+            font-family: 'Cinzel', serif;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--primary-wine);
             font-size: 0.9rem;
-            min-width: 30px;
+            min-width: 35px;
             text-align: right;
         }
 
         .aroma-profile {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .aroma-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 0.8rem;
         }
 
@@ -251,58 +421,95 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #f8f9fa;
-            padding: 0.6rem 0.8rem;
-            border-radius: 6px;
+            background: rgba(248, 248, 248, 0.8);
+            padding: 0.8rem 1rem;
+            border-radius: 15px;
             font-size: 0.85rem;
+            border: 1px solid var(--spiral-cream);
+            transition: all 0.3s ease;
+        }
+
+        .aroma-item:hover {
+            background: rgba(212, 180, 86, 0.1);
+            border-color: var(--primary-gold);
         }
 
         .aroma-type {
-            color: #2c3e50;
+            color: var(--primary-wine);
             font-weight: 500;
         }
 
         .aroma-value {
-            color: var(--wine-color, #3498db);
+            color: var(--primary-gold);
+            font-family: 'Cinzel', serif;
             font-weight: 600;
         }
 
         .food-pairings {
-            margin-top: 1.5rem;
+            margin-top: 2rem;
         }
 
         .pairing-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 0.8rem;
-        }
-
-        .pairing-tag {
-            background: #ecf0f1;
-            color: #2c3e50;
-            padding: 0.4rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            border: 1px solid #bdc3c7;
-        }
-
-        .view-sipcard-btn {
-            background: var(--wine-color, #3498db);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: opacity 0.3s ease;
-            width: 100%;
+            gap: 0.8rem;
             margin-top: 1rem;
         }
 
+        .pairing-tag {
+            background: rgba(142, 28, 56, 0.1);
+            color: var(--primary-wine);
+            padding: 0.6rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            border: 1px solid var(--spiral-cream);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .pairing-tag:hover {
+            background: var(--primary-gold);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .view-sipcard-btn {
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .view-sipcard-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 180, 86, 0.3), transparent);
+            transition: left 0.7s ease;
+        }
+
         .view-sipcard-btn:hover {
-            opacity: 0.9;
+            background: linear-gradient(135deg, #7a2433 0%, var(--primary-wine) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15), 0 0 15px var(--primary-gold);
+        }
+
+        .view-sipcard-btn:hover::before {
+            left: 100%;
         }
 
         .modal {
@@ -312,7 +519,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -321,98 +528,121 @@
 
         .modal-content {
             background: white;
-            border-radius: 12px;
-            padding: 2rem;
+            border-radius: 30px;
+            padding: 3rem;
             max-width: 900px;
             max-height: 90vh;
             overflow-y: auto;
             position: relative;
             width: 100%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
 
         .modal-close {
             position: absolute;
-            top: 1rem;
-            right: 1.5rem;
+            top: 1.5rem;
+            right: 2rem;
             background: none;
             border: none;
             font-size: 2rem;
             cursor: pointer;
-            color: #95a5a6;
+            color: var(--accent-red);
             line-height: 1;
+            transition: all 0.3s ease;
         }
 
         .modal-close:hover {
-            color: #2c3e50;
+            color: var(--primary-wine);
+            transform: scale(1.1);
         }
 
         .modal-header {
             text-align: center;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 1.5rem;
-            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--primary-gold);
+            padding-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .modal-wine-name {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #2c3e50;
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-wine);
             margin-bottom: 0.5rem;
+            letter-spacing: 2px;
         }
 
         .modal-producer {
-            font-size: 1.2rem;
-            color: #7f8c8d;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--accent-red);
             margin-bottom: 0.5rem;
+            font-weight: 600;
         }
 
         .modal-denomination {
-            color: #95a5a6;
+            color: var(--text-color);
             font-style: italic;
+            font-size: 1.1rem;
         }
 
         .modal-section {
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem;
         }
 
         .modal-section h3 {
-            color: #2c3e50;
-            font-size: 1.2rem;
-            margin-bottom: 1rem;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 0.5rem;
+            font-family: 'Cinzel', serif;
+            color: var(--primary-wine);
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--spiral-cream);
+            padding-bottom: 0.8rem;
+            letter-spacing: 1px;
         }
 
         .technical-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            gap: 1.5rem;
         }
 
         .tech-item {
             display: flex;
             flex-direction: column;
-            padding: 1rem;
-            background: #f8f9fa;
-            border-radius: 6px;
+            padding: 1.5rem;
+            background: rgba(248, 248, 248, 0.8);
+            border-radius: 15px;
+            border: 1px solid var(--spiral-cream);
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            background: rgba(212, 180, 86, 0.1);
+            border-color: var(--primary-gold);
+            transform: translateY(-3px);
         }
 
         .tech-label {
+            font-family: 'Cinzel', serif;
             font-weight: 600;
-            color: #2c3e50;
+            color: var(--primary-wine);
             font-size: 0.9rem;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
         }
 
         .tech-value {
-            color: #555;
+            color: var(--text-color);
+            font-size: 0.95rem;
         }
 
         .no-results {
             text-align: center;
-            color: #7f8c8d;
-            font-size: 1.2rem;
-            margin-top: 3rem;
+            color: var(--accent-red);
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-top: 4rem;
+            font-weight: 600;
         }
 
         @media (max-width: 768px) {
@@ -431,52 +661,72 @@
             .radar-grid {
                 grid-template-columns: 1fr;
             }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .modal-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .technical-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="geometric-bg"></div>
+
     <div class="header">
         <div class="container">
-            <h1>Wine Collection</h1>
+            <div class="header-content">
+                <h1>Wine Collection</h1>
+                <h2>Professional SipCards</h2>
+            </div>
         </div>
     </div>
 
     <div class="container">
         <div class="search-panel">
-            <div class="search-grid">
-                <div class="form-group">
-                    <label for="searchProducer">Producer Name</label>
-                    <input type="text" id="searchProducer" placeholder="Search by producer...">
-                </div>
-                
-                <div class="form-group">
-                    <label for="searchWine">Wine Name</label>
-                    <input type="text" id="searchWine" placeholder="Search by wine name...">
-                </div>
-                
-                <div class="form-group">
-                    <label for="filterVintage">Vintage</label>
-                    <select id="filterVintage">
-                        <option value="">All vintages</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="filterDenomination">Denomination</label>
-                    <select id="filterDenomination">
-                        <option value="">All denominations</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="filterTheme">Theme</label>
-                    <select id="filterTheme">
-                        <option value="">All themes</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <button class="reset-button" onclick="resetFilters()">Reset Filters</button>
+            <div class="search-panel-content">
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="searchProducer">Producer Name</label>
+                        <input type="text" id="searchProducer" placeholder="Search by producer...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="searchWine">Wine Name</label>
+                        <input type="text" id="searchWine" placeholder="Search by wine name...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterVintage">Vintage</label>
+                        <select id="filterVintage">
+                            <option value="">All vintages</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterDenomination">Denomination</label>
+                        <select id="filterDenomination">
+                            <option value="">All denominations</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterTheme">Theme</label>
+                        <select id="filterTheme">
+                            <option value="">All themes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="reset-button" onclick="resetFilters()">Reset Filters</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -522,41 +772,6 @@
                 visual_notes: "Deep garnet red with brick reflections. Clear and brilliant with medium intensity, showing the wine's maturity and elegance.",
                 olfactory_notes: "Complex bouquet of rose petals, violet, tar, leather, licorice, and sweet spices. Hints of tobacco and dried herbs emerge with aeration, revealing the wine's sophisticated character.",
                 gustatory_notes: "Full-bodied and elegant on the palate. Well-integrated tannins with excellent structure provide backbone while maintaining finesse. Long, persistent finish with notes of cherry, spices, and mineral undertones.",
-                radar_body: 9,
-                radar_tannins: 8,
-                radar_alcohol: 7,
-                radar_persistence: 9,
-                radar_acidity: 8,
-                radar_complexity: 10,
-                aroma_1_type: "Floral", aroma_1_value: 8,
-                aroma_2_type: "Red Fruit", aroma_2_value: 7,
-                aroma_3_type: "Spices", aroma_3_value: 9,
-                aroma_4_type: "Earthy", aroma_4_value: 8,
-                aroma_5_type: "Leather", aroma_5_value: 7,
-                aroma_6_type: "Tobacco", aroma_6_value: 6,
-                aroma_7_type: "Mineral", aroma_7_value: 8,
-                color: "#8B0000",
-                theme: "Elegant Tradition"
-            },
-            {
-                id: 2,
-                producer_name: "Ornellaia",
-                vintage: "2019",
-                denomination: "Bolgheri Superiore DOC",
-                grapes: "Cabernet Sauvignon 56%, Merlot 27%, Petit Verdot 10%, Cabernet Franc 7%",
-                alcohol_content: "14%",
-                aging: "18 months in French oak barriques (70% new), followed by 12 months in bottle",
-                serving_temperature: "16-18°C",
-                cellaring_potential: "15-20 years",
-                vintage_description: "2019 was characterized by a mild winter and spring, followed by a warm summer with excellent day-night temperature variations. Harvest took place under optimal conditions from late August to early October.",
-                food_pairings: ["Grilled Tuscan steak", "Osso buco alla Milanese", "Aged pecorino cheese", "Dark chocolate desserts", "Roasted lamb with herbs"],
-                visual_notes: "Deep ruby red with purple reflections. Intense and concentrated appearance with excellent clarity, showcasing the wine's power and elegance.",
-                olfactory_notes: "Intense and complex nose with notes of blackcurrant, blackberry, cedar, vanilla, and chocolate. Elegant balsamic hints and Mediterranean herbs add layers of complexity.",
-                gustatory_notes: "Full-bodied and harmonious on the palate. Velvety tannins are perfectly integrated with the wine's structure. Long finish with notes of dark fruit, spices, and toasted oak.",
-                radar_body: 9,
-                radar_tannins: 8,
-                radar_alcohol: 7,
-                radar_persistence: 9,
                 radar_acidity: 7,
                 radar_complexity: 9,
                 aroma_1_type: "Dark Fruit", aroma_1_value: 9,
@@ -629,7 +844,7 @@
         function updateStats() {
             const total = wineDatabase.length;
             const showing = filteredWines.length;
-            document.getElementById('statsBar').textContent = `Showing ${showing} of ${total} wines`;
+            document.getElementById('statsBar').textContent = `Showing ${showing} of ${total} wines in collection`;
         }
 
         // Get aromas for display
@@ -661,86 +876,88 @@
                     const aromas = getAromas(wine);
                     
                     return `
-                        <div class="wine-card" style="--wine-color: ${wine.color}">
-                            <div class="wine-header">
-                                <div class="wine-name">${wine.producer_name}</div>
-                                <div class="producer-name">${wine.vintage}</div>
-                                <div class="vintage-denomination">${wine.denomination}</div>
-                            </div>
-                            
-                            <div class="wine-details">
-                                <div class="detail-item">
-                                    <div class="detail-label">Grapes</div>
-                                    <div class="detail-value">${wine.grapes}</div>
+                        <div class="wine-card">
+                            <div class="wine-card-content">
+                                <div class="wine-header">
+                                    <div class="wine-name">${wine.producer_name}</div>
+                                    <div class="producer-name">${wine.vintage}</div>
+                                    <div class="vintage-denomination">${wine.denomination}</div>
                                 </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">Alcohol Content</div>
-                                    <div class="detail-value">${wine.alcohol_content}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">Serving Temperature</div>
-                                    <div class="detail-value">${wine.serving_temperature}</div>
-                                </div>
-                                <div class="detail-item">
-                                    <div class="detail-label">Cellaring Potential</div>
-                                    <div class="detail-value">${wine.cellaring_potential}</div>
-                                </div>
-                            </div>
-
-                            <div class="tasting-section">
-                                <div class="section-title">Vintage Description</div>
-                                <div class="tasting-notes">${wine.vintage_description}</div>
-                            </div>
-
-                            <div class="radar-analysis">
-                                <div class="section-title">Profile Analysis</div>
-                                <div class="radar-grid">
-                                    <div class="radar-item">
-                                        <span class="radar-label">Body</span>
-                                        <div class="radar-bar">
-                                            <div class="radar-fill" style="width: ${wine.radar_body * 10}%"></div>
-                                        </div>
-                                        <span class="radar-value">${wine.radar_body}</span>
+                                
+                                <div class="wine-details">
+                                    <div class="detail-item">
+                                        <div class="detail-label">Grapes</div>
+                                        <div class="detail-value">${wine.grapes}</div>
                                     </div>
-                                    <div class="radar-item">
-                                        <span class="radar-label">Tannins</span>
-                                        <div class="radar-bar">
-                                            <div class="radar-fill" style="width: ${wine.radar_tannins * 10}%"></div>
-                                        </div>
-                                        <span class="radar-value">${wine.radar_tannins}</span>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Alcohol Content</div>
+                                        <div class="detail-value">${wine.alcohol_content}</div>
                                     </div>
-                                    <div class="radar-item">
-                                        <span class="radar-label">Acidity</span>
-                                        <div class="radar-bar">
-                                            <div class="radar-fill" style="width: ${wine.radar_acidity * 10}%"></div>
-                                        </div>
-                                        <span class="radar-value">${wine.radar_acidity}</span>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Serving Temperature</div>
+                                        <div class="detail-value">${wine.serving_temperature}</div>
                                     </div>
-                                    <div class="radar-item">
-                                        <span class="radar-label">Complexity</span>
-                                        <div class="radar-bar">
-                                            <div class="radar-fill" style="width: ${wine.radar_complexity * 10}%"></div>
-                                        </div>
-                                        <span class="radar-value">${wine.radar_complexity}</span>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Cellaring Potential</div>
+                                        <div class="detail-value">${wine.cellaring_potential}</div>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="aroma-profile">
-                                <div class="section-title">Top Aromas</div>
-                                <div class="aroma-grid">
-                                    ${aromas.slice(0, 4).map(aroma => `
-                                        <div class="aroma-item">
-                                            <span class="aroma-type">${aroma.type}</span>
-                                            <span class="aroma-value">${aroma.value}</span>
-                                        </div>
-                                    `).join('')}
+                                <div class="tasting-section">
+                                    <div class="section-title">Vintage Description</div>
+                                    <div class="tasting-notes">${wine.vintage_description}</div>
                                 </div>
-                            </div>
 
-                            <button class="view-sipcard-btn" onclick="viewSipCard(${wine.id})">
-                                View Complete SipCard
-                            </button>
+                                <div class="radar-analysis">
+                                    <div class="section-title">Profile Analysis</div>
+                                    <div class="radar-grid">
+                                        <div class="radar-item">
+                                            <span class="radar-label">Body</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_body * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_body}</span>
+                                        </div>
+                                        <div class="radar-item">
+                                            <span class="radar-label">Tannins</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_tannins * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_tannins}</span>
+                                        </div>
+                                        <div class="radar-item">
+                                            <span class="radar-label">Acidity</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_acidity * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_acidity}</span>
+                                        </div>
+                                        <div class="radar-item">
+                                            <span class="radar-label">Complexity</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_complexity * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_complexity}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="aroma-profile">
+                                    <div class="section-title">Top Aromas</div>
+                                    <div class="aroma-grid">
+                                        ${aromas.slice(0, 4).map(aroma => `
+                                            <div class="aroma-item">
+                                                <span class="aroma-type">${aroma.type}</span>
+                                                <span class="aroma-value">${aroma.value}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <button class="view-sipcard-btn" onclick="viewSipCard(${wine.id})">
+                                    View Complete SipCard
+                                </button>
+                            </div>
                         </div>
                     `;
                 }).join('');
@@ -749,7 +966,7 @@
             updateStats();
         }
 
-        // View SipCard modal
+        // View SipCard modal with your template design
         function viewSipCard(wineId) {
             const wine = wineDatabase.find(w => w.id === wineId);
             if (!wine) return;
@@ -758,84 +975,383 @@
             const modal = document.getElementById('sipcardModal');
             const content = document.getElementById('modalContent');
             
+            // Generate RADAR chart points
+            const radarPoints = generateRadarPoints(wine);
+            
             content.innerHTML = `
-                <div class="modal-header">
-                    <div class="modal-wine-name">${wine.producer_name}</div>
-                    <div class="modal-producer">${wine.vintage}</div>
-                    <div class="modal-denomination">${wine.denomination}</div>
-                </div>
-
-                <div class="modal-section">
-                    <h3>RADAR Analysis</h3>
-                    <div class="radar-grid">
-                        <div class="radar-item">
-                            <span class="radar-label">Body</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_body * 10}%; background: ${wine.color}"></div>
-                            </div>
-                            <span class="radar-value">${wine.radar_body}/10</span>
-                        </div>
-                        <div class="radar-item">
-                            <span class="radar-label">Tannins</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_tannins * 10}%; background: ${wine.color}"></div>
-                            </div>
-                            <span class="radar-value">${wine.radar_tannins}/10</span>
-                        </div>
-                        <div class="radar-item">
-                            <span class="radar-label">Alcohol</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_alcohol * 10}%; background: ${wine.color}"></div>
-                            </div>
-                            <span class="radar-value">${wine.radar_alcohol}/10</span>
-                        </div>
-                        <div class="radar-item">
-                            <span class="radar-label">Persistence</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_persistence * 10}%; background: ${wine.color}"></div>
-                            </div>
-                            <span class="radar-value">${wine.radar_persistence}/10</span>
-                        </div>
-                        <div class="radar-item">
-                            <span class="radar-label">Acidity</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_acidity * 10}%; background: ${wine.color}"></div>
-                            </div>
-                            <span class="radar-value">${wine.radar_acidity}/10</span>
-                        </div>
-                        <div class="radar-item">
-                            <span class="radar-label">Complexity</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_complexity * 10}%; background: ${wine.color}"></div>
-                            </div>
-                            <span class="radar-value">${wine.radar_complexity}/10</span>
-                        </div>
+                <style>
+                    .sipcard-body {
+                        font-family: 'Garamond', serif;
+                        background-color: #f9f7f3;
+                        color: #333333;
+                        line-height: 1.6;
+                        margin: 0;
+                        padding: 0;
+                    }
+                    .sipcard-header {
+                        background-color: #5e1914;
+                        color: #ffffff;
+                        padding: 15px;
+                        text-align: center;
+                        margin: -3rem -3rem 2rem -3rem;
+                        border-radius: 30px 30px 0 0;
+                    }
+                    .sipcard-content {
+                        max-width: 1000px;
+                        margin: 0 auto;
+                    }
+                    .sipcard-container {
+                        position: relative;
+                        margin-bottom: 20px;
+                        background-color: white;
+                        border-radius: 12px;
+                        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+                        overflow: hidden;
+                    }
+                    .sipcard-wine-card {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 20px;
+                        padding: 25px;
+                        position: relative;
+                        z-index: 2;
+                    }
+                    .sipcard-logo-background {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        z-index: 1;
+                        opacity: 0.05;
+                        pointer-events: none;
+                        text-align: center;
+                        font-size: 120px;
+                        color: var(--primary-wine);
+                    }
+                    .sipcard-wine-info h1 {
+                        color: #5e1914;
+                        margin-top: 0;
+                        border-bottom: 2px solid #e6d1a8;
+                        padding-bottom: 10px;
+                        font-family: 'Cinzel Decorative', cursive;
+                    }
+                    .sipcard-wine-info h2 {
+                        font-style: italic;
+                        font-weight: normal;
+                        margin-top: 5px;
+                        color: var(--accent-red);
+                    }
+                    .sipcard-specs {
+                        display: grid;
+                        grid-template-columns: repeat(2, 1fr);
+                        gap: 10px;
+                    }
+                    .sipcard-spec-item {
+                        display: flex;
+                        margin-bottom: 8px;
+                    }
+                    .sipcard-spec-item strong {
+                        min-width: 140px;
+                        color: #5e1914;
+                        font-weight: 600;
+                    }
+                    .sipcard-chart-container {
+                        position: relative;
+                        padding: 25px;
+                        z-index: 2;
+                    }
+                    .sipcard-chart-row {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 20px;
+                        position: relative;
+                        z-index: 3;
+                    }
+                    .sipcard-chart-title {
+                        color: #5e1914;
+                        text-align: center;
+                        margin-top: 0;
+                        margin-bottom: 20px;
+                        position: relative;
+                        z-index: 3;
+                        font-family: 'Cinzel', serif;
+                    }
+                    .sipcard-radar-chart {
+                        width: 100%;
+                        height: 300px;
+                        position: relative;
+                        z-index: 3;
+                    }
+                    .sipcard-aroma-chart {
+                        width: 100%;
+                        height: 350px;
+                        position: relative;
+                        z-index: 3;
+                    }
+                    .sipcard-flavor-profile {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 20px;
+                        text-align: left;
+                        position: relative;
+                        z-index: 3;
+                    }
+                    .sipcard-flavor-category {
+                        padding: 20px;
+                        background: rgba(248, 248, 248, 0.8);
+                        border-radius: 12px;
+                        border: 1px solid #e6d1a8;
+                    }
+                    .sipcard-flavor-category h3 {
+                        color: #5e1914;
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                        font-family: 'Cinzel', serif;
+                        border-bottom: 1px solid #e6d1a8;
+                        padding-bottom: 8px;
+                    }
+                    .wine-type-indicator {
+                        display: inline-block;
+                        padding: 5px 10px;
+                        background-color: #5e1914;
+                        color: white;
+                        border-radius: 4px;
+                        font-size: 12px;
+                        margin-left: 10px;
+                        vertical-align: middle;
+                    }
+                    @media (max-width: 768px) {
+                        .sipcard-wine-card {
+                            grid-template-columns: 1fr;
+                        }
+                        .sipcard-chart-row {
+                            grid-template-columns: 1fr;
+                        }
+                        .sipcard-specs {
+                            grid-template-columns: 1fr;
+                        }
+                        .sipcard-flavor-profile {
+                            grid-template-columns: 1fr;
+                        }
+                        .sipcard-spec-item {
+                            flex-direction: column;
+                        }
+                        .sipcard-spec-item strong {
+                            min-width: auto;
+                            margin-bottom: 3px;
+                        }
+                    }
+                </style>
+                
+                <div class="sipcard-body">
+                    <div class="sipcard-header">
+                        <h1>${wine.producer_name} - ${wine.vintage} <span class="wine-type-indicator">${getWineType(wine)}</span></h1>
                     </div>
-                </div>
-
-                <div class="modal-section">
-                    <h3>Aroma Profile</h3>
-                    <div class="aroma-grid">
-                        ${aromas.map(aroma => `
-                            <div class="aroma-item">
-                                <span class="aroma-type">${aroma.type}</span>
-                                <span class="aroma-value" style="color: ${wine.color}">${aroma.value}/10</span>
+                    
+                    <div class="sipcard-content">
+                        <!-- First Card -->
+                        <div class="sipcard-container">
+                            <div class="sipcard-logo-background">
+                                🍷
                             </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <div class="modal-section">
-                    <h3>Food Pairings</h3>
-                    <div class="pairing-list">
-                        ${wine.food_pairings.map(pairing => `
-                            <span class="pairing-tag">${pairing}</span>
-                        `).join('')}
+                            <div class="sipcard-wine-card">
+                                <div class="sipcard-wine-info">
+                                    <h1>${wine.producer_name}</h1>
+                                    <h2>${wine.denomination}</h2>
+                                    <div class="sipcard-specs">
+                                        <div class="sipcard-spec-item">
+                                            <strong>Producer:</strong>
+                                            <span>${wine.producer_name}</span>
+                                        </div>
+                                        <div class="sipcard-spec-item">
+                                            <strong>Grapes:</strong>
+                                            <span>${wine.grapes}</span>
+                                        </div>
+                                        <div class="sipcard-spec-item">
+                                            <strong>Vintage:</strong>
+                                            <span>${wine.vintage}</span>
+                                        </div>
+                                        <div class="sipcard-spec-item">
+                                            <strong>Alcohol Content:</strong>
+                                            <span>${wine.alcohol_content}</span>
+                                        </div>
+                                        <div class="sipcard-spec-item">
+                                            <strong>Aging:</strong>
+                                            <span>${wine.aging}</span>
+                                        </div>
+                                        <div class="sipcard-spec-item">
+                                            <strong>Serving Temperature:</strong>
+                                            <span>${wine.serving_temperature}</span>
+                                        </div>
+                                        <div class="sipcard-spec-item">
+                                            <strong>Cellaring Potential:</strong>
+                                            <span>${wine.cellaring_potential}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="sipcard-wine-summary">
+                                    <h3>Vintage ${wine.vintage}</h3>
+                                    <p>${wine.vintage_description}</p>
+                                    <h3>Ideal Food Pairings</h3>
+                                    <p>${wine.food_pairings.join(', ')}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Second Card -->
+                        <div class="sipcard-container">
+                            <div class="sipcard-logo-background">
+                                📊
+                            </div>
+                            <div class="sipcard-chart-container">
+                                <h2 class="sipcard-chart-title">Organoleptic Profile</h2>
+                                <div class="sipcard-chart-row">
+                                    <div class="sipcard-radar-chart">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+                                            <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Body and Structure</text>
+                                            
+                                            <!-- Radar grid -->
+                                            <polygon points="200,70 270,110 270,190 200,230 130,190 130,110" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                                            <polygon points="200,90 250,120 250,180 200,210 150,180 150,120" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                                            <polygon points="200,110 230,130 230,170 200,190 170,170 170,130" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                                            
+                                            <!-- Axis lines -->
+                                            <line x1="200" y1="150" x2="200" y2="70" stroke="#888888" stroke-width="1"/>
+                                            <line x1="200" y1="150" x2="270" y2="190" stroke="#888888" stroke-width="1"/>
+                                            <line x1="200" y1="150" x2="270" y2="110" stroke="#888888" stroke-width="1"/>
+                                            <line x1="200" y1="150" x2="200" y2="230" stroke="#888888" stroke-width="1"/>
+                                            <line x1="200" y1="150" x2="130" y2="190" stroke="#888888" stroke-width="1"/>
+                                            <line x1="200" y1="150" x2="130" y2="110" stroke="#888888" stroke-width="1"/>
+                                            
+                                            <!-- Labels -->
+                                            <text x="200" y="65" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Body</text>
+                                            <text x="280" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Tannins</text>
+                                            <text x="280" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Alcohol</text>
+                                            <text x="200" y="240" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Persistence</text>
+                                            <text x="120" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Acidity</text>
+                                            <text x="120" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Complexity</text>
+                                            
+                                            <!-- Data polygon -->
+                                            <polygon points="${radarPoints}" fill="rgba(94,25,20,0.5)" stroke="#5e1914" stroke-width="2"/>
+                                            
+                                            <!-- Data points -->
+                                            ${radarPoints.split(' ').map(point => {
+                                                const [x, y] = point.split(',');
+                                                return `<circle cx="${x}" cy="${y}" r="4" fill="#5e1914"/>`;
+                                            }).join('')}
+                                            
+                                            <!-- Legend -->
+                                            <foreignObject x="50%" y="260" width="500" height="50" transform="translate(-250, 0)">
+                                              <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; background-color: #ffffff; border: 1px solid #e6d1a8; border-radius: 5px; padding: 5px 15px; white-space: nowrap; transform: translateX(-50%); position: relative; left: 50%;">
+                                                <div style="display: flex; align-items: center;">
+                                                  <div style="width: 10px; height: 10px; background-color: rgba(94,25,20,0.5); border: 1px solid #5e1914; margin-right: 10px;"></div>
+                                                  <span style="font-family: Garamond; font-size: 12px; color: #2c1e1d;">${wine.producer_name} ${wine.vintage}</span>
+                                                </div>
+                                              </div>
+                                            </foreignObject>
+                                        </svg>
+                                    </div>
+                                    
+                                    <div class="sipcard-aroma-chart">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="100%" height="100%">
+                                            <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Aromatic Profile</text>
+                                            
+                                            ${aromas.map((aroma, index) => `
+                                                <!-- Bar background -->
+                                                <rect x="120" y="${70 + index * 35}" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                                                <!-- Label -->
+                                                <text x="115" y="${87 + index * 35}" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">${aroma.type}</text>
+                                                <!-- Data bar -->
+                                                <rect x="120" y="${70 + index * 35}" width="${aroma.value * 20}" height="25" fill="rgba(94,25,20,0.7)"/>
+                                            `).join('')}
+                                            
+                                            <!-- Intensity scale -->
+                                            <text x="120" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d">Low</text>
+                                            <text x="220" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="middle">Medium</text>
+                                            <text x="320" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="end">High</text>
+                                            <line x1="120" y1="330" x2="320" y2="330" stroke="#888888" stroke-width="1"/>
+                                            <line x1="120" y1="328" x2="120" y2="332" stroke="#888888" stroke-width="1"/>
+                                            <line x1="220" y1="328" x2="220" y2="332" stroke="#888888" stroke-width="1"/>
+                                            <line x1="320" y1="328" x2="320" y2="332" stroke="#888888" stroke-width="1"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Third Card -->
+                        <div class="sipcard-container">
+                            <div class="sipcard-logo-background">
+                                👃
+                            </div>
+                            <div class="sipcard-chart-container">
+                                <h2 class="sipcard-chart-title">Tasting Notes</h2>
+                                <div class="sipcard-flavor-profile">
+                                    <div class="sipcard-flavor-category">
+                                        <h3>Visual</h3>
+                                        <p>${wine.visual_notes}</p>
+                                    </div>
+                                    <div class="sipcard-flavor-category">
+                                        <h3>Olfactory</h3>
+                                        <p>${wine.olfactory_notes}</p>
+                                    </div>
+                                    <div class="sipcard-flavor-category">
+                                        <h3>Gustatory</h3>
+                                        <p>${wine.gustatory_notes}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
 
             modal.style.display = 'flex';
+        }
+
+        // Helper function to generate radar chart points
+        function generateRadarPoints(wine) {
+            const center = { x: 200, y: 150 };
+            const maxRadius = 80;
+            const values = [
+                wine.radar_body,
+                wine.radar_tannins, 
+                wine.radar_alcohol,
+                wine.radar_persistence,
+                wine.radar_acidity,
+                wine.radar_complexity
+            ];
+            
+            const angles = [
+                -90,  // Body (top)
+                -30,  // Tannins (top right)
+                30,   // Alcohol (bottom right) 
+                90,   // Persistence (bottom)
+                150,  // Acidity (bottom left)
+                210   // Complexity (top left)
+            ];
+            
+            const points = values.map((value, index) => {
+                const radius = (value / 10) * maxRadius;
+                const angleRad = (angles[index] * Math.PI) / 180;
+                const x = center.x + radius * Math.cos(angleRad);
+                const y = center.y + radius * Math.sin(angleRad);
+                return `${x},${y}`;
+            });
+            
+            return points.join(' ');
+        }
+
+        // Helper function to determine wine type
+        function getWineType(wine) {
+            if (wine.denomination.toLowerCase().includes('champagne') || wine.denomination.toLowerCase().includes('prosecco')) {
+                return 'Sparkling';
+            } else if (wine.grapes.toLowerCase().includes('nebbiolo') || wine.grapes.toLowerCase().includes('cabernet') || wine.grapes.toLowerCase().includes('merlot')) {
+                return 'Red';
+            } else if (wine.grapes.toLowerCase().includes('chardonnay') || wine.grapes.toLowerCase().includes('pinot grigio')) {
+                return 'White';
+            }
+            return 'Red'; // default
         }
 
         // Close modal
@@ -897,51 +1413,39 @@
         renderWines(filteredWines);
     </script>
 </body>
-</html>
-                    <h3>Technical Information</h3>
-                    <div class="technical-grid">
-                        <div class="tech-item">
-                            <div class="tech-label">Grapes</div>
-                            <div class="tech-value">${wine.grapes}</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-label">Alcohol Content</div>
-                            <div class="tech-value">${wine.alcohol_content}</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-label">Aging</div>
-                            <div class="tech-value">${wine.aging}</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-label">Serving Temperature</div>
-                            <div class="tech-value">${wine.serving_temperature}</div>
-                        </div>
-                        <div class="tech-item">
-                            <div class="tech-label">Cellaring Potential</div>
-                            <div class="tech-value">${wine.cellaring_potential}</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-section">
-                    <h3>Vintage Description</h3>
-                    <p>${wine.vintage_description}</p>
-                </div>
-
-                <div class="modal-section">
-                    <h3>Tasting Notes</h3>
-                    <div style="margin-bottom: 1rem;">
-                        <strong>Visual Notes:</strong><br>
-                        ${wine.visual_notes}
-                    </div>
-                    <div style="margin-bottom: 1rem;">
-                        <strong>Olfactory Notes:</strong><br>
-                        ${wine.olfactory_notes}
-                    </div>
-                    <div>
-                        <strong>Gustatory Notes:</strong><br>
-                        ${wine.gustatory_notes}
-                    </div>
-                </div>
-
-                <div class="modal-section">
+</html>body: 9,
+                radar_tannins: 8,
+                radar_alcohol: 7,
+                radar_persistence: 9,
+                radar_acidity: 8,
+                radar_complexity: 10,
+                aroma_1_type: "Floral", aroma_1_value: 8,
+                aroma_2_type: "Red Fruit", aroma_2_value: 7,
+                aroma_3_type: "Spices", aroma_3_value: 9,
+                aroma_4_type: "Earthy", aroma_4_value: 8,
+                aroma_5_type: "Leather", aroma_5_value: 7,
+                aroma_6_type: "Tobacco", aroma_6_value: 6,
+                aroma_7_type: "Mineral", aroma_7_value: 8,
+                color: "#8B0000",
+                theme: "Elegant Tradition"
+            },
+            {
+                id: 2,
+                producer_name: "Ornellaia",
+                vintage: "2019",
+                denomination: "Bolgheri Superiore DOC",
+                grapes: "Cabernet Sauvignon 56%, Merlot 27%, Petit Verdot 10%, Cabernet Franc 7%",
+                alcohol_content: "14%",
+                aging: "18 months in French oak barriques (70% new), followed by 12 months in bottle",
+                serving_temperature: "16-18°C",
+                cellaring_potential: "15-20 years",
+                vintage_description: "2019 was characterized by a mild winter and spring, followed by a warm summer with excellent day-night temperature variations. Harvest took place under optimal conditions from late August to early October.",
+                food_pairings: ["Grilled Tuscan steak", "Osso buco alla Milanese", "Aged pecorino cheese", "Dark chocolate desserts", "Roasted lamb with herbs"],
+                visual_notes: "Deep ruby red with purple reflections. Intense and concentrated appearance with excellent clarity, showcasing the wine's power and elegance.",
+                olfactory_notes: "Intense and complex nose with notes of blackcurrant, blackberry, cedar, vanilla, and chocolate. Elegant balsamic hints and Mediterranean herbs add layers of complexity.",
+                gustatory_notes: "Full-bodied and harmonious on the palate. Velvety tannins are perfectly integrated with the wine's structure. Long finish with notes of dark fruit, spices, and toasted oak.",
+                radar_body: 9,
+                radar_tannins: 8,
+                radar_alcohol: 7,
+                radar_persistence: 9,
+                radar_
