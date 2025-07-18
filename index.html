@@ -18,6 +18,74 @@
             --accent-light: #f0f0f0;
         }
 
+        // Close modal
+        function closeModal() {
+            document.getElementById('sipcardModal').style.display = 'none';
+        }
+
+        // Filter wines
+        function filterWines() {
+            const producerSearch = document.getElementById('searchProducer').value.toLowerCase();
+            const wineSearch = document.getElementById('searchWine').value.toLowerCase();
+            const vintageFilter = document.getElementById('filterVintage').value;
+            const denominationFilter = document.getElementById('filterDenomination').value;
+            const themeFilter = document.getElementById('filterTheme').value;
+
+            filteredWines = wineDatabase.filter(wine => {
+                const matchesProducer = wine.producer_name.toLowerCase().includes(producerSearch);
+                const matchesWine = wine.producer_name.toLowerCase().includes(wineSearch) || 
+                                  wine.denomination.toLowerCase().includes(wineSearch);
+                const matchesVintage = !vintageFilter || wine.vintage === vintageFilter;
+                const matchesDenomination = !denominationFilter || wine.denomination === denominationFilter;
+                const matchesTheme = !themeFilter || wine.theme === themeFilter;
+                
+                return matchesProducer && matchesWine && matchesVintage && 
+                       matchesDenomination && matchesTheme;
+            });
+
+            renderWines(filteredWines);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchProducer').value = '';
+            document.getElementById('searchWine').value = '';
+            document.getElementById('filterVintage').value = '';
+            document.getElementById('filterDenomination').value = '';
+            document.getElementById('filterTheme').value = '';
+            
+            filteredWines = [...wineDatabase];
+            renderWines(filteredWines);
+        }
+
+        // Event listeners
+        document.getElementById('searchProducer').addEventListener('input', filterWines);
+        document.getElementById('searchWine').addEventListener('input', filterWines);
+        document.getElementById('filterVintage').addEventListener('change', filterWines);
+        document.getElementById('filterDenomination').addEventListener('change', filterWines);
+        document.getElementById('filterTheme').addEventListener('change', filterWines);
+
+        // Close modal when clicking outside
+        document.getElementById('sipcardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        populateFilters();
+        renderWines(filteredWines);
+    </script>
+</body>
+</html>
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -1413,39 +1481,4 @@
         renderWines(filteredWines);
     </script>
 </body>
-</html>body: 9,
-                radar_tannins: 8,
-                radar_alcohol: 7,
-                radar_persistence: 9,
-                radar_acidity: 8,
-                radar_complexity: 10,
-                aroma_1_type: "Floral", aroma_1_value: 8,
-                aroma_2_type: "Red Fruit", aroma_2_value: 7,
-                aroma_3_type: "Spices", aroma_3_value: 9,
-                aroma_4_type: "Earthy", aroma_4_value: 8,
-                aroma_5_type: "Leather", aroma_5_value: 7,
-                aroma_6_type: "Tobacco", aroma_6_value: 6,
-                aroma_7_type: "Mineral", aroma_7_value: 8,
-                color: "#8B0000",
-                theme: "Elegant Tradition"
-            },
-            {
-                id: 2,
-                producer_name: "Ornellaia",
-                vintage: "2019",
-                denomination: "Bolgheri Superiore DOC",
-                grapes: "Cabernet Sauvignon 56%, Merlot 27%, Petit Verdot 10%, Cabernet Franc 7%",
-                alcohol_content: "14%",
-                aging: "18 months in French oak barriques (70% new), followed by 12 months in bottle",
-                serving_temperature: "16-18°C",
-                cellaring_potential: "15-20 years",
-                vintage_description: "2019 was characterized by a mild winter and spring, followed by a warm summer with excellent day-night temperature variations. Harvest took place under optimal conditions from late August to early October.",
-                food_pairings: ["Grilled Tuscan steak", "Osso buco alla Milanese", "Aged pecorino cheese", "Dark chocolate desserts", "Roasted lamb with herbs"],
-                visual_notes: "Deep ruby red with purple reflections. Intense and concentrated appearance with excellent clarity, showcasing the wine's power and elegance.",
-                olfactory_notes: "Intense and complex nose with notes of blackcurrant, blackberry, cedar, vanilla, and chocolate. Elegant balsamic hints and Mediterranean herbs add layers of complexity.",
-                gustatory_notes: "Full-bodied and harmonious on the palate. Velvety tannins are perfectly integrated with the wine's structure. Long finish with notes of dark fruit, spices, and toasted oak.",
-                radar_body: 9,
-                radar_tannins: 8,
-                radar_alcohol: 7,
-                radar_persistence: 9,
-                radar_
+</html>
