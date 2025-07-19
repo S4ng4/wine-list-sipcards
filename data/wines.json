@@ -1,10 +1,7 @@
-// Cleaned wine database with valid entries only (1-56)
-// Fixed issues: Added producer names, removed corrupted entries
-
 const wineDatabase = [
     {
         "id": 1,
-        "producer_name": "Cascina Morassino", // Added example producer name
+        "producer_name": "Cascina Morassino", 
         "vintage": "2021",
         "denomination": "DOCG Barbaresco",
         "grapes": "Nebbiolo 100%",
