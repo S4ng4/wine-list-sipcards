@@ -1,12 +1,4 @@
-{
-  "metadata": {
-    "last_updated": "2025-07-18",
-    "total_wines": 6,
-    "version": "1.0.0",
-    "restaurant": "Your Restaurant Name",
-    "curator": "Head Sommelier Name"
-  },
-  "wines": [
+const wineDatabase = [
  
     {
         "id": 1,
