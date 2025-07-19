@@ -1,5 +1,3 @@
-const wineDatabase = [
- 
     {
         "id": 1,
         "producer_name": "",
