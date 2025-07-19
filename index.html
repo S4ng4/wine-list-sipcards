@@ -892,95 +892,373 @@ fetch('data/wines.json')
     const modal = document.getElementById('sipcardModal');
     const modalContent = document.getElementById('modalContent');
     
-    // Popola il template esistente con i dati del vino
+    // Determina il tipo di vino (Red/White) in base al colore
+    const wineType = wine.color === '#F5DEB3' ? 'White' : 'Red';
+    
+    // Genera il radar chart SVG in base ai valori RADAR
+    const radarPoints = generateRadarPoints(wine);
+    const aromaBars = generateAromaBars(wine);
+
     modalContent.innerHTML = `
-        <div class="wine-card">
-            <div class="wine-card-content">
-                <div class="wine-header">
-                    <div class="wine-name">${wine.producer}</div>
-                    <div class="producer-name">${wine.vintage}</div>
-                    <div class="vintage-denomination">${wine.denomination}</div>
-                </div>
-                
-                <div class="wine-details">
-                    <div class="detail-item">
-                        <div class="detail-label">Grapes</div>
-                        <div class="detail-value">${wine.grapes}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Alcohol Content</div>
-                        <div class="detail-value">${wine.alcohol_content}%</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Aging</div>
-                        <div class="detail-value">${wine.aging}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Serving Temperature</div>
-                        <div class="detail-value">${wine.serving_temperature}</div>
-                    </div>
-                    <div class="detail-item">
-                        <div class="detail-label">Cellaring Potential</div>
-                        <div class="detail-value">${wine.cellaring_potential}</div>
-                    </div>
-                </div>
+        <style>
+            body {
+                font-family: 'Garamond', serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f9f7f3;
+                color: #333333;
+                line-height: 1.6;
+            }
+            header {
+                background-color: #5e1914;
+                color: #ffffff;
+                padding: 15px;
+                text-align: center;
+            }
+            .content {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            .card-container {
+                position: relative;
+                margin-bottom: 20px;
+                background-color: white;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+                overflow: hidden;
+            }
+            .wine-card {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                padding: 20px;
+                position: relative;
+                z-index: 2;
+            }
+            .logo-background {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 1;
+                opacity: 0.1;
+                pointer-events: none;
+                text-align: center;
+            }
+            .wine-info h1 {
+                color: #5e1914;
+                margin-top: 0;
+                border-bottom: 2px solid #e6d1a8;
+                padding-bottom: 10px;
+            }
+            .wine-info h2 {
+                font-style: italic;
+                font-weight: normal;
+                margin-top: 5px;
+            }
+            .specs {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            .spec-item {
+                display: flex;
+            }
+            .spec-item strong {
+                min-width: 120px;
+                color: #5e1914;
+            }
+            .chart-container {
+                position: relative;
+                padding: 20px;
+                z-index: 2;
+            }
+            .chart-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                position: relative;
+                z-index: 3;
+            }
+            .chart-title {
+                color: #5e1914;
+                text-align: center;
+                margin-top: 0;
+                margin-bottom: 20px;
+                position: relative;
+                z-index: 3;
+            }
+            .radar-chart, .aroma-chart {
+                width: 100%;
+                height: 300px;
+                position: relative;
+                z-index: 3;
+            }
+            .flavor-profile {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+                text-align: center;
+                position: relative;
+                z-index: 3;
+            }
+            .flavor-category {
+                padding: 10px;
+            }
+            .flavor-category h3 {
+                color: #5e1914;
+                margin-top: 0;
+            }
+            footer {
+                background-color: #2c1e1d;
+                color: #e6d1a8;
+                text-align: center;
+                padding: 15px;
+                margin-top: 20px;
+            }
+            .wine-type-indicator {
+                display: inline-block;
+                padding: 5px 10px;
+                background-color: #5e1914;
+                color: white;
+                border-radius: 4px;
+                font-size: 12px;
+                margin-left: 10px;
+                vertical-align: middle;
+            }
+            
+            @media (max-width: 768px) {
+                .content {
+                    padding: 10px;
+                }
+                .wine-card {
+                    grid-template-columns: 1fr;
+                }
+                .chart-row {
+                    grid-template-columns: 1fr;
+                }
+                .specs {
+                    grid-template-columns: 1fr;
+                }
+                .flavor-profile {
+                    grid-template-columns: 1fr;
+                }
+                .spec-item {
+                    flex-direction: column;
+                }
+                .spec-item strong {
+                    min-width: auto;
+                    margin-bottom: 3px;
+                }
+            }
+        </style>
 
-                <div class="tasting-section">
-                    <div class="section-title">Vintage Description</div>
-                    <div class="tasting-notes">${wine.vintage_description}</div>
+        <header>
+            <h1>${wine.producer} - ${wine.vintage} ${wine.denomination} <span class="wine-type-indicator">${wineType}</span></h1>
+        </header>
+        
+        <div class="content">
+            <!-- First Card -->
+            <div class="card-container">
+                <div class="logo-background">
+                    <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
                 </div>
-
-                <div class="tasting-section">
-                    <div class="section-title">Visual Notes</div>
-                    <div class="tasting-notes">${wine.visual_notes}</div>
-                </div>
-
-                <div class="tasting-section">
-                    <div class="section-title">Olfactory Notes</div>
-                    <div class="tasting-notes">${wine.olfactory_notes}</div>
-                </div>
-
-                <div class="tasting-section">
-                    <div class="section-title">Gustatory Notes</div>
-                    <div class="tasting-notes">${wine.gustatory_notes}</div>
-                </div>
-
-                <div class="radar-analysis">
-                    <div class="section-title">Profile Analysis</div>
-                    <div class="radar-grid">
-                        <div class="radar-item">
-                            <span class="radar-label">Body</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_body * 20}%"></div>
+                <div class="wine-card">
+                    <div class="wine-info">
+                        <h1>${wine.producer} ${wine.vintage}</h1>
+                        <h2>${wine.denomination}</h2>
+                        <div class="specs">
+                            <div class="spec-item">
+                                <strong>Producer:</strong>
+                                <span>${wine.producer}</span>
                             </div>
-                            <span class="radar-value">${wine.radar_body}/5</span>
-                        </div>
-                        <!-- Ripeti per tutti i valori radar -->
-                        <div class="radar-item">
-                            <span class="radar-label">Tannins</span>
-                            <div class="radar-bar">
-                                <div class="radar-fill" style="width: ${wine.radar_tannins * 20}%"></div>
+                            <div class="spec-item">
+                                <strong>Grapes:</strong>
+                                <span>${wine.grapes}</span>
                             </div>
-                            <span class="radar-value">${wine.radar_tannins}/5</span>
+                            <div class="spec-item">
+                                <strong>Vintage:</strong>
+                                <span>${wine.vintage}</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>Alcohol Content:</strong>
+                                <span>${wine.alcohol_content}%</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>Aging:</strong>
+                                <span>${wine.aging}</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>Serving Temperature:</strong>
+                                <span>${wine.serving_temperature}</span>
+                            </div>
+                            <div class="spec-item">
+                                <strong>Cellaring Potential:</strong>
+                                <span>${wine.cellaring_potential}</span>
+                            </div>
                         </div>
-                        <!-- Aggiungi gli altri 4 parametri radar allo stesso modo -->
+                    </div>
+                    <div class="wine-summary">
+                        <h3>Vintage ${wine.vintage}</h3>
+                        <p>${wine.vintage_description}</p>
+                        <h3>Ideal Food Pairings</h3>
+                        <p>${wine.food_pairings.join(', ')}</p>
                     </div>
                 </div>
-
-                <div class="food-pairings">
-                    <div class="section-title">Food Pairings</div>
-                    <div class="pairing-list">
-                        ${wine.food_pairings.map(pairing => 
-                            `<span class="pairing-tag">${pairing}</span>`
-                        ).join('')}
+            </div>
+            
+            <!-- Second Card -->
+            <div class="card-container">
+                <div class="logo-background">
+                    <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                </div>
+                <div class="chart-container">
+                    <h2 class="chart-title">Organoleptic Profile</h2>
+                    <div class="chart-row">
+                        <div class="radar-chart">
+                            ${generateRadarChart(wine)}
+                        </div>
+                        
+                        <div class="aroma-chart">
+                            ${generateAromaChart(wine)}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Third Card -->
+            <div class="card-container">
+                <div class="logo-background">
+                    <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                </div>
+                <div class="chart-container">
+                    <h2 class="chart-title">Tasting Notes</h2>
+                    <div class="flavor-profile">
+                        <div class="flavor-category">
+                            <h3>Visual</h3>
+                            <p>${wine.visual_notes}</p>
+                        </div>
+                        <div class="flavor-category">
+                            <h3>Olfactory</h3>
+                            <p>${wine.olfactory_notes}</p>
+                        </div>
+                        <div class="flavor-category">
+                            <h3>Gustatory</h3>
+                            <p>${wine.gustatory_notes}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        
+        <footer>
+            <p>&copy; ${new Date().getFullYear()} - ${wine.producer} - ${wine.denomination}. Consume responsibly.</p>
+        </footer>
     `;
 
-    // Mostra il modal
     modal.style.display = 'flex';
+}
+
+// Funzioni helper per generare i grafici
+function generateRadarChart(wine) {
+    const radarValues = [
+        wine.radar_body,
+        wine.radar_tannins,
+        wine.radar_alcohol,
+        wine.radar_persistence,
+        wine.radar_acidity,
+        wine.radar_complexity
+    ];
+    
+    // Normalizza i valori (1-5) a coordinate del poligono (0-100)
+    const maxValue = 5;
+    const points = radarValues.map((value, i) => {
+        const angle = (Math.PI * 2 * i) / radarValues.length - Math.PI/2;
+        const radius = (value / maxValue) * 80;
+        const x = 200 + radius * Math.cos(angle);
+        const y = 150 + radius * Math.sin(angle);
+        return `${x},${y}`;
+    }).join(' ');
+
+    return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+            <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Body and Structure</text>
+            
+            <polygon points="200,70 270,110 270,190 200,230 130,190 130,110" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+            <polygon points="200,90 250,120 250,180 200,210 150,180 150,120" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+            <polygon points="200,110 230,130 230,170 200,190 170,170 170,130" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+            
+            <line x1="200" y1="150" x2="200" y2="70" stroke="#888888" stroke-width="1"/>
+            <line x1="200" y1="150" x2="270" y2="190" stroke="#888888" stroke-width="1"/>
+            <line x1="200" y1="150" x2="270" y2="110" stroke="#888888" stroke-width="1"/>
+            <line x1="200" y1="150" x2="200" y2="230" stroke="#888888" stroke-width="1"/>
+            <line x1="200" y1="150" x2="130" y2="190" stroke="#888888" stroke-width="1"/>
+            <line x1="200" y1="150" x2="130" y2="110" stroke="#888888" stroke-width="1"/>
+            
+            <text x="200" y="65" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Body</text>
+            <text x="280" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Tannins</text>
+            <text x="280" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Alcohol</text>
+            <text x="200" y="240" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Persistence</text>
+            <text x="120" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Acidity</text>
+            <text x="120" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Complexity</text>
+            
+            <polygon points="${points}" fill="rgba(94,25,20,0.5)" stroke="#5e1914" stroke-width="2"/>
+            
+            ${points.split(' ').map(point => {
+                const [x, y] = point.split(',');
+                return `<circle cx="${x}" cy="${y}" r="4" fill="#5e1914"/>`;
+            }).join('')}
+            
+            <foreignObject x="50%" y="260" width="500" height="50" transform="translate(-250, 0)">
+                <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; background-color: #ffffff; border: 1px solid #e6d1a8; border-radius: 5px; padding: 5px 15px; white-space: nowrap; transform: translateX(-50%); position: relative; left: 50%;">
+                    <div style="display: flex; align-items: center;">
+                        <div style="width: 10px; height: 10px; background-color: rgba(94,25,20,0.5); border: 1px solid #5e1914; margin-right: 10px;"></div>
+                        <span style="font-family: Garamond; font-size: 12px; color: #2c1e1d;">${wine.producer} ${wine.vintage}</span>
+                    </div>
+                </div>
+            </foreignObject>
+        </svg>
+    `;
+}
+
+function generateAromaChart(wine) {
+    // Estrai gli aromi principali (i primi 7)
+    const aromas = [];
+    for (let i = 1; i <= 7; i++) {
+        const type = wine[`aroma_${i}_type`];
+        const value = wine[`aroma_${i}_value`];
+        if (type && value) {
+            aromas.push({ type, value });
+        }
+    }
+
+    // Genera le barre degli aromi
+    const aromaBars = aromas.map((aroma, index) => {
+        const y = 70 + (index * 35);
+        const width = (aroma.value / 5) * 200; // Scala da 0-5 a 0-200
+        return `
+            <rect x="120" y="${y}" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+            <rect x="120" y="${y}" width="${width}" height="25" fill="rgba(94,25,20,0.7)"/>
+            <text x="115" y="${y + 17}" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">${aroma.type}</text>
+        `;
+    }).join('');
+
+    return `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="100%" height="100%">
+            <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Aromatic Profile</text>
+            
+            ${aromaBars}
+            
+            <text x="120" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d">Low</text>
+            <text x="220" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="middle">Medium</text>
+            <text x="320" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="end">High</text>
+            <line x1="120" y1="330" x2="320" y2="330" stroke="#888888" stroke-width="1"/>
+            <line x1="120" y1="328" x2="120" y2="332" stroke="#888888" stroke-width="1"/>
+            <line x1="220" y1="328" x2="220" y2="332" stroke="#888888" stroke-width="1"/>
+            <line x1="320" y1="328" x2="320" y2="332" stroke="#888888" stroke-width="1"/>
+        </svg>
+    `;
 }
 
         // Show Add Wine Modal with instructions
