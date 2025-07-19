@@ -291,7 +291,7 @@
             <div class="section-title">Step 2: Required CSV Format</div>
             <p>Your CSV should have these columns (exact names):</p>
             <div class="columns-grid">
-                <div class="column-item">Producer Name</div>
+                <div class="column-item">Producer</div>
                 <div class="column-item">Vintage</div>
                 <div class="column-item">Denomination</div>
                 <div class="column-item">Grapes</div>
@@ -446,7 +446,7 @@
 
                     return {
                         id: index + 1,
-                        producer_name: row['Producer Name'] || '',
+                        producer: row['Producer'] || '',
                         vintage: row['Vintage'] || '',
                         denomination: row['Denomination'] || '',
                         grapes: row['Grapes'] || '',
