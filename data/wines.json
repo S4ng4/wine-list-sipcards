@@ -2,7 +2,7 @@
   "wines": [
     {
         "id": 1,
-        "producer_name": "Cascina Morassino", 
+        "producer": "Cascina Morassino", 
         "vintage": "2021",
         "denomination": "DOCG Barbaresco",
         "grapes": "Nebbiolo 100%",
@@ -44,7 +44,7 @@
     },
     {
         "id": 2,
-        "producer_name": "Giuseppe Rinaldi",
+        "producer": "Giuseppe Rinaldi",
         "vintage": "2021",
         "denomination": "DOCG Barolo",
         "grapes": "Nebbiolo 100%",
@@ -86,7 +86,7 @@
     },
     {
         "id": 3,
-        "producer_name": "Dal Forno Romano", 
+        "producer": "Dal Forno Romano", 
         "vintage": "2008",
         "denomination": "DOCG Amarone della Valpolicella",
         "grapes": "Corvina 60%, Rondinella 20%, Oseleta 10%, Croatina 10%",
