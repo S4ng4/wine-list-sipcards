@@ -44,7 +44,7 @@
     },
     {
         "id": 2,
-        "producer_name": "Giuseppe Rinaldi", // Added example producer name
+        "producer_name": "Giuseppe Rinaldi", 
         "vintage": "2021",
         "denomination": "DOCG Barolo",
         "grapes": "Nebbiolo 100%",
@@ -86,7 +86,7 @@
     },
     {
         "id": 3,
-        "producer_name": "Dal Forno Romano", // Added example producer name
+        "producer_name": "Dal Forno Romano", 
         "vintage": "2008",
         "denomination": "DOCG Amarone della Valpolicella",
         "grapes": "Corvina 60%, Rondinella 20%, Oseleta 10%, Croatina 10%",
