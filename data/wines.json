@@ -1,4 +1,5 @@
-const wineDatabase = [
+{
+  "wines": [
     {
         "id": 1,
         "producer": "Castello di Neive",
