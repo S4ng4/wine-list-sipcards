@@ -718,9 +718,8 @@
 
     <script>
         // Professional wine database
-       let wineDatabase = [];
+      let wineDatabase = [];
 
-// Carica dati da file JSON
 fetch('data/wines.json')
     .then(response => response.json())
     .then(data => {
@@ -731,8 +730,6 @@ fetch('data/wines.json')
     })
     .catch(error => {
         console.error('Error loading wines:', error);
-        // Fallback ai vini di esempio
-        wineDatabase = []; // vini di backup
     });
 
         let filteredWines = [...wineDatabase];
