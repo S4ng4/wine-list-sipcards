@@ -1,5 +1,6 @@
 {
   "wines": [
+    {
         "id": 1,
         "producer_name": "Cascina Morassino", 
         "vintage": "2021",
@@ -126,6 +127,5 @@
         "color": "#8E1C38",
         "theme": "Classic Excellence"
     }
-  
-];
-
+  ]
+}
