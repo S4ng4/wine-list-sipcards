@@ -895,32 +895,136 @@ fetch('data/wines.json')
     // Determina il tipo di vino (Red/White) in base al colore
     const wineType = wine.color === '#F5DEB3' ? 'White' : 'Red';
     
-    // Genera il radar chart SVG in base ai valori RADAR
-    const radarPoints = generateRadarPoints(wine);
-    const aromaBars = generateAromaBars(wine);
-
     modalContent.innerHTML = `
+        <div class="sipcard-template">
+            <header class="sipcard-header">
+                <h1>${wine.producer} - ${wine.vintage} ${wine.denomination} <span class="wine-type-indicator">${wineType}</span></h1>
+            </header>
+            
+            <div class="sipcard-content">
+                <!-- First Card -->
+                <div class="sipcard-card-container">
+                    <div class="sipcard-logo-background">
+                        <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                    </div>
+                    <div class="sipcard-wine-card">
+                        <div class="sipcard-wine-info">
+                            <h1>${wine.producer} ${wine.vintage}</h1>
+                            <h2>${wine.denomination}</h2>
+                            <div class="sipcard-specs">
+                                ${[
+                                    ['Producer', wine.producer],
+                                    ['Grapes', wine.grapes],
+                                    ['Vintage', wine.vintage],
+                                    ['Alcohol Content', wine.alcohol_content + '%'],
+                                    ['Aging', wine.aging],
+                                    ['Serving Temperature', wine.serving_temperature],
+                                    ['Cellaring Potential', wine.cellaring_potential]
+                                ].map(item => `
+                                    <div class="sipcard-spec-item">
+                                        <strong>${item[0]}:</strong>
+                                        <span>${item[1]}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="sipcard-wine-summary">
+                            <h3>Vintage ${wine.vintage}</h3>
+                            <p>${wine.vintage_description}</p>
+                            <h3>Ideal Food Pairings</h3>
+                            <p>${wine.food_pairings.join(', ')}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Second Card -->
+                <div class="sipcard-card-container">
+                    <div class="sipcard-logo-background">
+                        <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                    </div>
+                    <div class="sipcard-chart-container">
+                        <h2 class="sipcard-chart-title">Organoleptic Profile</h2>
+                        <div class="sipcard-chart-row">
+                            <div class="sipcard-radar-chart">
+                                ${generateRadarChart(wine)}
+                            </div>
+                            
+                            <div class="sipcard-aroma-chart">
+                                ${generateAromaChart(wine)}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Third Card -->
+                <div class="sipcard-card-container">
+                    <div class="sipcard-logo-background">
+                        <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                    </div>
+                    <div class="sipcard-chart-container">
+                        <h2 class="sipcard-chart-title">Tasting Notes</h2>
+                        <div class="sipcard-flavor-profile">
+                            <div class="sipcard-flavor-category">
+                                <h3>Visual</h3>
+                                <p>${wine.visual_notes}</p>
+                            </div>
+                            <div class="sipcard-flavor-category">
+                                <h3>Olfactory</h3>
+                                <p>${wine.olfactory_notes}</p>
+                            </div>
+                            <div class="sipcard-flavor-category">
+                                <h3>Gustatory</h3>
+                                <p>${wine.gustatory_notes}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer class="sipcard-footer">
+                <p>&copy; ${new Date().getFullYear()} - ${wine.producer} - ${wine.denomination}. Consume responsibly.</p>
+            </footer>
+        </div>
+        
         <style>
-            body {
+            .sipcard-template {
                 font-family: 'Garamond', serif;
-                margin: 0;
-                padding: 0;
-                background-color: #f9f7f3;
                 color: #333333;
                 line-height: 1.6;
             }
-            header {
+            
+            .sipcard-header {
                 background-color: #5e1914;
                 color: #ffffff;
                 padding: 15px;
                 text-align: center;
+                border-radius: 8px 8px 0 0;
             }
-            .content {
+            
+            .sipcard-header h1 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            
+            .wine-type-indicator {
+                display: inline-block;
+                padding: 3px 8px;
+                background-color: #5e1914;
+                color: white;
+                border-radius: 4px;
+                font-size: 12px;
+                margin-left: 10px;
+                vertical-align: middle;
+                border: 1px solid white;
+            }
+            
+            .sipcard-content {
                 max-width: 1000px;
                 margin: 0 auto;
                 padding: 20px;
             }
-            .card-container {
+            
+            .sipcard-card-container {
                 position: relative;
                 margin-bottom: 20px;
                 background-color: white;
@@ -928,15 +1032,8 @@ fetch('data/wines.json')
                 box-shadow: 0 2px 10px rgba(0,0,0,0.05);
                 overflow: hidden;
             }
-            .wine-card {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 20px;
-                padding: 20px;
-                position: relative;
-                z-index: 2;
-            }
-            .logo-background {
+            
+            .sipcard-logo-background {
                 position: absolute;
                 top: 50%;
                 left: 50%;
@@ -946,56 +1043,80 @@ fetch('data/wines.json')
                 pointer-events: none;
                 text-align: center;
             }
-            .wine-info h1 {
+            
+            .sipcard-wine-card {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                padding: 20px;
+                position: relative;
+                z-index: 2;
+            }
+            
+            .sipcard-wine-info h1 {
                 color: #5e1914;
                 margin-top: 0;
                 border-bottom: 2px solid #e6d1a8;
                 padding-bottom: 10px;
+                font-size: 1.3rem;
             }
-            .wine-info h2 {
+            
+            .sipcard-wine-info h2 {
                 font-style: italic;
                 font-weight: normal;
                 margin-top: 5px;
+                font-size: 1.1rem;
             }
-            .specs {
+            
+            .sipcard-specs {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
                 gap: 10px;
             }
-            .spec-item {
+            
+            .sipcard-spec-item {
                 display: flex;
+                font-size: 0.9rem;
             }
-            .spec-item strong {
+            
+            .sipcard-spec-item strong {
                 min-width: 120px;
                 color: #5e1914;
             }
-            .chart-container {
+            
+            .sipcard-chart-container {
                 position: relative;
                 padding: 20px;
                 z-index: 2;
             }
-            .chart-row {
+            
+            .sipcard-chart-row {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 20px;
                 position: relative;
                 z-index: 3;
             }
-            .chart-title {
+            
+            .sipcard-chart-title {
                 color: #5e1914;
                 text-align: center;
                 margin-top: 0;
                 margin-bottom: 20px;
                 position: relative;
                 z-index: 3;
+                font-size: 1.2rem;
             }
-            .radar-chart, .aroma-chart {
+            
+            .sipcard-radar-chart, 
+            .sipcard-aroma-chart {
                 width: 100%;
                 height: 300px;
                 position: relative;
                 z-index: 3;
             }
-            .flavor-profile {
+            
+            .sipcard-flavor-profile {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);
                 gap: 15px;
@@ -1003,163 +1124,69 @@ fetch('data/wines.json')
                 position: relative;
                 z-index: 3;
             }
-            .flavor-category {
+            
+            .sipcard-flavor-category {
                 padding: 10px;
             }
-            .flavor-category h3 {
+            
+            .sipcard-flavor-category h3 {
                 color: #5e1914;
                 margin-top: 0;
+                font-size: 1rem;
             }
-            footer {
+            
+            .sipcard-flavor-category p {
+                font-size: 0.9rem;
+                margin-bottom: 0;
+            }
+            
+            .sipcard-footer {
                 background-color: #2c1e1d;
                 color: #e6d1a8;
                 text-align: center;
                 padding: 15px;
                 margin-top: 20px;
-            }
-            .wine-type-indicator {
-                display: inline-block;
-                padding: 5px 10px;
-                background-color: #5e1914;
-                color: white;
-                border-radius: 4px;
-                font-size: 12px;
-                margin-left: 10px;
-                vertical-align: middle;
+                border-radius: 0 0 8px 8px;
+                font-size: 0.8rem;
             }
             
             @media (max-width: 768px) {
-                .content {
+                .sipcard-content {
                     padding: 10px;
                 }
-                .wine-card {
+                
+                .sipcard-wine-card {
                     grid-template-columns: 1fr;
                 }
-                .chart-row {
+                
+                .sipcard-chart-row {
                     grid-template-columns: 1fr;
                 }
-                .specs {
+                
+                .sipcard-specs {
                     grid-template-columns: 1fr;
                 }
-                .flavor-profile {
+                
+                .sipcard-flavor-profile {
                     grid-template-columns: 1fr;
                 }
-                .spec-item {
+                
+                .sipcard-spec-item {
                     flex-direction: column;
                 }
-                .spec-item strong {
+                
+                .sipcard-spec-item strong {
                     min-width: auto;
                     margin-bottom: 3px;
                 }
             }
         </style>
-
-        <header>
-            <h1>${wine.producer} - ${wine.vintage} ${wine.denomination} <span class="wine-type-indicator">${wineType}</span></h1>
-        </header>
-        
-        <div class="content">
-            <!-- First Card -->
-            <div class="card-container">
-                <div class="logo-background">
-                    <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
-                </div>
-                <div class="wine-card">
-                    <div class="wine-info">
-                        <h1>${wine.producer} ${wine.vintage}</h1>
-                        <h2>${wine.denomination}</h2>
-                        <div class="specs">
-                            <div class="spec-item">
-                                <strong>Producer:</strong>
-                                <span>${wine.producer}</span>
-                            </div>
-                            <div class="spec-item">
-                                <strong>Grapes:</strong>
-                                <span>${wine.grapes}</span>
-                            </div>
-                            <div class="spec-item">
-                                <strong>Vintage:</strong>
-                                <span>${wine.vintage}</span>
-                            </div>
-                            <div class="spec-item">
-                                <strong>Alcohol Content:</strong>
-                                <span>${wine.alcohol_content}%</span>
-                            </div>
-                            <div class="spec-item">
-                                <strong>Aging:</strong>
-                                <span>${wine.aging}</span>
-                            </div>
-                            <div class="spec-item">
-                                <strong>Serving Temperature:</strong>
-                                <span>${wine.serving_temperature}</span>
-                            </div>
-                            <div class="spec-item">
-                                <strong>Cellaring Potential:</strong>
-                                <span>${wine.cellaring_potential}</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="wine-summary">
-                        <h3>Vintage ${wine.vintage}</h3>
-                        <p>${wine.vintage_description}</p>
-                        <h3>Ideal Food Pairings</h3>
-                        <p>${wine.food_pairings.join(', ')}</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Second Card -->
-            <div class="card-container">
-                <div class="logo-background">
-                    <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
-                </div>
-                <div class="chart-container">
-                    <h2 class="chart-title">Organoleptic Profile</h2>
-                    <div class="chart-row">
-                        <div class="radar-chart">
-                            ${generateRadarChart(wine)}
-                        </div>
-                        
-                        <div class="aroma-chart">
-                            ${generateAromaChart(wine)}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Third Card -->
-            <div class="card-container">
-                <div class="logo-background">
-                    <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
-                </div>
-                <div class="chart-container">
-                    <h2 class="chart-title">Tasting Notes</h2>
-                    <div class="flavor-profile">
-                        <div class="flavor-category">
-                            <h3>Visual</h3>
-                            <p>${wine.visual_notes}</p>
-                        </div>
-                        <div class="flavor-category">
-                            <h3>Olfactory</h3>
-                            <p>${wine.olfactory_notes}</p>
-                        </div>
-                        <div class="flavor-category">
-                            <h3>Gustatory</h3>
-                            <p>${wine.gustatory_notes}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <footer>
-            <p>&copy; ${new Date().getFullYear()} - ${wine.producer} - ${wine.denomination}. Consume responsibly.</p>
-        </footer>
     `;
 
     modal.style.display = 'flex';
 }
 
+// Mantieni le funzioni generateRadarChart e generateAromaChart come nel codice precedente
 // Funzioni helper per generare i grafici
 function generateRadarChart(wine) {
     const radarValues = [
