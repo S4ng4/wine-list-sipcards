@@ -718,70 +718,22 @@
 
     <script>
         // Professional wine database
-        const wineDatabase = [
-            {
-                id: 1,
-                producer_name: "Giacomo Conterno",
-                vintage: "2018",
-                denomination: "Barolo DOCG",
-                grapes: "Nebbiolo 100%",
-                alcohol_content: "14.5%",
-                aging: "30 months in large Slavonian oak casks",
-                serving_temperature: "18-20°C",
-                cellaring_potential: "20-25 years",
-                vintage_description: "2018 was an exceptional vintage in Piedmont, characterized by a warm spring and ideal autumn conditions that allowed for perfect phenolic ripeness while maintaining excellent acidity.",
-                food_pairings: ["Brasato al Barolo", "Aged Parmigiano Reggiano", "Wild boar with juniper", "Truffle dishes", "Mature hard cheeses"],
-                visual_notes: "Deep garnet red with brick reflections. Clear and brilliant with medium intensity, showing the wine's maturity and elegance.",
-                olfactory_notes: "Complex bouquet of rose petals, violet, tar, leather, licorice, and sweet spices. Hints of tobacco and dried herbs emerge with aeration, revealing the wine's sophisticated character.",
-                gustatory_notes: "Full-bodied and elegant on the palate. Well-integrated tannins with excellent structure provide backbone while maintaining finesse. Long, persistent finish with notes of cherry, spices, and mineral undertones.",
-                radar_body: 9,
-                radar_tannins: 8,
-                radar_alcohol: 7,
-                radar_persistence: 9,
-                radar_acidity: 8,
-                radar_complexity: 10,
-                aroma_1_type: "Floral", aroma_1_value: 8,
-                aroma_2_type: "Red Fruit", aroma_2_value: 7,
-                aroma_3_type: "Spices", aroma_3_value: 9,
-                aroma_4_type: "Earthy", aroma_4_value: 8,
-                aroma_5_type: "Leather", aroma_5_value: 7,
-                aroma_6_type: "Tobacco", aroma_6_value: 6,
-                aroma_7_type: "Mineral", aroma_7_value: 8,
-                color: "#8B0000",
-                theme: "Elegant Tradition"
-            },
-            {
-                id: 2,
-                producer_name: "Dom Pérignon",
-                vintage: "2013",
-                denomination: "Champagne AOC",
-                grapes: "Chardonnay 50%, Pinot Noir 50%",
-                alcohol_content: "12.5%",
-                aging: "7 years on lees with traditional riddling and disgorgement by hand",
-                serving_temperature: "8-10°C",
-                cellaring_potential: "10-15 years",
-                vintage_description: "2013 was a challenging vintage that required precise selection and expertise. Cool conditions throughout the growing season preserved excellent acidity, resulting in a Champagne of remarkable freshness and aging potential.",
-                food_pairings: ["Fresh oysters", "Lobster thermidor", "Caviar service", "Sushi and sashimi", "Aged Comté cheese"],
-                visual_notes: "Brilliant golden color with fine, persistent bubbles forming elegant chains. Crystal clear with excellent mousse formation and remarkable visual appeal.",
-                olfactory_notes: "Complex bouquet of white flowers, citrus, brioche, and almonds. Notes of honey, vanilla, and subtle mineral undertones develop with time in the glass, revealing exceptional complexity.",
-                gustatory_notes: "Elegant and refined on the palate with perfect balance between freshness and richness. The mousse is creamy and persistent. Long, mineral finish with notes of toasted bread and citrus.",
-                radar_body: 7,
-                radar_tannins: 2,
-                radar_alcohol: 6,
-                radar_persistence: 9,
-                radar_acidity: 9,
-                radar_complexity: 10,
-                aroma_1_type: "Citrus", aroma_1_value: 8,
-                aroma_2_type: "White Flowers", aroma_2_value: 9,
-                aroma_3_type: "Brioche", aroma_3_value: 8,
-                aroma_4_type: "Almonds", aroma_4_value: 7,
-                aroma_5_type: "Honey", aroma_5_value: 6,
-                aroma_6_type: "Vanilla", aroma_6_value: 5,
-                aroma_7_type: "Mineral", aroma_7_value: 8,
-                color: "#FFD700",
-                theme: "Luxury Celebration"
-            }
-        ];
+       let wineDatabase = [];
+
+// Carica dati da file JSON
+fetch('data/wines.json')
+    .then(response => response.json())
+    .then(data => {
+        wineDatabase = data.wines;
+        filteredWines = [...wineDatabase];
+        populateFilters();
+        renderWines(filteredWines);
+    })
+    .catch(error => {
+        console.error('Error loading wines:', error);
+        // Fallback ai vini di esempio
+        wineDatabase = []; // vini di backup
+    });
 
         let filteredWines = [...wineDatabase];
 
