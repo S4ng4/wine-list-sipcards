@@ -823,5 +823,350 @@
                     aromas.push({ type, value });
                 }
             }
+            return aromas;
+        }
+
+        // Render wines
+        function renderWines(wines) {
+            const grid = document.getElementById('wineGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (wines.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+            } else {
+                grid.style.display = 'grid';
+                noResults.style.display = 'none';
+                
+                grid.innerHTML = wines.map(wine => {
+                    const aromas = getAromas(wine);
+                    
+                    return `
+                        <div class="wine-card">
+                            <div class="wine-card-content">
+                                <div class="wine-header">
+                                    <div class="wine-name">${wine.producer_name}</div>
+                                    <div class="producer-name">${wine.vintage}</div>
+                                    <div class="vintage-denomination">${wine.denomination}</div>
+                                </div>
+                                
+                                <div class="wine-details">
+                                    <div class="detail-item">
+                                        <div class="detail-label">Grapes</div>
+                                        <div class="detail-value">${wine.grapes}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Alcohol Content</div>
+                                        <div class="detail-value">${wine.alcohol_content}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Serving Temperature</div>
+                                        <div class="detail-value">${wine.serving_temperature}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">Cellaring Potential</div>
+                                        <div class="detail-value">${wine.cellaring_potential}</div>
+                                    </div>
+                                </div>
+
+                                <div class="tasting-section">
+                                    <div class="section-title">Vintage Description</div>
+                                    <div class="tasting-notes">${wine.vintage_description}</div>
+                                </div>
+
+                                <div class="radar-analysis">
+                                    <div class="section-title">Profile Analysis</div>
+                                    <div class="radar-grid">
+                                        <div class="radar-item">
+                                            <span class="radar-label">Body</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_body * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_body}</span>
+                                        </div>
+                                        <div class="radar-item">
+                                            <span class="radar-label">Tannins</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_tannins * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_tannins}</span>
+                                        </div>
+                                        <div class="radar-item">
+                                            <span class="radar-label">Acidity</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_acidity * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_acidity}</span>
+                                        </div>
+                                        <div class="radar-item">
+                                            <span class="radar-label">Complexity</span>
+                                            <div class="radar-bar">
+                                                <div class="radar-fill" style="width: ${wine.radar_complexity * 10}%"></div>
+                                            </div>
+                                            <span class="radar-value">${wine.radar_complexity}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="aroma-profile">
+                                    <div class="section-title">Top Aromas</div>
+                                    <div class="aroma-grid">
+                                        ${aromas.slice(0, 4).map(aroma => `
+                                            <div class="aroma-item">
+                                                <span class="aroma-type">${aroma.type}</span>
+                                                <span class="aroma-value">${aroma.value}</span>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+
+                                <button class="view-sipcard-btn" onclick="viewSipCard(${wine.id})">
+                                    View Complete SipCard
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            updateStats();
+        }
+
+        // View SipCard modal
+        function viewSipCard(wineId) {
+            alert('SipCard functionality will be implemented here!');
+        }
+
+        // Show Add Wine Modal with instructions
+        function showAddWineModal() {
+            const modal = document.getElementById('sipcardModal');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <style>
+                    .add-wine-modal {
+                        font-family: 'Cinzel', serif;
+                        text-align: center;
+                        padding: 1rem;
+                    }
+                    .add-wine-title {
+                        font-family: 'Cinzel Decorative', cursive;
+                        font-size: 2.5rem;
+                        color: var(--primary-wine);
+                        margin-bottom: 1.5rem;
+                        letter-spacing: 2px;
+                    }
+                    .add-wine-subtitle {
+                        font-size: 1.2rem;
+                        color: var(--accent-red);
+                        margin-bottom: 2rem;
+                        font-weight: 600;
+                    }
+                    .add-wine-steps {
+                        text-align: left;
+                        max-width: 600px;
+                        margin: 0 auto 2rem;
+                        background: rgba(248, 248, 248, 0.8);
+                        padding: 2rem;
+                        border-radius: 15px;
+                        border: 1px solid var(--spiral-cream);
+                    }
+                    .add-wine-step {
+                        margin-bottom: 1.5rem;
+                        padding: 1rem;
+                        background: white;
+                        border-radius: 10px;
+                        border-left: 4px solid var(--primary-gold);
+                    }
+                    .step-number {
+                        background: var(--primary-wine);
+                        color: white;
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        margin-right: 1rem;
+                        font-size: 0.9rem;
+                    }
+                    .step-title {
+                        color: var(--primary-wine);
+                        font-weight: 600;
+                        margin-bottom: 0.5rem;
+                    }
+                    .step-description {
+                        color: var(--text-color);
+                        line-height: 1.6;
+                    }
+                    .converter-btn {
+                        background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
+                        color: white;
+                        text-decoration: none;
+                        padding: 1.2rem 2.5rem;
+                        border-radius: 15px;
+                        font-family: 'Cinzel', serif;
+                        font-weight: 600;
+                        font-size: 1.1rem;
+                        letter-spacing: 1px;
+                        transition: all 0.3s ease;
+                        display: inline-block;
+                        margin: 1rem 0.5rem;
+                        position: relative;
+                        overflow: hidden;
+                        border: none;
+                        cursor: pointer;
+                    }
+                    .converter-btn:hover {
+                        background: linear-gradient(135deg, #7a2433 0%, var(--primary-wine) 100%);
+                        transform: translateY(-3px);
+                        box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15), 0 0 15px var(--primary-gold);
+                    }
+                </style>
+                
+                <div class="add-wine-modal">
+                    <h2 class="add-wine-title">Add New Wine Card</h2>
+                    <p class="add-wine-subtitle">Follow these steps to add wines to your collection</p>
+                    
+                    <div class="add-wine-steps">
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">1</span>
+                                <div>
+                                    <div class="step-title">Create Google Sheets</div>
+                                    <div class="step-description">
+                                        Set up a Google Sheets with columns: Producer Name, Vintage, Denomination, Grapes, Alcohol Content, etc.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">2</span>
+                                <div>
+                                    <div class="step-title">Export to CSV</div>
+                                    <div class="step-description">
+                                        In Google Sheets: File → Download → Comma Separated Values (.csv)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">3</span>
+                                <div>
+                                    <div class="step-title">Use Converter Tool</div>
+                                    <div class="step-description">
+                                        Upload your CSV file to our converter to generate the JSON format needed for the wine list.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">4</span>
+                                <div>
+                                    <div class="step-title">Update Wine List</div>
+                                    <div class="step-description">
+                                        Replace the wine data in your JavaScript code with the new JSON data.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="converter-btn" onclick="openConverter()">
+                        Open Wine Data Converter
+                    </button>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        // Function to open converter
+        function openConverter() {
+            // Per ora mostra un alert, sostituisci con il link al tuo convertitore
+            alert('Qui apriresti il convertitore wine data. Sostituisci questo alert con: window.open("converter.html", "_blank");');
+            closeModal();
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('sipcardModal').style.display = 'none';
+        }
+
+        // Filter wines
+        function filterWines() {
+            const producerSearch = document.getElementById('searchProducer').value.toLowerCase();
+            const wineSearch = document.getElementById('searchWine').value.toLowerCase();
+            const vintageFilter = document.getElementById('filterVintage').value;
+            const denominationFilter = document.getElementById('filterDenomination').value;
+            const themeFilter = document.getElementById('filterTheme').value;
+
+            filteredWines = wineDatabase.filter(wine => {
+                const matchesProducer = wine.producer_name.toLowerCase().includes(producerSearch);
+                const matchesWine = wine.producer_name.toLowerCase().includes(wineSearch) || 
+                                  wine.denomination.toLowerCase().includes(wineSearch);
+                const matchesVintage = !vintageFilter || wine.vintage === vintageFilter;
+                const matchesDenomination = !denominationFilter || wine.denomination === denominationFilter;
+                const matchesTheme = !themeFilter || wine.theme === themeFilter;
+                
+                return matchesProducer && matchesWine && matchesVintage && 
+                       matchesDenomination && matchesTheme;
+            });
+
+            renderWines(filteredWines);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchProducer').value = '';
+            document.getElementById('searchWine').value = '';
+            document.getElementById('filterVintage').value = '';
+            document.getElementById('filterDenomination').value = '';
+            document.getElementById('filterTheme').value = '';
+            
+            filteredWines = [...wineDatabase];
+            renderWines(filteredWines);
+        }
+
+        // Event listeners
+        document.getElementById('searchProducer').addEventListener('input', filterWines);
+        document.getElementById('searchWine').addEventListener('input', filterWines);
+        document.getElementById('filterVintage').addEventListener('change', filterWines);
+        document.getElementById('filterDenomination').addEventListener('change', filterWines);
+        document.getElementById('filterTheme').addEventListener('change', filterWines);
+
+        // Add Wine Card button
+        document.getElementById('addWineBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAddWineModal();
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('sipcardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        populateFilters();
+        renderWines(filteredWines);
+    </script>
+</body>
+</html>
 </body>
 </html>
