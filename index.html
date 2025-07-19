@@ -794,8 +794,8 @@ fetch('data/wines.json')
                         <div class="wine-card">
                             <div class="wine-card-content">
                                 <div class="wine-header">
-                                    <div class="wine-name">${wine.producer_name}</div>
-                                    <div class="producer-name">${wine.vintage}</div>
+                                    <div class="wine-name">${wine.producer}</div>
+                                    <div class="producer">${wine.vintage}</div>
                                     <div class="vintage-denomination">${wine.denomination}</div>
                                 </div>
                                 
@@ -1057,8 +1057,8 @@ fetch('data/wines.json')
             const themeFilter = document.getElementById('filterTheme').value;
 
             filteredWines = wineDatabase.filter(wine => {
-                const matchesProducer = wine.producer_name.toLowerCase().includes(producerSearch);
-                const matchesWine = wine.producer_name.toLowerCase().includes(wineSearch) || 
+                const matchesProducer = wine.producer.toLowerCase().includes(producerSearch);
+                const matchesWine = wine.producer.toLowerCase().includes(wineSearch) || 
                                   wine.denomination.toLowerCase().includes(wineSearch);
                 const matchesVintage = !vintageFilter || wine.vintage === vintageFilter;
                 const matchesDenomination = !denominationFilter || wine.denomination === denominationFilter;
