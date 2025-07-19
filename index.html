@@ -883,8 +883,105 @@ fetch('data/wines.json')
 
         // View SipCard modal
         function viewSipCard(wineId) {
-            alert('SipCard functionality will be implemented here!');
-        }
+    const wine = wineDatabase.find(w => w.id === wineId);
+    if (!wine) {
+        console.error("Wine not found with ID:", wineId);
+        return;
+    }
+
+    const modal = document.getElementById('sipcardModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    // Popola il template esistente con i dati del vino
+    modalContent.innerHTML = `
+        <div class="wine-card">
+            <div class="wine-card-content">
+                <div class="wine-header">
+                    <div class="wine-name">${wine.producer}</div>
+                    <div class="producer-name">${wine.vintage}</div>
+                    <div class="vintage-denomination">${wine.denomination}</div>
+                </div>
+                
+                <div class="wine-details">
+                    <div class="detail-item">
+                        <div class="detail-label">Grapes</div>
+                        <div class="detail-value">${wine.grapes}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Alcohol Content</div>
+                        <div class="detail-value">${wine.alcohol_content}%</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Aging</div>
+                        <div class="detail-value">${wine.aging}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Serving Temperature</div>
+                        <div class="detail-value">${wine.serving_temperature}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Cellaring Potential</div>
+                        <div class="detail-value">${wine.cellaring_potential}</div>
+                    </div>
+                </div>
+
+                <div class="tasting-section">
+                    <div class="section-title">Vintage Description</div>
+                    <div class="tasting-notes">${wine.vintage_description}</div>
+                </div>
+
+                <div class="tasting-section">
+                    <div class="section-title">Visual Notes</div>
+                    <div class="tasting-notes">${wine.visual_notes}</div>
+                </div>
+
+                <div class="tasting-section">
+                    <div class="section-title">Olfactory Notes</div>
+                    <div class="tasting-notes">${wine.olfactory_notes}</div>
+                </div>
+
+                <div class="tasting-section">
+                    <div class="section-title">Gustatory Notes</div>
+                    <div class="tasting-notes">${wine.gustatory_notes}</div>
+                </div>
+
+                <div class="radar-analysis">
+                    <div class="section-title">Profile Analysis</div>
+                    <div class="radar-grid">
+                        <div class="radar-item">
+                            <span class="radar-label">Body</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_body * 20}%"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_body}/5</span>
+                        </div>
+                        <!-- Ripeti per tutti i valori radar -->
+                        <div class="radar-item">
+                            <span class="radar-label">Tannins</span>
+                            <div class="radar-bar">
+                                <div class="radar-fill" style="width: ${wine.radar_tannins * 20}%"></div>
+                            </div>
+                            <span class="radar-value">${wine.radar_tannins}/5</span>
+                        </div>
+                        <!-- Aggiungi gli altri 4 parametri radar allo stesso modo -->
+                    </div>
+                </div>
+
+                <div class="food-pairings">
+                    <div class="section-title">Food Pairings</div>
+                    <div class="pairing-list">
+                        ${wine.food_pairings.map(pairing => 
+                            `<span class="pairing-tag">${pairing}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Mostra il modal
+    modal.style.display = 'flex';
+}
 
         // Show Add Wine Modal with instructions
         function showAddWineModal() {
