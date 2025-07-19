@@ -127,9 +127,8 @@
         "color": "#8E1C38",
         "theme": "Classic Excellence"
     }
-    // Continue with entries 4-56, adding producer names to each...
-    // Remove entries 57-78 completely as they are corrupted
+    
 ];
 
-// Export for use in your application
-export default wineDatabase;
+
+
