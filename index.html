@@ -882,7 +882,7 @@ fetch('data/wines.json')
         }
 
         // View SipCard modal
-        function viewSipCard(wineId) {
+function viewSipCard(wineId) {
     const wine = wineDatabase.find(w => w.id === wineId);
     if (!wine) {
         console.error("Wine not found with ID:", wineId);
@@ -892,6 +892,15 @@ fetch('data/wines.json')
     const modal = document.getElementById('sipcardModal');
     const modalContent = document.getElementById('modalContent');
     
+    // Crea il contenuto del modal con il nuovo template
+    modalContent.innerHTML = `
+        <div class="sipcard-template">
+            ... // your modal HTML
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+}
     // Crea il contenuto del modal con il nuovo template
     modalContent.innerHTML = `
         <div class="sipcard-template">
