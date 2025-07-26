@@ -385,7 +385,50 @@
         "aroma_7_value": 1,
         "color": "#8B0000",
         "theme": "Elegant Tradition"
-    }
+    },
+    {
+    "id": 2,
+    "producer": "Tenuta San Guido",
+    "vintage": "2019",
+    "denomination": "DOC Bolgheri Sassicaia",
+    "grapes": "Cabernet Sauvignon 85%, Cabernet Franc 15%",
+    "alcohol_content": "14",
+    "aging": "25 months in French oak barriques (1/3 new)",
+    "serving_temperature": "16-18°C",
+    "cellaring_potential": "2025-2045",
+    "vintage_description": "Exceptional vintage with optimal ripening, mild spring, and long sunny autumn, yielding structured and balanced wines",
+    "food_pairings": [
+        "Grilled lamb chops",
+        "Beef tenderloin with black truffle",
+        "Aged Tuscan pecorino"
+    ],
+    "visual_notes": "Deep ruby with garnet nuances",
+    "olfactory_notes": "Blackcurrant, cedar, graphite, wild herbs, delicate spice",
+    "gustatory_notes": "Silky tannins, superb balance, persistent finish with mineral tension",
+    "radar_body": 4,
+    "radar_tannins": 4,
+    "radar_alcohol": 3,
+    "radar_persistence": 5,
+    "radar_acidity": 3,
+    "radar_complexity": 5,
+    "aroma_1_type": "Black fruits",
+    "aroma_1_value": 5,
+    "aroma_2_type": "Herbal",
+    "aroma_2_value": 3,
+    "aroma_3_type": "Spices",
+    "aroma_3_value": 3,
+    "aroma_4_type": "Mineral",
+    "aroma_4_value": 4,
+    "aroma_5_type": "Earthy",
+    "aroma_5_value": 2,
+    "aroma_6_type": "Cedar",
+    "aroma_6_value": 3,
+    "aroma_7_type": "Floral",
+    "aroma_7_value": 2,
+    "color": "#4B0C0C",
+    "theme": "Iconic Elegance"
+}
+
   ]
 }
         
