@@ -681,46 +681,19 @@
 
     <script>
         // Professional wine database
-        let wineDatabase = [
-            {
-                id: 1,
-                producer: "Marchesi di Barolo",
-                vintage: "2017",
-                denomination: "DOC Barbera d'Alba",
-                grapes: "Barbera 100%",
-                alcohol_content: "14.5%",
-                aging: "12 months in French oak barrels with 30% new oak",
-                serving_temperature: "16-18°C",
-                cellaring_potential: "2020-2027",
-                vintage_description: "Warm vintage with drought conditions yielding concentrated grapes with ripe fruit character and moderate acidity",
-                food_pairings: ["Risotto with porcini", "Grilled meats", "Aged cheeses", "Rich pasta dishes"],
-                visual_notes: "Deep ruby red with purple highlights and good viscosity",
-                olfactory_notes: "Aromatic profile of black cherry, plum, blackberry jam, vanilla, and subtle spice notes with hints of violets and earth",
-                gustatory_notes: "Medium to full-bodied with integrated tannins, bright acidity, rich dark fruit flavors, balanced oak influence, and a long, clean finish with subtle coffee notes",
-                radar_body: 4,
-                radar_tannins: 3,
-                radar_acidity: 4,
-                radar_complexity: 4,
-                radar_alcohol: 4,
-                radar_persistence: 3,
-                aroma_1_type: "Red Fruit",
-                aroma_1_value: 2,
-                aroma_2_type: "Black Fruit", 
-                aroma_2_value: 2,
-                aroma_3_type: "Floral",
-                aroma_3_value: 1,
-                aroma_4_type: "Vanilla",
-                aroma_4_value: 1.5,
-                aroma_5_type: "Spice",
-                aroma_5_value: 1.5,
-                aroma_6_type: "Earth",
-                aroma_6_value: 1,
-                aroma_7_type: "Coffee",
-                aroma_7_value: 1,
-                theme: "Italian Classics",
-                color: "#5e1914"
-            }
-        ];
+        let wineDatabase = [];
+
+        fetch('data/wines.json')
+            .then(response => response.json())
+            .then(data => {
+                wineDatabase = data.wines;
+                filteredWines = [...wineDatabase];
+                populateFilters();
+                renderWines(filteredWines);
+            })
+            .catch(error => {
+                console.error('Error loading wines:', error);
+            });
 
         let filteredWines = [...wineDatabase];
 
