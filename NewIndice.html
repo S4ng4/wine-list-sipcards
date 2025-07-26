@@ -278,6 +278,9 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .wine-card:hover {
@@ -310,6 +313,16 @@
             padding: 20px;
             position: relative;
             z-index: 2;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wine-card-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            flex: 1;
         }
 
         .wine-info h1 {
@@ -390,10 +403,11 @@
             letter-spacing: 1px;
             transition: all 0.3s ease;
             width: 100%;
-            margin-top: 1.5rem;
+            margin: 1.5rem 20px 20px 20px;
             position: relative;
             overflow: hidden;
-            grid-column: 1 / -1;
+            z-index: 2;
+            flex-shrink: 0;
         }
 
         .view-sipcard-btn::before {
@@ -567,7 +581,7 @@
                 grid-template-columns: 1fr;
             }
             
-            .wine-card-content {
+            .wine-card-main {
                 grid-template-columns: 1fr;
             }
             
@@ -607,7 +621,7 @@
                 <h1>Wine Collection</h1>
                 <h2>Professional SipCards</h2>
                 <div class="header-actions">
-                    <a href="#" class="add-wine-btn" id="addWineBtn">Add Wine Card</a>
+                    <a href="CreateYourOwn.html" class="add-wine-btn" id="addWineBtn">Add Wine Card</a>
                     <a href="#" class="add-wine-btn" id="newIndexBtn">New Index</a>
                 </div>
             </div>
@@ -762,50 +776,52 @@
                                 <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
                             </div>
                             <div class="wine-card-content">
-                                <div class="wine-info">
-                                    <h1>${wine.producer} - ${wine.denomination} ${wine.vintage} <span class="wine-type-indicator">${wineType}</span></h1>
-                                    <h2>${wine.denomination}</h2>
-                                    <div class="specs">
-                                        <div class="spec-item">
-                                            <strong>Producer:</strong>
-                                            <span>${wine.producer}</span>
-                                        </div>
-                                        <div class="spec-item">
-                                            <strong>Grapes:</strong>
-                                            <span>${wine.grapes}</span>
-                                        </div>
-                                        <div class="spec-item">
-                                            <strong>Vintage:</strong>
-                                            <span>${wine.vintage}</span>
-                                        </div>
-                                        <div class="spec-item">
-                                            <strong>Alcohol Content:</strong>
-                                            <span>${wine.alcohol_content}</span>
-                                        </div>
-                                        <div class="spec-item">
-                                            <strong>Aging:</strong>
-                                            <span>${wine.aging || 'Not specified'}</span>
-                                        </div>
-                                        <div class="spec-item">
-                                            <strong>Serving Temperature:</strong>
-                                            <span>${wine.serving_temperature}</span>
-                                        </div>
-                                        <div class="spec-item">
-                                            <strong>Cellaring Potential:</strong>
-                                            <span>${wine.cellaring_potential}</span>
+                                <div class="wine-card-main">
+                                    <div class="wine-info">
+                                        <h1>${wine.producer} - ${wine.denomination} ${wine.vintage} <span class="wine-type-indicator">${wineType}</span></h1>
+                                        <h2>${wine.denomination}</h2>
+                                        <div class="specs">
+                                            <div class="spec-item">
+                                                <strong>Producer:</strong>
+                                                <span>${wine.producer}</span>
+                                            </div>
+                                            <div class="spec-item">
+                                                <strong>Grapes:</strong>
+                                                <span>${wine.grapes}</span>
+                                            </div>
+                                            <div class="spec-item">
+                                                <strong>Vintage:</strong>
+                                                <span>${wine.vintage}</span>
+                                            </div>
+                                            <div class="spec-item">
+                                                <strong>Alcohol Content:</strong>
+                                                <span>${wine.alcohol_content}</span>
+                                            </div>
+                                            <div class="spec-item">
+                                                <strong>Aging:</strong>
+                                                <span>${wine.aging || 'Not specified'}</span>
+                                            </div>
+                                            <div class="spec-item">
+                                                <strong>Serving Temperature:</strong>
+                                                <span>${wine.serving_temperature}</span>
+                                            </div>
+                                            <div class="spec-item">
+                                                <strong>Cellaring Potential:</strong>
+                                                <span>${wine.cellaring_potential}</span>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="wine-summary">
+                                        <h3>Vintage ${wine.vintage}</h3>
+                                        <p>${wine.vintage_description}</p>
+                                        <h3>Ideal Food Pairings</h3>
+                                        <p>${wine.food_pairings.join(', ')}</p>
+                                    </div>
                                 </div>
-                                <div class="wine-summary">
-                                    <h3>Vintage ${wine.vintage}</h3>
-                                    <p>${wine.vintage_description}</p>
-                                    <h3>Ideal Food Pairings</h3>
-                                    <p>${wine.food_pairings.join(', ')}</p>
-                                </div>
-                                <button class="view-sipcard-btn" onclick="viewSipCard(${wine.id})">
-                                    View Complete SipCard
-                                </button>
                             </div>
+                            <button class="view-sipcard-btn" onclick="viewSipCard(${wine.id})">
+                                View Complete SipCard
+                            </button>
                         </div>
                     `;
                 }).join('');
