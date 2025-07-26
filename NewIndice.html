@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Collection - Professional SipCards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gold: #D4B456;
+            --primary-gold-hover: #E0C472;
+            --primary-wine: #8E1C38;
+            --accent-red: #E27285;
+            --spiral-cream: #E6D7B9;
+            --text-color: #333;
+            --bg-white: #ffffff;
+            --bg-light: #f8f8f8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            margin: 0;
+            background-color: #f9f7f3;
+            color: var(--text-color);
+            font-family: 'Garamond', serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .geometric-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4b456' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
+            color: white;
+            padding: 3rem 0;
+            margin-bottom: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 180, 86, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .header-actions {
+            margin-top: 2rem;
+        }
+
+        .add-wine-btn {
+            background: linear-gradient(135deg, var(--primary-gold) 0%, var(--primary-gold-hover) 100%);
+            color: var(--primary-wine);
+            text-decoration: none;
+            padding: 1rem 2.5rem;
+            border-radius: 15px;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            box-shadow: 0 4px 15px rgba(212, 180, 86, 0.3);
+            margin: 0 0.5rem;
+        }
+
+        .add-wine-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .add-wine-btn:hover {
+            background: linear-gradient(135deg, var(--primary-gold-hover) 0%, #F0E68C 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(212, 180, 86, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .add-wine-btn:hover::before {
+            left: 100%;
+        }
+
+        .header h1 {
+            font-family: 'Cinzel Decorative', cursive;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: var(--primary-gold);
+            margin-bottom: 0.5rem;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+
+        .header h1:hover {
+            color: var(--primary-gold-hover);
+            transform: scale(1.02);
+        }
+
+        .header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            color: var(--spiral-cream);
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .search-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            margin: 2rem auto;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border-top: 4px solid var(--primary-gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 180, 86, 0.03) 0%, rgba(142, 28, 56, 0.03) 100%);
+            z-index: 0;
+        }
+
+        .search-panel-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .search-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: var(--primary-wine);
+            font-size: 1rem;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 1rem;
+            border: 2px solid var(--spiral-cream);
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            font-family: 'Garamond', serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(212, 180, 86, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .reset-button {
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reset-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 180, 86, 0.3), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .reset-button:hover {
+            background: linear-gradient(135deg, #7a2433 0%, var(--primary-wine) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15), 0 0 15px var(--primary-gold);
+        }
+
+        .reset-button:hover::before {
+            left: 100%;
+        }
+
+        .stats-bar {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            color: var(--primary-wine);
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .wine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Wine Card Styles - Based on your template */
+        .wine-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wine-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.2);
+        }
+
+        .logo-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0.1;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        .logo-background img {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            filter: grayscale(100%) brightness(0.7);
+        }
+
+        .wine-card-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .wine-info h1 {
+            color: #5e1914;
+            margin-top: 0;
+            border-bottom: 2px solid #e6d1a8;
+            padding-bottom: 10px;
+            font-size: 1.8rem;
+            font-family: 'Cinzel Decorative', cursive;
+        }
+
+        .wine-info h2 {
+            font-style: italic;
+            font-weight: normal;
+            margin-top: 5px;
+            color: var(--accent-red);
+            font-size: 1.2rem;
+        }
+
+        .wine-type-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #5e1914;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .specs {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-top: 1rem;
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0.5rem;
+        }
+
+        .spec-item strong {
+            color: #5e1914;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .spec-item span {
+            color: var(--text-color);
+            font-size: 0.9rem;
+            margin-top: 0.2rem;
+        }
+
+        .wine-summary h3 {
+            color: #5e1914;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .wine-summary p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .view-sipcard-btn {
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            grid-column: 1 / -1;
+        }
+
+        .view-sipcard-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 180, 86, 0.3), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .view-sipcard-btn:hover {
+            background: linear-gradient(135deg, #7a2433 0%, var(--primary-wine) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15), 0 0 15px var(--primary-gold);
+        }
+
+        .view-sipcard-btn:hover::before {
+            left: 100%;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 30px;
+            padding: 3rem;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            width: 100%;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 2rem;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--accent-red);
+            line-height: 1;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .modal-close:hover {
+            color: var(--primary-wine);
+            transform: scale(1.1);
+        }
+
+        .no-results {
+            text-align: center;
+            color: var(--accent-red);
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            margin-top: 4rem;
+            font-weight: 600;
+        }
+
+        /* Full SipCard Styles for Modal */
+        .sipcard-full {
+            font-family: 'Garamond', serif;
+        }
+
+        .sipcard-card {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .sipcard-header-card {
+            background-color: #5e1914;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .sipcard-header-card h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-family: 'Cinzel Decorative', cursive;
+        }
+
+        .sipcard-header-card .wine-type-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .chart-container {
+            position: relative;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .chart-title {
+            color: #5e1914;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 3;
+            font-size: 1.5rem;
+        }
+
+        .radar-chart, .aroma-chart {
+            width: 100%;
+            height: 300px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .flavor-profile {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .flavor-category {
+            padding: 10px;
+        }
+
+        .flavor-category h3 {
+            color: #5e1914;
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+        }
+
+        .flavor-category p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .wine-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wine-card-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-row {
+                grid-template-columns: 1fr;
+            }
+
+            .flavor-profile {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .modal-content {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .spec-item {
+                flex-direction: column;
+            }
+
+            .spec-item strong {
+                margin-bottom: 3px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="geometric-bg"></div>
+
+    <div class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>Wine Collection</h1>
+                <h2>Professional SipCards</h2>
+                <div class="header-actions">
+                    <a href="#" class="add-wine-btn" id="addWineBtn">Add Wine Card</a>
+                    <a href="#" class="add-wine-btn" id="newIndexBtn">New Index</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-panel">
+            <div class="search-panel-content">
+                <div class="search-grid">
+                    <div class="form-group">
+                        <label for="searchProducer">Producer Name</label>
+                        <input type="text" id="searchProducer" placeholder="Search by producer...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="searchWine">Wine Name</label>
+                        <input type="text" id="searchWine" placeholder="Search by wine name...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterVintage">Vintage</label>
+                        <select id="filterVintage">
+                            <option value="">All vintages</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterDenomination">Denomination</label>
+                        <select id="filterDenomination">
+                            <option value="">All denominations</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="filterTheme">Theme</label>
+                        <select id="filterTheme">
+                            <option value="">All themes</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button class="reset-button" onclick="resetFilters()">Reset Filters</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-bar" id="statsBar">
+            Loading wines...
+        </div>
+
+        <div class="wine-grid" id="wineGrid">
+            <!-- Wines will be loaded here -->
+        </div>
+
+        <div class="no-results" id="noResults" style="display: none;">
+            No wines found matching your search criteria.
+        </div>
+    </div>
+
+    <!-- SipCard Modal -->
+    <div class="modal" id="sipcardModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modalContent">
+                <!-- Modal content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Professional wine database
+        let wineDatabase = [
+            {
+                id: 1,
+                producer: "Marchesi di Barolo",
+                vintage: "2017",
+                denomination: "DOC Barbera d'Alba",
+                grapes: "Barbera 100%",
+                alcohol_content: "14.5%",
+                aging: "12 months in French oak barrels with 30% new oak",
+                serving_temperature: "16-18°C",
+                cellaring_potential: "2020-2027",
+                vintage_description: "Warm vintage with drought conditions yielding concentrated grapes with ripe fruit character and moderate acidity",
+                food_pairings: ["Risotto with porcini", "Grilled meats", "Aged cheeses", "Rich pasta dishes"],
+                visual_notes: "Deep ruby red with purple highlights and good viscosity",
+                olfactory_notes: "Aromatic profile of black cherry, plum, blackberry jam, vanilla, and subtle spice notes with hints of violets and earth",
+                gustatory_notes: "Medium to full-bodied with integrated tannins, bright acidity, rich dark fruit flavors, balanced oak influence, and a long, clean finish with subtle coffee notes",
+                radar_body: 4,
+                radar_tannins: 3,
+                radar_acidity: 4,
+                radar_complexity: 4,
+                radar_alcohol: 4,
+                radar_persistence: 3,
+                aroma_1_type: "Red Fruit",
+                aroma_1_value: 2,
+                aroma_2_type: "Black Fruit", 
+                aroma_2_value: 2,
+                aroma_3_type: "Floral",
+                aroma_3_value: 1,
+                aroma_4_type: "Vanilla",
+                aroma_4_value: 1.5,
+                aroma_5_type: "Spice",
+                aroma_5_value: 1.5,
+                aroma_6_type: "Earth",
+                aroma_6_value: 1,
+                aroma_7_type: "Coffee",
+                aroma_7_value: 1,
+                theme: "Italian Classics",
+                color: "#5e1914"
+            }
+        ];
+
+        let filteredWines = [...wineDatabase];
+
+        // Populate filter dropdowns
+        function populateFilters() {
+            const vintages = [...new Set(wineDatabase.map(wine => wine.vintage))].sort();
+            const denominations = [...new Set(wineDatabase.map(wine => wine.denomination))].sort();
+            const themes = [...new Set(wineDatabase.map(wine => wine.theme))].sort();
+            
+            populateSelect('filterVintage', vintages);
+            populateSelect('filterDenomination', denominations);
+            populateSelect('filterTheme', themes);
+        }
+
+        function populateSelect(elementId, options) {
+            const select = document.getElementById(elementId);
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                select.appendChild(optionElement);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = wineDatabase.length;
+            const showing = filteredWines.length;
+            document.getElementById('statsBar').textContent = `Showing ${showing} of ${total} wines in collection`;
+        }
+
+        // Get wine type based on grapes
+        function getWineType(grapes) {
+            const redGrapes = ['barbera', 'nebbiolo', 'sangiovese', 'cabernet', 'merlot', 'pinot noir', 'syrah', 'shiraz'];
+            const whiteGrapes = ['chardonnay', 'pinot grigio', 'sauvignon blanc', 'riesling', 'gewurztraminer'];
+            
+            const grapesLower = grapes.toLowerCase();
+            
+            if (redGrapes.some(grape => grapesLower.includes(grape))) {
+                return 'Red';
+            } else if (whiteGrapes.some(grape => grapesLower.includes(grape))) {
+                return 'White';
+            } else {
+                return 'Wine';
+            }
+        }
+
+        // Render wines
+        function renderWines(wines) {
+            const grid = document.getElementById('wineGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (wines.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+            } else {
+                grid.style.display = 'grid';
+                noResults.style.display = 'none';
+                
+                grid.innerHTML = wines.map(wine => {
+                    const wineType = getWineType(wine.grapes);
+                    
+                    return `
+                        <div class="wine-card">
+                            <div class="logo-background">
+                                <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                            </div>
+                            <div class="wine-card-content">
+                                <div class="wine-info">
+                                    <h1>${wine.producer} - ${wine.denomination} ${wine.vintage} <span class="wine-type-indicator">${wineType}</span></h1>
+                                    <h2>${wine.denomination}</h2>
+                                    <div class="specs">
+                                        <div class="spec-item">
+                                            <strong>Producer:</strong>
+                                            <span>${wine.producer}</span>
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Grapes:</strong>
+                                            <span>${wine.grapes}</span>
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Vintage:</strong>
+                                            <span>${wine.vintage}</span>
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Alcohol Content:</strong>
+                                            <span>${wine.alcohol_content}</span>
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Aging:</strong>
+                                            <span>${wine.aging || 'Not specified'}</span>
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Serving Temperature:</strong>
+                                            <span>${wine.serving_temperature}</span>
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Cellaring Potential:</strong>
+                                            <span>${wine.cellaring_potential}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wine-summary">
+                                    <h3>Vintage ${wine.vintage}</h3>
+                                    <p>${wine.vintage_description}</p>
+                                    <h3>Ideal Food Pairings</h3>
+                                    <p>${wine.food_pairings.join(', ')}</p>
+                                </div>
+                                <button class="view-sipcard-btn" onclick="viewSipCard(${wine.id})">
+                                    View Complete SipCard
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            updateStats();
+        }
+
+        // Generate radar chart SVG
+        function generateRadarChart(wine) {
+            const radarValues = [
+                wine.radar_body,
+                wine.radar_tannins,
+                wine.radar_alcohol,
+                wine.radar_persistence,
+                wine.radar_acidity,
+                wine.radar_complexity
+            ];
+            
+            // Normalizza i valori (1-5) a coordinate del poligono (0-100)
+            const maxValue = 5;
+            const points = radarValues.map((value, i) => {
+                const angle = (Math.PI * 2 * i) / radarValues.length - Math.PI/2;
+                const radius = (value / maxValue) * 80;
+                const x = 200 + radius * Math.cos(angle);
+                const y = 150 + radius * Math.sin(angle);
+                return `${x},${y}`;
+            }).join(' ');
+
+            return `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+                    <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Body and Structure</text>
+                    
+                    <polygon points="200,70 270,110 270,190 200,230 130,190 130,110" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                    <polygon points="200,90 250,120 250,180 200,210 150,180 150,120" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                    <polygon points="200,110 230,130 230,170 200,190 170,170 170,130" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                    
+                    <line x1="200" y1="150" x2="200" y2="70" stroke="#888888" stroke-width="1"/>
+                    <line x1="200" y1="150" x2="270" y2="190" stroke="#888888" stroke-width="1"/>
+                    <line x1="200" y1="150" x2="270" y2="110" stroke="#888888" stroke-width="1"/>
+                    <line x1="200" y1="150" x2="200" y2="230" stroke="#888888" stroke-width="1"/>
+                    <line x1="200" y1="150" x2="130" y2="190" stroke="#888888" stroke-width="1"/>
+                    <line x1="200" y1="150" x2="130" y2="110" stroke="#888888" stroke-width="1"/>
+                    
+                    <text x="200" y="65" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Body</text>
+                    <text x="280" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Tannins</text>
+                    <text x="280" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Alcohol</text>
+                    <text x="200" y="240" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Persistence</text>
+                    <text x="120" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Acidity</text>
+                    <text x="120" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Complexity</text>
+                    
+                    <polygon points="${points}" fill="rgba(94,25,20,0.5)" stroke="#5e1914" stroke-width="2"/>
+                    
+                    ${points.split(' ').map(point => {
+                        const [x, y] = point.split(',');
+                        return `<circle cx="${x}" cy="${y}" r="4" fill="#5e1914"/>`;
+                    }).join('')}
+                    
+                    <foreignObject x="50%" y="260" width="500" height="50" transform="translate(-250, 0)">
+                        <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; background-color: #ffffff; border: 1px solid #e6d1a8; border-radius: 5px; padding: 5px 15px; white-space: nowrap; transform: translateX(-50%); position: relative; left: 50%;">
+                            <div style="display: flex; align-items: center;">
+                                <div style="width: 10px; height: 10px; background-color: rgba(94,25,20,0.5); border: 1px solid #5e1914; margin-right: 10px;"></div>
+                                <span style="font-family: Garamond; font-size: 12px; color: #2c1e1d;">${wine.producer} ${wine.vintage}</span>
+                            </div>
+                        </div>
+                    </foreignObject>
+                </svg>
+            `;
+        }
+
+        function generateAromaChart(wine) {
+            // Estrai gli aromi principali (i primi 7)
+            const aromas = [];
+            for (let i = 1; i <= 7; i++) {
+                const type = wine[`aroma_${i}_type`];
+                const value = wine[`aroma_${i}_value`];
+                if (type && value) {
+                    aromas.push({ type, value });
+                }
+            }
+
+            // Genera le barre degli aromi
+            const aromaBars = aromas.map((aroma, index) => {
+                const y = 70 + (index * 35);
+                const width = (aroma.value / 5) * 200; // Scala da 0-5 a 0-200
+                return `
+                    <rect x="120" y="${y}" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
+                    <rect x="120" y="${y}" width="${width}" height="25" fill="rgba(94,25,20,0.7)"/>
+                    <text x="115" y="${y + 17}" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">${aroma.type}</text>
+                `;
+            }).join('');
+
+            return `
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="100%" height="100%">
+                    <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Aromatic Profile</text>
+                    
+                    ${aromaBars}
+                    
+                    <text x="120" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d">Low</text>
+                    <text x="220" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="middle">Medium</text>
+                    <text x="320" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="end">High</text>
+                    <line x1="120" y1="330" x2="320" y2="330" stroke="#888888" stroke-width="1"/>
+                    <line x1="120" y1="328" x2="120" y2="332" stroke="#888888" stroke-width="1"/>
+                    <line x1="220" y1="328" x2="220" y2="332" stroke="#888888" stroke-width="1"/>
+                    <line x1="320" y1="328" x2="320" y2="332" stroke="#888888" stroke-width="1"/>
+                </svg>
+            `;
+        }
+
+        // View SipCard modal with full template
+        function viewSipCard(wineId) {
+            const wine = wineDatabase.find(w => w.id === wineId);
+            if (!wine) {
+                console.error("Wine not found with ID:", wineId);
+                return;
+            }
+
+            const modal = document.getElementById('sipcardModal');
+            const modalContent = document.getElementById('modalContent');
+            const wineType = getWineType(wine.grapes);
+
+            // Create modal content with all three cards from template
+            modalContent.innerHTML = `
+                <div class="sipcard-full">
+                    <!-- First Card -->
+                    <div class="sipcard-card">
+                        <div class="sipcard-header-card">
+                            <h1>${wine.producer} - ${wine.denomination} ${wine.vintage} <span class="wine-type-indicator">${wineType}</span></h1>
+                        </div>
+                        <div class="logo-background">
+                            <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                        </div>
+                        <div class="wine-card-content">
+                            <div class="wine-info">
+                                <h1>${wine.denomination} ${wine.vintage}</h1>
+                                <h2>${wine.denomination}</h2>
+                                <div class="specs">
+                                    <div class="spec-item">
+                                        <strong>Producer:</strong>
+                                        <span>${wine.producer}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Grapes:</strong>
+                                        <span>${wine.grapes}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Vintage:</strong>
+                                        <span>${wine.vintage}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Alcohol Content:</strong>
+                                        <span>${wine.alcohol_content}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Aging:</strong>
+                                        <span>${wine.aging || 'Not specified'}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Serving Temperature:</strong>
+                                        <span>${wine.serving_temperature}</span>
+                                    </div>
+                                    <div class="spec-item">
+                                        <strong>Cellaring Potential:</strong>
+                                        <span>${wine.cellaring_potential}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="wine-summary">
+                                <h3>Vintage ${wine.vintage}</h3>
+                                <p>${wine.vintage_description}</p>
+                                <h3>Ideal Food Pairings</h3>
+                                <p>${wine.food_pairings.join(', ')}</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Second Card - Charts -->
+                    <div class="sipcard-card">
+                        <div class="logo-background">
+                            <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                        </div>
+                        <div class="chart-container">
+                            <h2 class="chart-title">Organoleptic Profile</h2>
+                            <div class="chart-row">
+                                <div class="radar-chart">
+                                    ${generateRadarChart(wine)}
+                                </div>
+                                
+                                <div class="aroma-chart">
+                                    ${generateAromaChart(wine)}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Third Card - Tasting Notes -->
+                    <div class="sipcard-card">
+                        <div class="logo-background">
+                            <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+                        </div>
+                        <div class="chart-container">
+                            <h2 class="chart-title">Tasting Notes</h2>
+                            <div class="flavor-profile">
+                                <div class="flavor-category">
+                                    <h3>Visual</h3>
+                                    <p>${wine.visual_notes}</p>
+                                </div>
+                                <div class="flavor-category">
+                                    <h3>Olfactory</h3>
+                                    <p>${wine.olfactory_notes}</p>
+                                </div>
+                                <div class="flavor-category">
+                                    <h3>Gustatory</h3>
+                                    <p>${wine.gustatory_notes}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        // Show Add Wine Modal with instructions
+        function showAddWineModal() {
+            const modal = document.getElementById('sipcardModal');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <style>
+                    .add-wine-modal {
+                        font-family: 'Cinzel', serif;
+                        text-align: center;
+                        padding: 1rem;
+                    }
+                    .add-wine-title {
+                        font-family: 'Cinzel Decorative', cursive;
+                        font-size: 2.5rem;
+                        color: var(--primary-wine);
+                        margin-bottom: 1.5rem;
+                        letter-spacing: 2px;
+                    }
+                    .add-wine-subtitle {
+                        font-size: 1.2rem;
+                        color: var(--accent-red);
+                        margin-bottom: 2rem;
+                        font-weight: 600;
+                    }
+                    .add-wine-steps {
+                        text-align: left;
+                        max-width: 600px;
+                        margin: 0 auto 2rem;
+                        background: rgba(248, 248, 248, 0.8);
+                        padding: 2rem;
+                        border-radius: 15px;
+                        border: 1px solid var(--spiral-cream);
+                    }
+                    .add-wine-step {
+                        margin-bottom: 1.5rem;
+                        padding: 1rem;
+                        background: white;
+                        border-radius: 10px;
+                        border-left: 4px solid var(--primary-gold);
+                    }
+                    .step-number {
+                        background: var(--primary-wine);
+                        color: white;
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: bold;
+                        margin-right: 1rem;
+                        font-size: 0.9rem;
+                    }
+                    .step-title {
+                        color: var(--primary-wine);
+                        font-weight: 600;
+                        margin-bottom: 0.5rem;
+                    }
+                    .step-description {
+                        color: var(--text-color);
+                        line-height: 1.6;
+                    }
+                    .converter-btn {
+                        background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
+                        color: white;
+                        text-decoration: none;
+                        padding: 1.2rem 2.5rem;
+                        border-radius: 15px;
+                        font-family: 'Cinzel', serif;
+                        font-weight: 600;
+                        font-size: 1.1rem;
+                        letter-spacing: 1px;
+                        transition: all 0.3s ease;
+                        display: inline-block;
+                        margin: 1rem 0.5rem;
+                        position: relative;
+                        overflow: hidden;
+                        border: none;
+                        cursor: pointer;
+                    }
+                    .converter-btn:hover {
+                        background: linear-gradient(135deg, #7a2433 0%, var(--primary-wine) 100%);
+                        transform: translateY(-3px);
+                        box-shadow: 0 7px 15px rgba(0, 0, 0, 0.15), 0 0 15px var(--primary-gold);
+                    }
+                </style>
+                
+                <div class="add-wine-modal">
+                    <h2 class="add-wine-title">Add New Wine Card</h2>
+                    <p class="add-wine-subtitle">Follow these steps to add wines to your collection</p>
+                    
+                    <div class="add-wine-steps">
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">1</span>
+                                <div>
+                                    <div class="step-title">Create Google Sheets</div>
+                                    <div class="step-description">
+                                        Set up a Google Sheets with columns: Producer Name, Vintage, Denomination, Grapes, Alcohol Content, etc.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">2</span>
+                                <div>
+                                    <div class="step-title">Export to CSV</div>
+                                    <div class="step-description">
+                                        In Google Sheets: File → Download → Comma Separated Values (.csv)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">3</span>
+                                <div>
+                                    <div class="step-title">Use Converter Tool</div>
+                                    <div class="step-description">
+                                        Upload your CSV file to our converter to generate the JSON format needed for the wine list.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="add-wine-step">
+                            <div style="display: flex; align-items: flex-start;">
+                                <span class="step-number">4</span>
+                                <div>
+                                    <div class="step-title">Update Wine List</div>
+                                    <div class="step-description">
+                                        Replace the wine data in your JavaScript code with the new JSON data.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="converter-btn" onclick="openConverter()">
+                        Open Wine Data Converter
+                    </button>
+                </div>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        // Function to open converter
+        function openConverter() {
+            window.open('converter.html', '_blank');
+            closeModal();
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('sipcardModal').style.display = 'none';
+        }
+
+        // Filter wines
+        function filterWines() {
+            const producerSearch = document.getElementById('searchProducer').value.toLowerCase();
+            const wineSearch = document.getElementById('searchWine').value.toLowerCase();
+            const vintageFilter = document.getElementById('filterVintage').value;
+            const denominationFilter = document.getElementById('filterDenomination').value;
+            const themeFilter = document.getElementById('filterTheme').value;
+
+            filteredWines = wineDatabase.filter(wine => {
+                const matchesProducer = wine.producer.toLowerCase().includes(producerSearch);
+                const matchesWine = wine.producer.toLowerCase().includes(wineSearch) || 
+                                  wine.denomination.toLowerCase().includes(wineSearch);
+                const matchesVintage = !vintageFilter || wine.vintage === vintageFilter;
+                const matchesDenomination = !denominationFilter || wine.denomination === denominationFilter;
+                const matchesTheme = !themeFilter || wine.theme === themeFilter;
+                
+                return matchesProducer && matchesWine && matchesVintage && 
+                       matchesDenomination && matchesTheme;
+            });
+
+            renderWines(filteredWines);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchProducer').value = '';
+            document.getElementById('searchWine').value = '';
+            document.getElementById('filterVintage').value = '';
+            document.getElementById('filterDenomination').value = '';
+            document.getElementById('filterTheme').value = '';
+            
+            filteredWines = [...wineDatabase];
+            renderWines(filteredWines);
+        }
+
+        // Event listeners
+        document.getElementById('searchProducer').addEventListener('input', filterWines);
+        document.getElementById('searchWine').addEventListener('input', filterWines);
+        document.getElementById('filterVintage').addEventListener('change', filterWines);
+        document.getElementById('filterDenomination').addEventListener('change', filterWines);
+        document.getElementById('filterTheme').addEventListener('change', filterWines);
+
+        // Add Wine Card button
+        document.getElementById('addWineBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAddWineModal();
+        });
+
+        // New Index button
+        document.getElementById('newIndexBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Placeholder for new index functionality
+            alert('New Index functionality - coming soon!');
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('sipcardModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Initialize
+        populateFilters();
+        renderWines(filteredWines);
+    </script>
+</body>
+</html>
