@@ -882,6 +882,7 @@ fetch('data/wines.json')
         }
 
         // View SipCard modal
+// View SipCard modal
 function viewSipCard(wineId) {
     const wine = wineDatabase.find(w => w.id === wineId);
     if (!wine) {
@@ -891,24 +892,15 @@ function viewSipCard(wineId) {
 
     const modal = document.getElementById('sipcardModal');
     const modalContent = document.getElementById('modalContent');
-    
-    // Crea il contenuto del modal con il nuovo template
-    modalContent.innerHTML = `
-        <div class="sipcard-template">
-            ... // your modal HTML
-        </div>
-    `;
 
-    modal.style.display = 'flex';
-}
-    // Crea il contenuto del modal con il nuovo template
+    // Create modal content with the new template
     modalContent.innerHTML = `
         <div class="sipcard-template">
             <div class="sipcard-header" style="background: ${wine.color || '#5e1914'}">
                 <h2>${wine.producer}</h2>
                 <h3>${wine.vintage} ${wine.denomination}</h3>
             </div>
-            
+
             <div class="sipcard-body">
                 <div class="sipcard-section">
                     <h4>Technical Details</h4>
@@ -919,14 +911,14 @@ function viewSipCard(wineId) {
                         <p><strong>Serving Temp:</strong> ${wine.serving_temperature}</p>
                     </div>
                 </div>
-                
+
                 <div class="sipcard-section">
                     <h4>Tasting Notes</h4>
                     <p><strong>Visual:</strong> ${wine.visual_notes}</p>
                     <p><strong>Nose:</strong> ${wine.olfactory_notes}</p>
                     <p><strong>Palate:</strong> ${wine.gustatory_notes}</p>
                 </div>
-                
+
                 <div class="sipcard-section">
                     <h4>Food Pairings</h4>
                     <ul>
@@ -934,7 +926,7 @@ function viewSipCard(wineId) {
                     </ul>
                 </div>
             </div>
-            
+
             <style>
                 .sipcard-template {
                     font-family: 'Garamond', serif;
@@ -943,45 +935,45 @@ function viewSipCard(wineId) {
                     overflow: hidden;
                     max-width: 800px;
                 }
-                
+
                 .sipcard-header {
                     color: white;
                     padding: 20px;
                     text-align: center;
                 }
-                
+
                 .sipcard-header h2 {
                     margin: 0;
                     font-size: 1.8rem;
                 }
-                
+
                 .sipcard-header h3 {
                     margin: 5px 0 0;
                     font-weight: normal;
                     font-style: italic;
                 }
-                
+
                 .sipcard-body {
                     padding: 20px;
                 }
-                
+
                 .sipcard-section {
                     margin-bottom: 25px;
                 }
-                
+
                 .sipcard-section h4 {
                     color: #5e1914;
                     border-bottom: 1px solid #e6d1a8;
                     padding-bottom: 5px;
                     margin-bottom: 10px;
                 }
-                
+
                 .sipcard-details {
                     display: grid;
                     grid-template-columns: 1fr 1fr;
                     gap: 10px;
                 }
-                
+
                 @media (max-width: 768px) {
                     .sipcard-details {
                         grid-template-columns: 1fr;
@@ -992,7 +984,6 @@ function viewSipCard(wineId) {
     `;
 
     modal.style.display = 'flex';
-}
 }
 
 // Mantieni le funzioni generateRadarChart e generateAromaChart come nel codice precedente
