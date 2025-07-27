@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wine Data Converter - CSV to JSON</title>
+    <title>Wine JSON Updater</title>
     <style>
         :root {
             --primary-gold: #D4B456;
@@ -89,10 +89,6 @@
             padding-bottom: 0.5rem;
         }
 
-        .input-section, .output-section {
-            margin-bottom: 2rem;
-        }
-
         .file-input {
             border: 2px dashed var(--spiral-cream);
             border-radius: 10px;
@@ -113,7 +109,12 @@
             background: rgba(142, 28, 56, 0.05);
         }
 
-        #csvFileInput {
+        .file-input.loaded {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+
+        input[type="file"] {
             display: none;
         }
 
@@ -141,25 +142,98 @@
             transform: none;
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
         .btn-secondary {
             background: linear-gradient(135deg, var(--primary-gold) 0%, #E0C472 100%);
             color: var(--text-color);
         }
 
-        textarea {
-            width: 100%;
-            min-height: 300px;
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
             padding: 1rem;
-            border: 2px solid var(--spiral-cream);
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            resize: vertical;
+            margin: 1rem 0;
         }
 
-        textarea:focus {
-            outline: none;
-            border-color: var(--primary-gold);
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .wine-item {
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary-wine);
+            font-size: 0.9rem;
+        }
+
+        .wine-item strong {
+            color: var(--primary-wine);
+        }
+
+        .progress {
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-wine), var(--primary-gold));
+            height: 20px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .step-counter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 10px;
+            margin: 0 0.5rem;
+            background: var(--bg-light);
+            border: 2px solid #dee2e6;
+        }
+
+        .step.active {
+            background: var(--primary-gold);
+            border-color: var(--primary-wine);
+            color: var(--primary-wine);
+            font-weight: bold;
+        }
+
+        .step.completed {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
         }
 
         .instructions {
@@ -183,65 +257,6 @@
             margin-bottom: 0.5rem;
         }
 
-        .sample-format {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 1rem;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 8px;
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .progress {
-            background: #e9ecef;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 1rem 0;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, var(--primary-wine), var(--primary-gold));
-            height: 20px;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .columns-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.5rem;
-            font-size: 0.8rem;
-            margin: 1rem 0;
-        }
-
-        .column-item {
-            background: #f8f9fa;
-            padding: 0.5rem;
-            border-radius: 5px;
-            border: 1px solid #dee2e6;
-        }
-
         @media (max-width: 768px) {
             .back-link {
                 position: relative;
@@ -251,8 +266,12 @@
                 margin-bottom: 1rem;
             }
             
-            .columns-grid {
-                grid-template-columns: 1fr;
+            .step-counter {
+                flex-direction: column;
+            }
+            
+            .step {
+                margin: 0.25rem 0;
             }
         }
     </style>
@@ -262,297 +281,325 @@
     
     <div class="container">
         <div class="header">
-            <h1>Wine Data Converter</h1>
-            <p>Convert your Google Sheets wine data to JSON format for the wine list application</p>
+            <h1>Wine JSON Updater</h1>
+            <p>Update your wines.json database with new wines while maintaining existing IDs</p>
         </div>
 
         <div class="instructions">
-            <h3>How to use this converter:</h3>
+            <h3>How to use this updater:</h3>
             <ol>
-                <li><strong>Export from Google Sheets:</strong> Go to File → Download → Comma Separated Values (.csv)</li>
-                <li><strong>Upload CSV:</strong> Click the upload area below or drag & drop your CSV file</li>
-                <li><strong>Verify mapping:</strong> Check that your columns match the required format</li>
-                <li><strong>Generate JSON:</strong> Click convert to generate the wines.json file</li>
-                <li><strong>Download:</strong> Save the generated JSON file to your wine list project</li>
+                <li><strong>Load new JSON:</strong> File generated from the CSV-to-JSON converter</li>
+                <li><strong>Load existing wines.json:</strong> Your current database from the data/ folder</li>
+                <li><strong>Automatic merge:</strong> New wines will receive incremental IDs</li>
+                <li><strong>Download updated:</strong> Download the complete and updated wines.json</li>
             </ol>
         </div>
 
-        <div class="conversion-panel">
-            <div class="section-title">Step 1: Upload CSV File</div>
-            
-            <div class="file-input" onclick="document.getElementById('csvFileInput').click()">
-                <input type="file" id="csvFileInput" accept=".csv" />
-                <div id="fileInputText">
-                    <strong>Click here or drag & drop your CSV file</strong><br>
-                    <small>Accepts .csv files from Google Sheets export</small>
-                </div>
+        <div class="step-counter">
+            <div class="step active" id="step1">
+                <div>1</div>
+                <div>New JSON</div>
             </div>
-
-            <div class="section-title">Step 2: Required CSV Format</div>
-            <p>Your CSV should have these columns (exact names):</p>
-            <div class="columns-grid">
-                <div class="column-item">Producer</div>
-                <div class="column-item">Vintage</div>
-                <div class="column-item">Denomination</div>
-                <div class="column-item">Grapes</div>
-                <div class="column-item">Alcohol Content</div>
-                <div class="column-item">Aging</div>
-                <div class="column-item">Serving Temperature</div>
-                <div class="column-item">Cellaring Potential</div>
-                <div class="column-item">Vintage Description</div>
-                <div class="column-item">Food Pairings</div>
-                <div class="column-item">Visual Notes</div>
-                <div class="column-item">Olfactory Notes</div>
-                <div class="column-item">Gustatory Notes</div>
-                <div class="column-item">RADAR-Body</div>
-                <div class="column-item">RADAR-Tannins</div>
-                <div class="column-item">RADAR-Alcohol</div>
-                <div class="column-item">RADAR-Persistence</div>
-                <div class="column-item">RADAR-Acidity</div>
-                <div class="column-item">RADAR-Complexity</div>
-                <div class="column-item">AROMA-1 Type</div>
-                <div class="column-item">AROMA-1 Value</div>
-                <div class="column-item">AROMA-2 Type</div>
-                <div class="column-item">AROMA-2 Value</div>
-                <div class="column-item">AROMA-3 Type</div>
-                <div class="column-item">AROMA-3 Value</div>
-                <div class="column-item">AROMA-4 Type</div>
-                <div class="column-item">AROMA-4 Value</div>
-                <div class="column-item">AROMA-5 Type</div>
-                <div class="column-item">AROMA-5 Value</div>
-                <div class="column-item">AROMA-6 Type</div>
-                <div class="column-item">AROMA-6 Value</div>
-                <div class="column-item">AROMA-7 Type</div>
-                <div class="column-item">AROMA-7 Value</div>
-                <div class="column-item">Color</div>
-                <div class="column-item">Theme</div>
+            <div class="step" id="step2">
+                <div>2</div>
+                <div>Existing JSON</div>
             </div>
-
-            <div class="section-title">Step 3: Convert to JSON</div>
-            <button class="btn" id="convertBtn" disabled>Convert CSV to JSON</button>
-            <button class="btn btn-secondary" id="downloadBtn" style="display: none;">Download wines.json</button>
-            
-            <div class="progress" id="progressContainer" style="display: none;">
-                <div class="progress-bar" id="progressBar"></div>
+            <div class="step" id="step3">
+                <div>3</div>
+                <div>Merge & Download</div>
             </div>
-            
-            <div id="statusMessage"></div>
         </div>
 
         <div class="conversion-panel">
-            <div class="section-title">Generated JSON Output</div>
-            <textarea id="jsonOutput" placeholder="Your JSON output will appear here after conversion..."></textarea>
-            <button class="btn btn-secondary" id="copyBtn" style="display: none;">Copy to Clipboard</button>
-            
-            <div style="margin-top: 1rem; padding: 1rem; background: rgba(212, 180, 86, 0.1); border-radius: 8px;">
-                <strong>Next Step:</strong> Replace the <code>wineDatabase</code> array in your wine list JavaScript with this JSON data.
+            <div class="section-title">Step 1: Load New JSON</div>
+            <div class="file-input" onclick="document.getElementById('newJsonFile').click()" id="newJsonInput">
+                <input type="file" id="newJsonFile" accept=".json" />
+                <div id="newJsonText">
+                    <strong>Click here or drag & drop your new JSON file</strong><br>
+                    <small>File generated from the CSV-to-JSON converter</small>
+                </div>
             </div>
+            <div id="newJsonPreview" class="preview" style="display: none;"></div>
+        </div>
+
+        <div class="conversion-panel" id="existingPanel" style="opacity: 0.5;">
+            <div class="section-title">Step 2: Load Existing wines.json</div>
+            <div class="file-input" onclick="document.getElementById('existingJsonFile').click()" id="existingJsonInput">
+                <input type="file" id="existingJsonFile" accept=".json" />
+                <div id="existingJsonText">
+                    <strong>Load your existing wines.json file</strong><br>
+                    <small>The file from your project's data/ folder</small>
+                </div>
+            </div>
+            <div id="existingJsonPreview" class="preview" style="display: none;"></div>
+        </div>
+
+        <div class="conversion-panel" id="mergePanel" style="opacity: 0.5;">
+            <div class="section-title">Step 3: Merge and Download</div>
+            <button class="btn" id="mergeBtn" disabled>Merge Databases</button>
+            <div class="progress" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="statusMessage"></div>
+            <div id="mergePreview" class="preview" style="display: none;"></div>
+            <button class="btn btn-success" id="downloadBtn" style="display: none;">Download Updated wines.json</button>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-        let csvData = null;
-        let jsonOutput = null;
+        let newJsonData = null;
+        let existingJsonData = null;
+        let mergedData = null;
 
-        // File input handling
-        const fileInput = document.getElementById('csvFileInput');
-        const fileInputArea = document.querySelector('.file-input');
-        const convertBtn = document.getElementById('convertBtn');
+        // DOM Elements
+        const newJsonFile = document.getElementById('newJsonFile');
+        const existingJsonFile = document.getElementById('existingJsonFile');
+        const mergeBtn = document.getElementById('mergeBtn');
         const downloadBtn = document.getElementById('downloadBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        const jsonOutputArea = document.getElementById('jsonOutput');
         const statusMessage = document.getElementById('statusMessage');
 
-        // Drag and drop handling
-        fileInputArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            fileInputArea.classList.add('dragover');
-        });
+        // Steps
+        const step1 = document.getElementById('step1');
+        const step2 = document.getElementById('step2');
+        const step3 = document.getElementById('step3');
+        const existingPanel = document.getElementById('existingPanel');
+        const mergePanel = document.getElementById('mergePanel');
 
-        fileInputArea.addEventListener('dragleave', () => {
-            fileInputArea.classList.remove('dragover');
-        });
+        // File input handlers
+        newJsonFile.addEventListener('change', (e) => handleNewJson(e.target.files[0]));
+        existingJsonFile.addEventListener('change', (e) => handleExistingJson(e.target.files[0]));
+        mergeBtn.addEventListener('click', mergeData);
+        downloadBtn.addEventListener('click', downloadMergedJson);
 
-        fileInputArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            fileInputArea.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
-        });
+        // Drag & Drop for new JSON
+        const newJsonInput = document.getElementById('newJsonInput');
+        setupDragDrop(newJsonInput, handleNewJson);
 
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
-        });
+        // Drag & Drop for existing JSON
+        const existingJsonInput = document.getElementById('existingJsonInput');
+        setupDragDrop(existingJsonInput, handleExistingJson);
 
-        function handleFile(file) {
-            if (!file.name.endsWith('.csv')) {
-                showMessage('Please select a CSV file.', 'error');
-                return;
-            }
+        function setupDragDrop(element, handler) {
+            element.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                element.classList.add('dragover');
+            });
 
-            const fileInputText = document.getElementById('fileInputText');
-            fileInputText.innerHTML = `<strong>📄 ${file.name}</strong><br><small>File loaded successfully</small>`;
+            element.addEventListener('dragleave', () => {
+                element.classList.remove('dragover');
+            });
 
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    csvData = results.data;
-                    showMessage(`✅ CSV loaded successfully! Found ${csvData.length} wines.`, 'success');
-                    convertBtn.disabled = false;
-                    
-                    // Show preview of columns
-                    if (csvData.length > 0) {
-                        const columns = Object.keys(csvData[0]);
-                        console.log('Detected columns:', columns);
-                    }
-                },
-                error: function(error) {
-                    showMessage(`❌ Error parsing CSV: ${error.message}`, 'error');
+            element.addEventListener('drop', (e) => {
+                e.preventDefault();
+                element.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handler(files[0]);
                 }
             });
         }
 
-        convertBtn.addEventListener('click', convertToJSON);
-        downloadBtn.addEventListener('click', downloadJSON);
-        copyBtn.addEventListener('click', copyToClipboard);
+        function handleNewJson(file) {
+            if (!file || !file.name.endsWith('.json')) {
+                showMessage('Please select a valid JSON file.', 'error');
+                return;
+            }
 
-        function convertToJSON() {
-            if (!csvData) {
-                showMessage('Please upload a CSV file first.', 'error');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    newJsonData = data;
+                    
+                    document.getElementById('newJsonText').innerHTML = 
+                        `<strong>${file.name}</strong><br><small>Loaded successfully</small>`;
+                    document.getElementById('newJsonInput').classList.add('loaded');
+                    
+                    // Show preview
+                    showNewJsonPreview(data);
+                    
+                    // Activate step 2
+                    step1.classList.remove('active');
+                    step1.classList.add('completed');
+                    step2.classList.add('active');
+                    existingPanel.style.opacity = '1';
+                    
+                    showMessage(`New JSON loaded: ${data.wines ? data.wines.length : 0} wines found.`, 'success');
+                    
+                } catch (error) {
+                    showMessage('Error parsing JSON: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function handleExistingJson(file) {
+            if (!file || !file.name.endsWith('.json')) {
+                showMessage('Please select a valid JSON file.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    existingJsonData = data;
+                    
+                    document.getElementById('existingJsonText').innerHTML = 
+                        `<strong>${file.name}</strong><br><small>Loaded successfully</small>`;
+                    document.getElementById('existingJsonInput').classList.add('loaded');
+                    
+                    // Show preview
+                    showExistingJsonPreview(data);
+                    
+                    // Activate step 3
+                    step2.classList.remove('active');
+                    step2.classList.add('completed');
+                    step3.classList.add('active');
+                    mergePanel.style.opacity = '1';
+                    mergeBtn.disabled = false;
+                    
+                    showMessage(`Existing JSON loaded: ${data.wines ? data.wines.length : 0} existing wines.`, 'success');
+                    
+                } catch (error) {
+                    showMessage('Error parsing existing JSON: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function showNewJsonPreview(data) {
+            const preview = document.getElementById('newJsonPreview');
+            const wines = data.wines || [];
+            let html = `<strong>New wines to add: ${wines.length}</strong><br><br>`;
+            
+            wines.slice(0, 3).forEach((wine, index) => {
+                html += `<div class="wine-item">
+                    <strong>${wine.producer || 'N/A'}</strong> - ${wine.vintage || 'N/A'}<br>
+                    <small>${wine.denomination || 'N/A'}</small>
+                </div>`;
+            });
+            
+            if (wines.length > 3) {
+                html += `<div class="wine-item">... and ${wines.length - 3} more wines</div>`;
+            }
+            
+            preview.innerHTML = html;
+            preview.style.display = 'block';
+        }
+
+        function showExistingJsonPreview(data) {
+            const preview = document.getElementById('existingJsonPreview');
+            const wines = data.wines || [];
+            
+            // Find max ID
+            const maxId = wines.length > 0 ? Math.max(...wines.map(w => w.id || 0)) : 0;
+            
+            let html = `<strong>Existing database: ${wines.length} wines (Max ID: ${maxId})</strong><br><br>`;
+            
+            wines.slice(-3).forEach((wine) => {
+                html += `<div class="wine-item">
+                    <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
+                    <small>${wine.denomination || 'N/A'}</small>
+                </div>`;
+            });
+            
+            preview.innerHTML = html;
+            preview.style.display = 'block';
+        }
+
+        function mergeData() {
+            if (!newJsonData || !existingJsonData) {
+                showMessage('Please load both JSON files before proceeding.', 'error');
                 return;
             }
 
             showProgress(true);
+            showMessage('Merging databases...', 'success');
 
             try {
-                const wines = csvData.map((row, index) => {
-                    updateProgress((index / csvData.length) * 100);
-
-                    // Parse food pairings (split by comma or semicolon)
-                    const foodPairings = row['Food Pairings'] ? 
-                        row['Food Pairings'].split(/[,;]/).map(p => p.trim()).filter(p => p) : [];
-
-                    // Generate theme from denomination if not provided
-                    const theme = row['Theme'] || generateTheme(row['Denomination']);
-
-                    // Generate color from wine type if not provided
-                    const color = row['Color'] || generateColor(row['Denomination'], row['Grapes']);
-
-                    return {
-                        id: index + 1,
-                        producer: row['Producer'] || '',
-                        vintage: row['Vintage'] || '',
-                        denomination: row['Denomination'] || '',
-                        grapes: row['Grapes'] || '',
-                        alcohol_content: row['Alcohol Content'] || '',
-                        aging: row['Aging'] || '',
-                        serving_temperature: row['Serving Temperature'] || '',
-                        cellaring_potential: row['Cellaring Potential'] || '',
-                        vintage_description: row['Vintage Description'] || '',
-                        food_pairings: foodPairings,
-                        visual_notes: row['Visual Notes'] || '',
-                        olfactory_notes: row['Olfactory Notes'] || '',
-                        gustatory_notes: row['Gustatory Notes'] || '',
-                        radar_body: parseInt(row['RADAR-Body']) || 5,
-                        radar_tannins: parseInt(row['RADAR-Tannins']) || 5,
-                        radar_alcohol: parseInt(row['RADAR-Alcohol']) || 5,
-                        radar_persistence: parseInt(row['RADAR-Persistence']) || 5,
-                        radar_acidity: parseInt(row['RADAR-Acidity']) || 5,
-                        radar_complexity: parseInt(row['RADAR-Complexity']) || 5,
-                        aroma_1_type: row['AROMA-1 Type'] || '',
-                        aroma_1_value: parseInt(row['AROMA-1 Value']) || 0,
-                        aroma_2_type: row['AROMA-2 Type'] || '',
-                        aroma_2_value: parseInt(row['AROMA-2 Value']) || 0,
-                        aroma_3_type: row['AROMA-3 Type'] || '',
-                        aroma_3_value: parseInt(row['AROMA-3 Value']) || 0,
-                        aroma_4_type: row['AROMA-4 Type'] || '',
-                        aroma_4_value: parseInt(row['AROMA-4 Value']) || 0,
-                        aroma_5_type: row['AROMA-5 Type'] || '',
-                        aroma_5_value: parseInt(row['AROMA-5 Value']) || 0,
-                        aroma_6_type: row['AROMA-6 Type'] || '',
-                        aroma_6_value: parseInt(row['AROMA-6 Value']) || 0,
-                        aroma_7_type: row['AROMA-7 Type'] || '',
-                        aroma_7_value: parseInt(row['AROMA-7 Value']) || 0,
-                        color: color,
-                        theme: theme
-                    };
-                });
-
-                // Create the JavaScript array format instead of JSON object
-                const jsArrayOutput = `const wineDatabase = ${JSON.stringify(wines, null, 4)};`;
-
-                updateProgress(100);
-                setTimeout(() => {
-                    showProgress(false);
-                    jsonOutputArea.value = jsArrayOutput;
-                    showMessage(`🎉 Successfully converted ${wines.length} wines! Copy this code and replace the wineDatabase array in your JavaScript.`, 'success');
-                    downloadBtn.style.display = 'inline-block';
-                    copyBtn.style.display = 'inline-block';
-                }, 500);
-
-                // Store for download
-                jsonOutput = {
+                const existingWines = existingJsonData.wines || [];
+                const newWines = newJsonData.wines || [];
+                
+                // Find the highest ID in existing data
+                const maxId = existingWines.length > 0 ? 
+                    Math.max(...existingWines.map(w => w.id || 0)) : 0;
+                
+                updateProgress(30);
+                
+                // Assign new incremental IDs to new wines
+                const updatedNewWines = newWines.map((wine, index) => ({
+                    ...wine,
+                    id: maxId + index + 1
+                }));
+                
+                updateProgress(60);
+                
+                // Combine arrays
+                const allWines = [...existingWines, ...updatedNewWines];
+                
+                updateProgress(80);
+                
+                // Create merged data structure
+                mergedData = {
                     metadata: {
                         last_updated: new Date().toISOString().split('T')[0],
-                        total_wines: wines.length,
+                        total_wines: allWines.length,
                         version: "2.0.0",
-                        format: "Professional SipCard Format"
+                        format: "Professional SipCard Format",
+                        last_merge: new Date().toISOString(),
+                        previous_count: existingWines.length,
+                        added_count: newWines.length
                     },
-                    wines: wines
+                    wines: allWines
                 };
-
+                
+                updateProgress(100);
+                
+                setTimeout(() => {
+                    showProgress(false);
+                    showMergePreview();
+                    step3.classList.remove('active');
+                    step3.classList.add('completed');
+                    downloadBtn.style.display = 'inline-block';
+                    showMessage(`Merge completed! ${existingWines.length} existing wines + ${newWines.length} new wines = ${allWines.length} total wines.`, 'success');
+                }, 500);
+                
             } catch (error) {
                 showProgress(false);
-                showMessage(`❌ Error converting data: ${error.message}`, 'error');
+                showMessage('Error during merge: ' + error.message, 'error');
             }
         }
 
-        function generateTheme(denomination) {
-            if (!denomination) return 'Classic Excellence';
+        function showMergePreview() {
+            const preview = document.getElementById('mergePreview');
+            const wines = mergedData.wines;
+            const metadata = mergedData.metadata;
             
-            const denom = denomination.toLowerCase();
-            if (denom.includes('barolo') || denom.includes('barbaresco')) {
-                return 'Elegant Tradition';
-            } else if (denom.includes('champagne')) {
-                return 'Luxury Celebration';
-            } else if (denom.includes('bolgheri') || denom.includes('super tuscan')) {
-                return 'Super Tuscan Excellence';
-            } else if (denom.includes('prosecco')) {
-                return 'Italian Sparkling';
-            } else if (denom.includes('chianti')) {
-                return 'Tuscan Heritage';
-            }
-            return 'Classic Excellence';
+            let html = `<strong>Updated Database</strong><br>
+                <small>Total wines: ${metadata.total_wines} | Previous wines: ${metadata.previous_count} | New added: ${metadata.added_count}</small><br><br>`;
+            
+            // Show last few wines (the newly added ones)
+            const lastWines = wines.slice(-Math.min(5, metadata.added_count));
+            html += `<strong>Recently added wines:</strong><br>`;
+            
+            lastWines.forEach((wine) => {
+                html += `<div class="wine-item">
+                    <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
+                    <small>${wine.denomination || 'N/A'}</small>
+                </div>`;
+            });
+            
+            preview.innerHTML = html;
+            preview.style.display = 'block';
         }
 
-        function generateColor(denomination, grapes) {
-            if (!denomination && !grapes) return '#8E1C38';
-            
-            const denomLower = (denomination || '').toLowerCase();
-            const grapesLower = (grapes || '').toLowerCase();
-            
-            if (denomLower.includes('champagne') || denomLower.includes('prosecco')) {
-                return '#FFD700';
-            } else if (grapesLower.includes('pinot grigio') || grapesLower.includes('chardonnay')) {
-                return '#F5DEB3';
-            } else if (grapesLower.includes('nebbiolo') || denomLower.includes('barolo')) {
-                return '#8B0000';
-            } else if (grapesLower.includes('cabernet') || grapesLower.includes('merlot')) {
-                return '#722F37';
-            }
-            return '#8E1C38';
-        }
+        function downloadMergedJson() {
+            if (!mergedData) return;
 
-        function downloadJSON() {
-            if (!jsonOutput) return;
-
-            const blob = new Blob([JSON.stringify(jsonOutput, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify(mergedData, null, 2)], { 
+                type: 'application/json' 
+            });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
@@ -562,13 +609,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            showMessage('📥 wines.json file downloaded successfully!', 'success');
-        }
-
-        function copyToClipboard() {
-            jsonOutputArea.select();
-            document.execCommand('copy');
-            showMessage('📋 JavaScript array copied to clipboard! Paste this into your wine list code.', 'success');
+            showMessage('Updated wines.json downloaded successfully! Replace the file in your project\'s data/ folder.', 'success');
         }
 
         function showMessage(message, type) {
