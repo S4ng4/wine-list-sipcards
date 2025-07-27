@@ -207,35 +207,6 @@
             transition: width 0.3s ease;
         }
 
-        .step-counter {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
-
-        .step {
-            flex: 1;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 0 0.5rem;
-            background: var(--bg-light);
-            border: 2px solid #dee2e6;
-        }
-
-        .step.active {
-            background: var(--primary-gold);
-            border-color: var(--primary-wine);
-            color: var(--primary-wine);
-            font-weight: bold;
-        }
-
-        .step.completed {
-            background: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-        }
-
         .instructions {
             background: rgba(212, 180, 86, 0.1);
             border: 1px solid var(--primary-gold);
@@ -269,6 +240,33 @@
             margin: 1rem 0;
         }
 
+        .option-selector {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .option-selector label {
+            display: block;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .option-selector input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+
+        #existingFileSection {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(212, 180, 86, 0.05);
+            border-radius: 8px;
+            border: 1px solid var(--primary-gold);
+        }
+
         @media (max-width: 768px) {
             .back-link {
                 position: relative;
@@ -276,14 +274,6 @@
                 left: auto;
                 display: inline-block;
                 margin-bottom: 1rem;
-            }
-            
-            .step-counter {
-                flex-direction: column;
-            }
-            
-            .step {
-                margin: 0.25rem 0;
             }
         }
     </style>
@@ -294,19 +284,19 @@
     <div class="container">
         <div class="header">
             <h1>Wine JSON Updater</h1>
-            <p>Add new wines to your database by finding the last ID and appending new entries</p>
+            <p>Add new wines to your database with automatic ID assignment</p>
         </div>
 
         <div class="instructions">
-            <h3>How this updater works:</h3>
+            <h3>How to use this updater:</h3>
             <ol>
-                <li><strong>Upload new wines JSON:</strong> File with wines data (without IDs)</li>
-                <li><strong>Upload existing wines.json:</strong> Your current database from data/ folder</li>
-                <li><strong>Automatic ID assignment:</strong> New wines get IDs starting from last ID + 1</li>
-                <li><strong>Download updated file:</strong> Complete wines.json ready for your project</li>
+                <li><strong>Upload new wines JSON:</strong> File with wine data (without IDs)</li>
+                <li><strong>Choose update method:</strong> Start new database or add to existing one</li>
+                <li><strong>Automatic processing:</strong> IDs are assigned automatically</li>
+                <li><strong>Download result:</strong> Get your updated wines.json file</li>
             </ol>
             
-            <div class="template-example">Expected JSON format for new wines:
+            <div class="template-example">Expected JSON format:
 [
   {
     "producer": "Producer Name",
@@ -314,28 +304,15 @@
     "denomination": "DOC Barbera d'Alba",
     "grapes": "Barbera 100%",
     "alcohol_content": "14.5",
-    // ... (no ID field needed)
+    "aging": "12 months in French oak barrels",
+    "serving_temperature": "16-18°C",
+    // ... (no ID field needed - will be auto-assigned)
   }
 ]</div>
         </div>
 
-        <div class="step-counter">
-            <div class="step active" id="step1">
-                <div>1</div>
-                <div>New Wines JSON</div>
-            </div>
-            <div class="step" id="step2">
-                <div>2</div>
-                <div>Existing Database</div>
-            </div>
-            <div class="step" id="step3">
-                <div>3</div>
-                <div>Merge & Download</div>
-            </div>
-        </div>
-
         <div class="conversion-panel">
-            <div class="section-title">Step 1: Upload New Wines JSON</div>
+            <div class="section-title">Upload New Wines JSON</div>
             <div class="file-input" onclick="document.getElementById('newWinesFile').click()" id="newWinesInput">
                 <input type="file" id="newWinesFile" accept=".json" />
                 <div id="newWinesText">
@@ -344,56 +321,76 @@
                 </div>
             </div>
             <div id="newWinesPreview" class="preview" style="display: none;"></div>
-        </div>
 
-        <div class="conversion-panel" id="existingPanel" style="opacity: 0.5;">
-            <div class="section-title">Step 2: Upload Existing wines.json</div>
-            <div class="file-input" onclick="document.getElementById('existingWinesFile').click()" id="existingWinesInput">
-                <input type="file" id="existingWinesFile" accept=".json" />
-                <div id="existingWinesText">
-                    <strong>Upload your current wines.json from data/ folder</strong><br>
-                    <small>Your existing wine database</small>
-                </div>
+            <div class="option-selector" id="optionSelector" style="display: none;">
+                <strong>How do you want to process these wines?</strong>
+                <label>
+                    <input type="radio" name="updateMethod" value="new" checked>
+                    Create new database (IDs start from 1)
+                </label>
+                <label>
+                    <input type="radio" name="updateMethod" value="append">
+                    Add to existing database (upload your current wines.json)
+                </label>
             </div>
-            <div id="existingWinesPreview" class="preview" style="display: none;"></div>
+
+            <div id="existingFileSection" style="display: none;">
+                <div class="section-title">Upload Existing wines.json</div>
+                <div class="file-input" onclick="document.getElementById('existingWinesFile').click()" id="existingWinesInput">
+                    <input type="file" id="existingWinesFile" accept=".json" />
+                    <div id="existingWinesText">
+                        <strong>Upload your current wines.json from data/ folder</strong><br>
+                        <small>Your existing wine database</small>
+                    </div>
+                </div>
+                <div id="existingWinesPreview" class="preview" style="display: none;"></div>
+            </div>
         </div>
 
-        <div class="conversion-panel" id="mergePanel" style="opacity: 0.5;">
-            <div class="section-title">Step 3: Merge and Download</div>
-            <button class="btn" id="mergeBtn" disabled>Merge and Assign IDs</button>
+        <div class="conversion-panel">
+            <div class="section-title">Process and Download</div>
+            <button class="btn" id="processBtn" disabled>Process Wines and Assign IDs</button>
             <div class="progress" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
             <div id="statusMessage"></div>
-            <div id="mergePreview" class="preview" style="display: none;"></div>
-            <button class="btn btn-success" id="downloadBtn" style="display: none;">Download Updated wines.json</button>
+            <div id="processPreview" class="preview" style="display: none;"></div>
+            <button class="btn btn-success" id="downloadBtn" style="display: none;">Download wines.json</button>
         </div>
     </div>
 
     <script>
         let newWinesData = null;
         let existingWinesData = null;
-        let mergedData = null;
+        let processedData = null;
 
         // DOM Elements
         const newWinesFile = document.getElementById('newWinesFile');
         const existingWinesFile = document.getElementById('existingWinesFile');
-        const mergeBtn = document.getElementById('mergeBtn');
+        const processBtn = document.getElementById('processBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const statusMessage = document.getElementById('statusMessage');
-
-        // Steps
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        const existingPanel = document.getElementById('existingPanel');
-        const mergePanel = document.getElementById('mergePanel');
+        const optionSelector = document.getElementById('optionSelector');
+        const existingFileSection = document.getElementById('existingFileSection');
 
         // File input handlers
         newWinesFile.addEventListener('change', (e) => handleNewWinesFile(e.target.files[0]));
         existingWinesFile.addEventListener('change', (e) => handleExistingWinesFile(e.target.files[0]));
-        mergeBtn.addEventListener('click', mergeData);
-        downloadBtn.addEventListener('click', downloadMergedJson);
+        processBtn.addEventListener('click', processWines);
+        downloadBtn.addEventListener('click', downloadProcessedJson);
+
+        // Radio button handler
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'updateMethod') {
+                if (e.target.value === 'append') {
+                    existingFileSection.style.display = 'block';
+                } else {
+                    existingFileSection.style.display = 'none';
+                    existingWinesData = null;
+                    updateProcessButton();
+                }
+            }
+        });
 
         // Drag & Drop setup
         const newWinesInput = document.getElementById('newWinesInput');
@@ -448,16 +445,12 @@
                         `<strong>${file.name}</strong><br><small>Loaded successfully</small>`;
                     document.getElementById('newWinesInput').classList.add('loaded');
                     
-                    // Show preview
+                    // Show preview and options
                     showNewWinesPreview(wines);
+                    optionSelector.style.display = 'block';
                     
-                    // Activate step 2
-                    step1.classList.remove('active');
-                    step1.classList.add('completed');
-                    step2.classList.add('active');
-                    existingPanel.style.opacity = '1';
-                    
-                    showMessage(`New wines loaded: ${wines.length} wines to add.`, 'success');
+                    updateProcessButton();
+                    showMessage(`New wines loaded: ${wines.length} wines to process.`, 'success');
                     
                 } catch (error) {
                     showMessage('Error parsing new wines JSON: ' + error.message, 'error');
@@ -485,13 +478,7 @@
                     // Show preview
                     showExistingWinesPreview(data);
                     
-                    // Activate step 3
-                    step2.classList.remove('active');
-                    step2.classList.add('completed');
-                    step3.classList.add('active');
-                    mergePanel.style.opacity = '1';
-                    mergeBtn.disabled = false;
-                    
+                    updateProcessButton();
                     showMessage(`Existing database loaded: ${data.wines ? data.wines.length : 0} wines in database.`, 'success');
                     
                 } catch (error) {
@@ -501,9 +488,19 @@
             reader.readAsText(file);
         }
 
+        function updateProcessButton() {
+            const selectedMethod = document.querySelector('input[name="updateMethod"]:checked').value;
+            
+            if (selectedMethod === 'new') {
+                processBtn.disabled = !newWinesData;
+            } else {
+                processBtn.disabled = !newWinesData || !existingWinesData;
+            }
+        }
+
         function showNewWinesPreview(wines) {
             const preview = document.getElementById('newWinesPreview');
-            let html = `<strong>New wines to add: ${wines.length}</strong><br><br>`;
+            let html = `<strong>New wines to process: ${wines.length}</strong><br><br>`;
             
             wines.slice(0, 3).forEach((wine, index) => {
                 html += `<div class="wine-item">
@@ -542,81 +539,96 @@
             preview.style.display = 'block';
         }
 
-        function mergeData() {
-            if (!newWinesData || !existingWinesData) {
-                showMessage('Please load both JSON files before proceeding.', 'error');
+        function processWines() {
+            if (!newWinesData) {
+                showMessage('Please upload new wines JSON first.', 'error');
+                return;
+            }
+
+            const selectedMethod = document.querySelector('input[name="updateMethod"]:checked').value;
+            
+            if (selectedMethod === 'append' && !existingWinesData) {
+                showMessage('Please upload existing wines.json file.', 'error');
                 return;
             }
 
             showProgress(true);
-            showMessage('Merging databases and assigning IDs...', 'success');
+            showMessage('Processing wines and assigning IDs...', 'success');
 
             try {
-                const existingWines = existingWinesData.wines || [];
-                const newWines = newWinesData;
-                
-                // Find the highest ID in existing data
-                const maxId = existingWines.length > 0 ? 
-                    Math.max(...existingWines.map(w => w.id || 0)) : 0;
-                
-                updateProgress(30);
-                
-                // Assign new incremental IDs to new wines
-                const winesWithIds = newWines.map((wine, index) => ({
-                    id: maxId + index + 1,
+                let allWines = [];
+                let startId = 1;
+                let previousCount = 0;
+
+                updateProgress(25);
+
+                if (selectedMethod === 'append' && existingWinesData) {
+                    const existingWines = existingWinesData.wines || [];
+                    allWines = [...existingWines];
+                    previousCount = existingWines.length;
+                    startId = existingWines.length > 0 ? Math.max(...existingWines.map(w => w.id || 0)) + 1 : 1;
+                }
+
+                updateProgress(50);
+
+                // Assign IDs to new wines
+                const winesWithIds = newWinesData.map((wine, index) => ({
+                    id: startId + index,
                     ...wine
                 }));
-                
-                updateProgress(60);
-                
-                // Combine arrays
-                const allWines = [...existingWines, ...winesWithIds];
-                
-                updateProgress(80);
-                
-                // Create merged data structure
-                mergedData = {
+
+                updateProgress(75);
+
+                // Add new wines to the collection
+                allWines = [...allWines, ...winesWithIds];
+
+                // Create final data structure
+                processedData = {
                     metadata: {
                         last_updated: new Date().toISOString().split('T')[0],
                         total_wines: allWines.length,
                         version: "2.0.0",
                         format: "Professional SipCard Format",
-                        last_merge: new Date().toISOString(),
-                        previous_count: existingWines.length,
-                        added_count: newWines.length,
-                        last_id: maxId + newWines.length
+                        processed_date: new Date().toISOString(),
+                        method: selectedMethod,
+                        previous_count: previousCount,
+                        added_count: newWinesData.length,
+                        last_id: startId + newWinesData.length - 1
                     },
                     wines: allWines
                 };
-                
+
                 updateProgress(100);
-                
+
                 setTimeout(() => {
                     showProgress(false);
-                    showMergePreview();
-                    step3.classList.remove('active');
-                    step3.classList.add('completed');
+                    showProcessPreview();
                     downloadBtn.style.display = 'inline-block';
-                    showMessage(`Merge completed! Added ${newWines.length} new wines with IDs ${maxId + 1} to ${maxId + newWines.length}. Total: ${allWines.length} wines.`, 'success');
+                    
+                    if (selectedMethod === 'new') {
+                        showMessage(`New database created! ${newWinesData.length} wines with IDs 1 to ${newWinesData.length}.`, 'success');
+                    } else {
+                        showMessage(`Database updated! Added ${newWinesData.length} new wines with IDs ${startId} to ${startId + newWinesData.length - 1}. Total: ${allWines.length} wines.`, 'success');
+                    }
                 }, 500);
-                
+
             } catch (error) {
                 showProgress(false);
-                showMessage('Error during merge: ' + error.message, 'error');
+                showMessage('Error processing wines: ' + error.message, 'error');
             }
         }
 
-        function showMergePreview() {
-            const preview = document.getElementById('mergePreview');
-            const wines = mergedData.wines;
-            const metadata = mergedData.metadata;
+        function showProcessPreview() {
+            const preview = document.getElementById('processPreview');
+            const wines = processedData.wines;
+            const metadata = processedData.metadata;
             
-            let html = `<strong>Updated Database</strong><br>
-                <small>Total wines: ${metadata.total_wines} | Previous: ${metadata.previous_count} | Added: ${metadata.added_count} | Last ID: ${metadata.last_id}</small><br><br>`;
+            let html = `<strong>Processed Database</strong><br>
+                <small>Total wines: ${metadata.total_wines} | Method: ${metadata.method} | Added: ${metadata.added_count}</small><br><br>`;
             
-            // Show the newly added wines
+            // Show the newly processed wines
             const newlyAdded = wines.slice(-metadata.added_count);
-            html += `<strong>Newly added wines with IDs:</strong><br>`;
+            html += `<strong>Newly processed wines with IDs:</strong><br>`;
             
             newlyAdded.slice(0, 5).forEach((wine) => {
                 html += `<div class="wine-item">
@@ -626,17 +638,17 @@
             });
             
             if (newlyAdded.length > 5) {
-                html += `<div class="wine-item">... and ${newlyAdded.length - 5} more newly added wines</div>`;
+                html += `<div class="wine-item">... and ${newlyAdded.length - 5} more processed wines</div>`;
             }
             
             preview.innerHTML = html;
             preview.style.display = 'block';
         }
 
-        function downloadMergedJson() {
-            if (!mergedData) return;
+        function downloadProcessedJson() {
+            if (!processedData) return;
 
-            const blob = new Blob([JSON.stringify(mergedData, null, 2)], { 
+            const blob = new Blob([JSON.stringify(processedData, null, 2)], { 
                 type: 'application/json' 
             });
             const url = URL.createObjectURL(blob);
@@ -648,7 +660,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            showMessage('Updated wines.json downloaded successfully! Replace this file in your project\'s data/ folder.', 'success');
+            showMessage('wines.json downloaded successfully! Replace this file in your project\'s data/ folder.', 'success');
         }
 
         function showMessage(message, type) {
