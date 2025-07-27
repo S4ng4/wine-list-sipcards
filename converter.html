@@ -349,13 +349,29 @@
             <div class="option-selector" id="optionSelector" style="display: none;">
                 <strong>How do you want to add this wine?</strong>
                 <label>
-                    <input type="radio" name="updateMethod" value="new" checked>
+                    <input type="radio" name="updateMethod" value="auto" checked>
+                    Auto-detect next ID from index.html (recommended)
+                </label>
+                <label>
+                    <input type="radio" name="updateMethod" value="new">
                     Create new database (this will be wine ID: 1)
                 </label>
                 <label>
-                    <input type="radio" name="updateMethod" value="append">
-                    Add to existing database (upload your current wines.json)
+                    <input type="radio" name="updateMethod" value="manual">
+                    Manual: upload existing wines.json
                 </label>
+            </div>
+
+            <div id="indexFileSection" style="display: none;">
+                <div class="section-title">Upload Your index.html File</div>
+                <div class="file-input" onclick="document.getElementById('indexFile').click()" id="indexInput">
+                    <input type="file" id="indexFile" accept=".html" />
+                    <div id="indexText">
+                        <strong>Upload your wine list index.html file</strong><br>
+                        <small>Tool will scan for highest wine ID in the data</small>
+                    </div>
+                </div>
+                <div id="indexPreview" class="preview" style="display: none;"></div>
             </div>
 
             <div id="existingFileSection" style="display: none;">
@@ -399,39 +415,54 @@
             'aroma_7_type', 'aroma_7_value', 'color', 'theme'
         ];
 
+        let indexData = null;
+
         // DOM Elements
         const wineTemplateFile = document.getElementById('wineTemplateFile');
         const existingWinesFile = document.getElementById('existingWinesFile');
+        const indexFile = document.getElementById('indexFile');
         const processBtn = document.getElementById('processBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const statusMessage = document.getElementById('statusMessage');
         const optionSelector = document.getElementById('optionSelector');
         const existingFileSection = document.getElementById('existingFileSection');
+        const indexFileSection = document.getElementById('indexFileSection');
 
         // File input handlers
         wineTemplateFile.addEventListener('change', (e) => handleWineTemplateFile(e.target.files[0]));
         existingWinesFile.addEventListener('change', (e) => handleExistingWinesFile(e.target.files[0]));
+        indexFile.addEventListener('change', (e) => handleIndexFile(e.target.files[0]));
         processBtn.addEventListener('click', processWine);
         downloadBtn.addEventListener('click', downloadProcessedJson);
 
         // Radio button handler
         document.addEventListener('change', (e) => {
             if (e.target.name === 'updateMethod') {
-                if (e.target.value === 'append') {
-                    existingFileSection.style.display = 'block';
-                } else {
+                if (e.target.value === 'auto') {
+                    indexFileSection.style.display = 'block';
                     existingFileSection.style.display = 'none';
                     existingWinesData = null;
-                    updateProcessButton();
+                } else if (e.target.value === 'manual') {
+                    existingFileSection.style.display = 'block';
+                    indexFileSection.style.display = 'none';
+                    indexData = null;
+                } else {
+                    existingFileSection.style.display = 'none';
+                    indexFileSection.style.display = 'none';
+                    existingWinesData = null;
+                    indexData = null;
                 }
+                updateProcessButton();
             }
         });
 
         // Drag & Drop setup
         const wineTemplateInput = document.getElementById('wineTemplateInput');
         const existingWinesInput = document.getElementById('existingWinesInput');
+        const indexInput = document.getElementById('indexInput');
         setupDragDrop(wineTemplateInput, handleWineTemplateFile);
         setupDragDrop(existingWinesInput, handleExistingWinesFile);
+        setupDragDrop(indexInput, handleIndexFile);
 
         function setupDragDrop(element, handler) {
             element.addEventListener('dragover', (e) => {
@@ -533,7 +564,119 @@
             };
         }
 
-        function handleExistingWinesFile(file) {
+        function handleIndexFile(file) {
+            if (!file || !file.name.endsWith('.html')) {
+                showMessage('Please select a valid HTML file.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const htmlContent = e.target.result;
+                    const highestId = extractHighestIdFromHtml(htmlContent);
+                    
+                    if (highestId === null) {
+                        showMessage('Could not find wine data in the HTML file. Make sure this is your wine list index.html.', 'error');
+                        return;
+                    }
+                    
+                    indexData = { highestId: highestId };
+                    
+                    document.getElementById('indexText').innerHTML = 
+                        `<strong>${file.name}</strong><br><small>Loaded successfully</small>`;
+                    document.getElementById('indexInput').classList.add('loaded');
+                    
+                    // Show preview
+                    showIndexPreview(highestId);
+                    
+                    updateProcessButton();
+                    showMessage(`Index file analyzed: Found ${highestId} wines. Next wine will get ID: ${highestId + 1}`, 'success');
+                    
+                } catch (error) {
+                    showMessage('Error reading HTML file: ' + error.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function extractHighestIdFromHtml(htmlContent) {
+            try {
+                // Look for various patterns where wine data might be stored
+                let highestId = 0;
+                
+                // Pattern 1: Look for wineDatabase array
+                const wineDatabaseMatch = htmlContent.match(/const\s+wineDatabase\s*=\s*\[([\s\S]*?)\];/);
+                if (wineDatabaseMatch) {
+                    const wineDataStr = wineDatabaseMatch[1];
+                    // Find all id values
+                    const idMatches = wineDataStr.match(/"?id"?\s*:\s*(\d+)/g);
+                    if (idMatches) {
+                        idMatches.forEach(match => {
+                            const id = parseInt(match.match(/(\d+)/)[1]);
+                            if (id > highestId) highestId = id;
+                        });
+                    }
+                }
+                
+                // Pattern 2: Look for wine objects with id properties
+                const wineObjectMatches = htmlContent.match(/\{\s*"?id"?\s*:\s*(\d+)/g);
+                if (wineObjectMatches) {
+                    wineObjectMatches.forEach(match => {
+                        const id = parseInt(match.match(/(\d+)/)[1]);
+                        if (id > highestId) highestId = id;
+                    });
+                }
+                
+                // Pattern 3: Look for stats or counters
+                const statsMatches = htmlContent.match(/Total[:\s]*(\d+)|total[:\s]*(\d+)|count[:\s]*(\d+)/gi);
+                if (statsMatches) {
+                    statsMatches.forEach(match => {
+                        const numbers = match.match(/(\d+)/g);
+                        if (numbers) {
+                            numbers.forEach(num => {
+                                const id = parseInt(num);
+                                if (id > highestId) highestId = id;
+                            });
+                        }
+                    });
+                }
+                
+                // Pattern 4: Look for any JSON data in script tags
+                const scriptMatches = htmlContent.match(/<script[^>]*>([\s\S]*?)<\/script>/g);
+                if (scriptMatches) {
+                    scriptMatches.forEach(script => {
+                        const idMatches = script.match(/"?id"?\s*:\s*(\d+)/g);
+                        if (idMatches) {
+                            idMatches.forEach(match => {
+                                const id = parseInt(match.match(/(\d+)/)[1]);
+                                if (id > highestId) highestId = id;
+                            });
+                        }
+                    });
+                }
+                
+                return highestId > 0 ? highestId : null;
+                
+            } catch (error) {
+                console.error('Error extracting IDs from HTML:', error);
+                return null;
+            }
+        }
+
+        function showIndexPreview(highestId) {
+            const preview = document.getElementById('indexPreview');
+            let html = `<strong>Index File Analysis</strong><br><br>`;
+            
+            html += `<div class="wine-item">
+                <strong>Highest Wine ID Found: ${highestId}</strong><br>
+                <small>Next wine will be assigned ID: ${highestId + 1}</small><br>
+                <small>Analysis completed successfully</small>
+            </div>`;
+            
+            preview.innerHTML = html;
+            preview.style.display = 'block';
+        }
             if (!file || !file.name.endsWith('.json')) {
                 showMessage('Please select a valid JSON file.', 'error');
                 return;
@@ -567,7 +710,9 @@
             
             if (selectedMethod === 'new') {
                 processBtn.disabled = !wineTemplateData;
-            } else {
+            } else if (selectedMethod === 'auto') {
+                processBtn.disabled = !wineTemplateData || !indexData;
+            } else if (selectedMethod === 'manual') {
                 processBtn.disabled = !wineTemplateData || !existingWinesData;
             }
         }
@@ -617,8 +762,13 @@
 
             const selectedMethod = document.querySelector('input[name="updateMethod"]:checked').value;
             
-            if (selectedMethod === 'append' && !existingWinesData) {
+            if (selectedMethod === 'manual' && !existingWinesData) {
                 showMessage('Please upload existing wines.json file.', 'error');
+                return;
+            }
+            
+            if (selectedMethod === 'auto' && !indexData) {
+                showMessage('Please upload your index.html file.', 'error');
                 return;
             }
 
@@ -626,15 +776,17 @@
             showMessage('Processing wine and assigning ID...', 'success');
 
             try {
-                let allWines = [];
                 let newId = 1;
                 let previousCount = 0;
+                let method = selectedMethod;
 
                 updateProgress(33);
 
-                if (selectedMethod === 'append' && existingWinesData) {
+                if (selectedMethod === 'auto') {
+                    newId = indexData.highestId + 1;
+                    previousCount = indexData.highestId;
+                } else if (selectedMethod === 'manual' && existingWinesData) {
                     const existingWines = existingWinesData.wines || [];
-                    allWines = [...existingWines];
                     previousCount = existingWines.length;
                     newId = existingWines.length > 0 ? Math.max(...existingWines.map(w => w.id || 0)) + 1 : 1;
                 }
@@ -647,21 +799,29 @@
                     ...wineTemplateData
                 };
 
-                // Add new wine to collection
-                allWines.push(wineWithId);
+                // For auto and new methods, we only have the new wine
+                // For manual method, we would need to create complete database
+                let allWines = [];
+                if (selectedMethod === 'manual' && existingWinesData) {
+                    allWines = [...(existingWinesData.wines || []), wineWithId];
+                } else {
+                    // For auto and new methods, output just the new wine data
+                    allWines = [wineWithId];
+                }
 
                 // Create final data structure
                 processedData = {
                     metadata: {
                         last_updated: new Date().toISOString().split('T')[0],
-                        total_wines: allWines.length,
+                        total_wines: selectedMethod === 'auto' ? newId : allWines.length,
                         version: "2.0.0",
                         format: "Professional SipCard Format",
                         processed_date: new Date().toISOString(),
-                        method: selectedMethod,
+                        method: method,
                         previous_count: previousCount,
                         added_count: 1,
-                        last_id: newId
+                        last_id: newId,
+                        note: selectedMethod === 'auto' ? 'Auto-detected from index.html - merge with your existing wines.json' : ''
                     },
                     wines: allWines
                 };
@@ -675,6 +835,8 @@
                     
                     if (selectedMethod === 'new') {
                         showMessage(`New database created with 1 wine (ID: 1)!`, 'success');
+                    } else if (selectedMethod === 'auto') {
+                        showMessage(`Wine processed with auto-detected ID: ${newId}. Add this to your existing wines.json!`, 'success');
                     } else {
                         showMessage(`Wine added to database with ID: ${newId}. Total wines: ${allWines.length}`, 'success');
                     }
