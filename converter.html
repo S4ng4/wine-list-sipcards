@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wine JSON Updater</title>
+    <title>Wine JSON Loader</title>
     <style>
         :root {
             --primary-gold: #D4B456;
@@ -207,35 +207,6 @@
             transition: width 0.3s ease;
         }
 
-        .step-counter {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
-
-        .step {
-            flex: 1;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 10px;
-            margin: 0 0.5rem;
-            background: var(--bg-light);
-            border: 2px solid #dee2e6;
-        }
-
-        .step.active {
-            background: var(--primary-gold);
-            border-color: var(--primary-wine);
-            color: var(--primary-wine);
-            font-weight: bold;
-        }
-
-        .step.completed {
-            background: #d4edda;
-            border-color: #28a745;
-            color: #155724;
-        }
-
         .instructions {
             background: rgba(212, 180, 86, 0.1);
             border: 1px solid var(--primary-gold);
@@ -257,6 +228,16 @@
             margin-bottom: 0.5rem;
         }
 
+        .step-indicator {
+            background: var(--primary-gold);
+            color: var(--primary-wine);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
         @media (max-width: 768px) {
             .back-link {
                 position: relative;
@@ -264,14 +245,6 @@
                 left: auto;
                 display: inline-block;
                 margin-bottom: 1rem;
-            }
-            
-            .step-counter {
-                flex-direction: column;
-            }
-            
-            .step {
-                margin: 0.25rem 0;
             }
         }
     </style>
@@ -281,103 +254,78 @@
     
     <div class="container">
         <div class="header">
-            <h1>Wine JSON Updater</h1>
-            <p>Update your wines.json database with new wines while maintaining existing IDs</p>
+            <h1>Wine JSON Loader</h1>
+            <p>Upload your wines JSON file and automatically load it as your new wines.json database</p>
         </div>
 
         <div class="instructions">
-            <h3>How to use this updater:</h3>
+            <h3>How to use this loader:</h3>
             <ol>
-                <li><strong>Load new JSON:</strong> File generated from the CSV-to-JSON converter</li>
-                <li><strong>Load existing wines.json:</strong> Your current database from the data/ folder</li>
-                <li><strong>Automatic merge:</strong> New wines will receive incremental IDs</li>
-                <li><strong>Download updated:</strong> Download the complete and updated wines.json</li>
+                <li><strong>Upload JSON:</strong> Select your wines JSON file from your computer</li>
+                <li><strong>Validate data:</strong> Review the wines that will be loaded</li>
+                <li><strong>Process IDs:</strong> Ensure all wines have proper sequential IDs</li>
+                <li><strong>Download:</strong> Get your processed wines.json ready for the data/ folder</li>
             </ol>
         </div>
 
-        <div class="step-counter">
-            <div class="step active" id="step1">
-                <div>1</div>
-                <div>New JSON</div>
-            </div>
-            <div class="step" id="step2">
-                <div>2</div>
-                <div>Existing JSON</div>
-            </div>
-            <div class="step" id="step3">
-                <div>3</div>
-                <div>Merge & Download</div>
-            </div>
-        </div>
-
         <div class="conversion-panel">
-            <div class="section-title">Step 1: Load New JSON</div>
-            <div class="file-input" onclick="document.getElementById('newJsonFile').click()" id="newJsonInput">
-                <input type="file" id="newJsonFile" accept=".json" />
-                <div id="newJsonText">
-                    <strong>Click here or drag & drop your new JSON file</strong><br>
-                    <small>File generated from the CSV-to-JSON converter</small>
+            <div class="section-title">Upload Wine JSON File</div>
+            <div class="step-indicator">Step 1: Select JSON File</div>
+            
+            <div class="file-input" onclick="document.getElementById('jsonFile').click()" id="jsonInput">
+                <input type="file" id="jsonFile" accept=".json" />
+                <div id="jsonText">
+                    <strong>Click here or drag & drop your JSON file</strong><br>
+                    <small>Select the wines JSON file you want to load</small>
                 </div>
             </div>
-            <div id="newJsonPreview" class="preview" style="display: none;"></div>
+            <div id="jsonPreview" class="preview" style="display: none;"></div>
         </div>
 
-        <div class="conversion-panel" id="existingPanel" style="opacity: 0.5;">
-            <div class="section-title">Step 2: Load Existing wines.json</div>
-            <div class="file-input" onclick="document.getElementById('existingJsonFile').click()" id="existingJsonInput">
-                <input type="file" id="existingJsonFile" accept=".json" />
-                <div id="existingJsonText">
-                    <strong>Load your existing wines.json file</strong><br>
-                    <small>The file from your project's data/ folder</small>
-                </div>
-            </div>
-            <div id="existingJsonPreview" class="preview" style="display: none;"></div>
-        </div>
-
-        <div class="conversion-panel" id="mergePanel" style="opacity: 0.5;">
-            <div class="section-title">Step 3: Merge and Download</div>
-            <button class="btn" id="mergeBtn" disabled>Merge Databases</button>
+        <div class="conversion-panel" id="processPanel" style="opacity: 0.5;">
+            <div class="section-title">Process and Validate</div>
+            <div class="step-indicator">Step 2: Process Data</div>
+            
+            <button class="btn" id="processBtn" disabled>Process and Validate JSON</button>
             <div class="progress" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
             <div id="statusMessage"></div>
-            <div id="mergePreview" class="preview" style="display: none;"></div>
-            <button class="btn btn-success" id="downloadBtn" style="display: none;">Download Updated wines.json</button>
+            <div id="processPreview" class="preview" style="display: none;"></div>
+        </div>
+
+        <div class="conversion-panel" id="downloadPanel" style="opacity: 0.5;">
+            <div class="section-title">Download Updated wines.json</div>
+            <div class="step-indicator">Step 3: Download & Replace</div>
+            
+            <button class="btn btn-success" id="downloadBtn" style="display: none;">Download wines.json</button>
+            
+            <div style="margin-top: 1rem; padding: 1rem; background: rgba(212, 180, 86, 0.1); border-radius: 8px;">
+                <strong>Next Step:</strong> Replace the wines.json file in your project's data/ folder with the downloaded file.
+            </div>
         </div>
     </div>
 
     <script>
-        let newJsonData = null;
-        let existingJsonData = null;
-        let mergedData = null;
+        let uploadedJsonData = null;
+        let processedData = null;
 
         // DOM Elements
-        const newJsonFile = document.getElementById('newJsonFile');
-        const existingJsonFile = document.getElementById('existingJsonFile');
-        const mergeBtn = document.getElementById('mergeBtn');
+        const jsonFile = document.getElementById('jsonFile');
+        const processBtn = document.getElementById('processBtn');
         const downloadBtn = document.getElementById('downloadBtn');
         const statusMessage = document.getElementById('statusMessage');
-
-        // Steps
-        const step1 = document.getElementById('step1');
-        const step2 = document.getElementById('step2');
-        const step3 = document.getElementById('step3');
-        const existingPanel = document.getElementById('existingPanel');
-        const mergePanel = document.getElementById('mergePanel');
+        const processPanel = document.getElementById('processPanel');
+        const downloadPanel = document.getElementById('downloadPanel');
 
         // File input handlers
-        newJsonFile.addEventListener('change', (e) => handleNewJson(e.target.files[0]));
-        existingJsonFile.addEventListener('change', (e) => handleExistingJson(e.target.files[0]));
-        mergeBtn.addEventListener('click', mergeData);
-        downloadBtn.addEventListener('click', downloadMergedJson);
+        jsonFile.addEventListener('change', (e) => handleJsonFile(e.target.files[0]));
+        processBtn.addEventListener('click', processJsonData);
+        downloadBtn.addEventListener('click', downloadProcessedJson);
 
-        // Drag & Drop for new JSON
-        const newJsonInput = document.getElementById('newJsonInput');
-        setupDragDrop(newJsonInput, handleNewJson);
-
-        // Drag & Drop for existing JSON
-        const existingJsonInput = document.getElementById('existingJsonInput');
-        setupDragDrop(existingJsonInput, handleExistingJson);
+        // Drag & Drop setup
+        const jsonInput = document.getElementById('jsonInput');
+        setupDragDrop(jsonInput, handleJsonFile);
 
         function setupDragDrop(element, handler) {
             element.addEventListener('dragover', (e) => {
@@ -399,7 +347,7 @@
             });
         }
 
-        function handleNewJson(file) {
+        function handleJsonFile(file) {
             if (!file || !file.name.endsWith('.json')) {
                 showMessage('Please select a valid JSON file.', 'error');
                 return;
@@ -409,22 +357,20 @@
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
-                    newJsonData = data;
+                    uploadedJsonData = data;
                     
-                    document.getElementById('newJsonText').innerHTML = 
+                    document.getElementById('jsonText').innerHTML = 
                         `<strong>${file.name}</strong><br><small>Loaded successfully</small>`;
-                    document.getElementById('newJsonInput').classList.add('loaded');
+                    document.getElementById('jsonInput').classList.add('loaded');
                     
                     // Show preview
-                    showNewJsonPreview(data);
+                    showJsonPreview(data);
                     
-                    // Activate step 2
-                    step1.classList.remove('active');
-                    step1.classList.add('completed');
-                    step2.classList.add('active');
-                    existingPanel.style.opacity = '1';
+                    // Enable next step
+                    processPanel.style.opacity = '1';
+                    processBtn.disabled = false;
                     
-                    showMessage(`New JSON loaded: ${data.wines ? data.wines.length : 0} wines found.`, 'success');
+                    showMessage(`JSON file loaded: ${data.wines ? data.wines.length : 0} wines found.`, 'success');
                     
                 } catch (error) {
                     showMessage('Error parsing JSON: ' + error.message, 'error');
@@ -433,70 +379,126 @@
             reader.readAsText(file);
         }
 
-        function handleExistingJson(file) {
-            if (!file || !file.name.endsWith('.json')) {
-                showMessage('Please select a valid JSON file.', 'error');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    existingJsonData = data;
-                    
-                    document.getElementById('existingJsonText').innerHTML = 
-                        `<strong>${file.name}</strong><br><small>Loaded successfully</small>`;
-                    document.getElementById('existingJsonInput').classList.add('loaded');
-                    
-                    // Show preview
-                    showExistingJsonPreview(data);
-                    
-                    // Activate step 3
-                    step2.classList.remove('active');
-                    step2.classList.add('completed');
-                    step3.classList.add('active');
-                    mergePanel.style.opacity = '1';
-                    mergeBtn.disabled = false;
-                    
-                    showMessage(`Existing JSON loaded: ${data.wines ? data.wines.length : 0} existing wines.`, 'success');
-                    
-                } catch (error) {
-                    showMessage('Error parsing existing JSON: ' + error.message, 'error');
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function showNewJsonPreview(data) {
-            const preview = document.getElementById('newJsonPreview');
+        function showJsonPreview(data) {
+            const preview = document.getElementById('jsonPreview');
             const wines = data.wines || [];
-            let html = `<strong>New wines to add: ${wines.length}</strong><br><br>`;
+            let html = `<strong>Loaded wines: ${wines.length}</strong><br><br>`;
             
-            wines.slice(0, 3).forEach((wine, index) => {
+            wines.slice(0, 5).forEach((wine, index) => {
                 html += `<div class="wine-item">
-                    <strong>${wine.producer || 'N/A'}</strong> - ${wine.vintage || 'N/A'}<br>
+                    <strong>ID: ${wine.id || 'Missing'}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
                     <small>${wine.denomination || 'N/A'}</small>
                 </div>`;
             });
             
-            if (wines.length > 3) {
-                html += `<div class="wine-item">... and ${wines.length - 3} more wines</div>`;
+            if (wines.length > 5) {
+                html += `<div class="wine-item">... and ${wines.length - 5} more wines</div>`;
             }
             
             preview.innerHTML = html;
             preview.style.display = 'block';
         }
 
-        function showExistingJsonPreview(data) {
-            const preview = document.getElementById('existingJsonPreview');
-            const wines = data.wines || [];
+        function processJsonData() {
+            if (!uploadedJsonData) {
+                showMessage('Please upload a JSON file first.', 'error');
+                return;
+            }
+
+            showProgress(true);
+            showMessage('Processing wine data...', 'success');
+
+            try {
+                const wines = uploadedJsonData.wines || [];
+                
+                updateProgress(25);
+                
+                // Ensure all wines have sequential IDs starting from 1
+                const processedWines = wines.map((wine, index) => ({
+                    ...wine,
+                    id: index + 1
+                }));
+                
+                updateProgress(50);
+                
+                // Create the final data structure
+                processedData = {
+                    metadata: {
+                        last_updated: new Date().toISOString().split('T')[0],
+                        total_wines: processedWines.length,
+                        version: "2.0.0",
+                        format: "Professional SipCard Format",
+                        processed_date: new Date().toISOString(),
+                        source: "Wine JSON Loader"
+                    },
+                    wines: processedWines
+                };
+                
+                updateProgress(75);
+                
+                // Validate data structure
+                const validationResult = validateWineData(processedWines);
+                
+                updateProgress(100);
+                
+                setTimeout(() => {
+                    showProgress(false);
+                    
+                    if (validationResult.isValid) {
+                        showProcessPreview();
+                        downloadPanel.style.opacity = '1';
+                        downloadBtn.style.display = 'inline-block';
+                        showMessage(`Processing completed! ${processedWines.length} wines processed successfully. ${validationResult.fixedCount} wines had IDs corrected.`, 'success');
+                    } else {
+                        showMessage(`Processing completed with warnings: ${validationResult.issues.join(', ')}`, 'error');
+                    }
+                }, 500);
+                
+            } catch (error) {
+                showProgress(false);
+                showMessage('Error processing data: ' + error.message, 'error');
+            }
+        }
+
+        function validateWineData(wines) {
+            let issues = [];
+            let fixedCount = 0;
             
-            // Find max ID
-            const maxId = wines.length > 0 ? Math.max(...wines.map(w => w.id || 0)) : 0;
+            wines.forEach((wine, index) => {
+                if (!wine.producer) issues.push(`Wine ${index + 1}: Missing producer`);
+                if (!wine.denomination) issues.push(`Wine ${index + 1}: Missing denomination`);
+                if (wine.id !== index + 1) fixedCount++;
+            });
             
-            let html = `<strong>Existing database: ${wines.length} wines (Max ID: ${maxId})</strong><br><br>`;
+            return {
+                isValid: issues.length === 0,
+                issues: issues,
+                fixedCount: fixedCount
+            };
+        }
+
+        function showProcessPreview() {
+            const preview = document.getElementById('processPreview');
+            const wines = processedData.wines;
+            const metadata = processedData.metadata;
             
+            let html = `<strong>Processed Database</strong><br>
+                <small>Total wines: ${metadata.total_wines} | Processed: ${metadata.processed_date.split('T')[0]} | Version: ${metadata.version}</small><br><br>`;
+            
+            // Show first and last few wines
+            html += `<strong>First wines:</strong><br>`;
+            wines.slice(0, 3).forEach((wine) => {
+                html += `<div class="wine-item">
+                    <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
+                    <small>${wine.denomination || 'N/A'}</small>
+                </div>`;
+            });
+            
+            if (wines.length > 6) {
+                html += `<div class="wine-item">... ${wines.length - 6} wines in between ...</div>`;
+            }
+            
+            html += `<strong>Last wines:</strong><br>`;
             wines.slice(-3).forEach((wine) => {
                 html += `<div class="wine-item">
                     <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
@@ -508,96 +510,10 @@
             preview.style.display = 'block';
         }
 
-        function mergeData() {
-            if (!newJsonData || !existingJsonData) {
-                showMessage('Please load both JSON files before proceeding.', 'error');
-                return;
-            }
+        function downloadProcessedJson() {
+            if (!processedData) return;
 
-            showProgress(true);
-            showMessage('Merging databases...', 'success');
-
-            try {
-                const existingWines = existingJsonData.wines || [];
-                const newWines = newJsonData.wines || [];
-                
-                // Find the highest ID in existing data
-                const maxId = existingWines.length > 0 ? 
-                    Math.max(...existingWines.map(w => w.id || 0)) : 0;
-                
-                updateProgress(30);
-                
-                // Assign new incremental IDs to new wines
-                const updatedNewWines = newWines.map((wine, index) => ({
-                    ...wine,
-                    id: maxId + index + 1
-                }));
-                
-                updateProgress(60);
-                
-                // Combine arrays
-                const allWines = [...existingWines, ...updatedNewWines];
-                
-                updateProgress(80);
-                
-                // Create merged data structure
-                mergedData = {
-                    metadata: {
-                        last_updated: new Date().toISOString().split('T')[0],
-                        total_wines: allWines.length,
-                        version: "2.0.0",
-                        format: "Professional SipCard Format",
-                        last_merge: new Date().toISOString(),
-                        previous_count: existingWines.length,
-                        added_count: newWines.length
-                    },
-                    wines: allWines
-                };
-                
-                updateProgress(100);
-                
-                setTimeout(() => {
-                    showProgress(false);
-                    showMergePreview();
-                    step3.classList.remove('active');
-                    step3.classList.add('completed');
-                    downloadBtn.style.display = 'inline-block';
-                    showMessage(`Merge completed! ${existingWines.length} existing wines + ${newWines.length} new wines = ${allWines.length} total wines.`, 'success');
-                }, 500);
-                
-            } catch (error) {
-                showProgress(false);
-                showMessage('Error during merge: ' + error.message, 'error');
-            }
-        }
-
-        function showMergePreview() {
-            const preview = document.getElementById('mergePreview');
-            const wines = mergedData.wines;
-            const metadata = mergedData.metadata;
-            
-            let html = `<strong>Updated Database</strong><br>
-                <small>Total wines: ${metadata.total_wines} | Previous wines: ${metadata.previous_count} | New added: ${metadata.added_count}</small><br><br>`;
-            
-            // Show last few wines (the newly added ones)
-            const lastWines = wines.slice(-Math.min(5, metadata.added_count));
-            html += `<strong>Recently added wines:</strong><br>`;
-            
-            lastWines.forEach((wine) => {
-                html += `<div class="wine-item">
-                    <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
-                    <small>${wine.denomination || 'N/A'}</small>
-                </div>`;
-            });
-            
-            preview.innerHTML = html;
-            preview.style.display = 'block';
-        }
-
-        function downloadMergedJson() {
-            if (!mergedData) return;
-
-            const blob = new Blob([JSON.stringify(mergedData, null, 2)], { 
+            const blob = new Blob([JSON.stringify(processedData, null, 2)], { 
                 type: 'application/json' 
             });
             const url = URL.createObjectURL(blob);
@@ -609,7 +525,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
 
-            showMessage('Updated wines.json downloaded successfully! Replace the file in your project\'s data/ folder.', 'success');
+            showMessage('wines.json downloaded successfully! Replace this file in your project\'s data/ folder to update your wine database.', 'success');
         }
 
         function showMessage(message, type) {
