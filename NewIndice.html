@@ -621,8 +621,8 @@
                 <h1>Wine Collection</h1>
                 <h2>Professional SipCards</h2>
                 <div class="header-actions">
-                    <a href="CreateYourOwn.html" class="add-wine-btn" id="addWineBtn">Add Wine Card</a>
-                    <a href="CreateYourOwn.html" class="add-wine-btn" id="newIndexBtn">CreateYourOwn.html</a>
+                    <a href="#" class="add-wine-btn" id="addWineBtn">Add Wine Card</a>
+                    <a href="#" class="add-wine-btn" id="newIndexBtn">New Index</a>
                 </div>
             </div>
         </div>
@@ -1250,11 +1250,8 @@
         document.getElementById('filterDenomination').addEventListener('change', filterWines);
         document.getElementById('filterTheme').addEventListener('change', filterWines);
 
-        // Add Wine Card button
-        document.getElementById('addWineBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            showAddWineModal();
-        });
+        // Add Wine Card button - Let it navigate naturally to CreateYourOwn.html
+        // Removed event listener to allow normal link behavior
 
         // New Index button
         document.getElementById('newIndexBtn').addEventListener('click', function(e) {
