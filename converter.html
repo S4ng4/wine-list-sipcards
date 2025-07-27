@@ -284,49 +284,73 @@
     <div class="container">
         <div class="header">
             <h1>Wine JSON Updater</h1>
-            <p>Add new wines to your database with automatic ID assignment</p>
+            <p>Add wines using the exact template format with automatic ID assignment</p>
         </div>
 
         <div class="instructions">
-            <h3>How to use this updater:</h3>
+            <h3>Template Format Requirements:</h3>
             <ol>
-                <li><strong>Upload new wines JSON:</strong> File with wine data (without IDs)</li>
-                <li><strong>Choose update method:</strong> Start new database or add to existing one</li>
-                <li><strong>Automatic processing:</strong> IDs are assigned automatically</li>
-                <li><strong>Download result:</strong> Get your updated wines.json file</li>
+                <li><strong>Single wine object:</strong> Upload a JSON file with exactly this structure</li>
+                <li><strong>All required fields:</strong> Must include producer, vintage, denomination, etc.</li>
+                <li><strong>No ID field:</strong> ID will be automatically assigned</li>
+                <li><strong>Exact format:</strong> Must match the template structure below</li>
             </ol>
             
-            <div class="template-example">Expected JSON format:
-[
-  {
-    "producer": "Producer Name",
-    "vintage": "2017",
-    "denomination": "DOC Barbera d'Alba",
-    "grapes": "Barbera 100%",
-    "alcohol_content": "14.5",
-    "aging": "12 months in French oak barrels",
-    "serving_temperature": "16-18°C",
-    // ... (no ID field needed - will be auto-assigned)
-  }
-]</div>
+            <div class="template-example">{
+  "producer": "Producer Name",
+  "vintage": "2017", 
+  "denomination": "DOC Barbera d'Alba",
+  "grapes": "Barbera 100%",
+  "alcohol_content": "14.5",
+  "aging": "12 months in French oak barrels with 30% new oak",
+  "serving_temperature": "16-18°C",
+  "cellaring_potential": "2020-2027",
+  "vintage_description": "Description text...",
+  "food_pairings": ["Risotto with porcini", "grilled meats"],
+  "visual_notes": "Deep ruby red with purple highlights...",
+  "olfactory_notes": "Aromatic profile of black cherry...",
+  "gustatory_notes": "Medium to full-bodied with integrated tannins...",
+  "radar_body": 3,
+  "radar_tannins": 3,
+  "radar_alcohol": 4,
+  "radar_persistence": 3,
+  "radar_acidity": 4,
+  "radar_complexity": 3,
+  "aroma_1_type": "Red Fruit",
+  "aroma_1_value": 2,
+  "aroma_2_type": "Black Fruit",
+  "aroma_2_value": 2,
+  "aroma_3_type": "Floral",
+  "aroma_3_value": 1,
+  "aroma_4_type": "Vanilla",
+  "aroma_4_value": 2,
+  "aroma_5_type": "Spice",
+  "aroma_5_value": 2,
+  "aroma_6_type": "Earth",
+  "aroma_6_value": 1,
+  "aroma_7_type": "Coffee",
+  "aroma_7_value": 1,
+  "color": "#8B0000",
+  "theme": "Modern Classic"
+}</div>
         </div>
 
         <div class="conversion-panel">
-            <div class="section-title">Upload New Wines JSON</div>
-            <div class="file-input" onclick="document.getElementById('newWinesFile').click()" id="newWinesInput">
-                <input type="file" id="newWinesFile" accept=".json" />
-                <div id="newWinesText">
-                    <strong>Click here or drag & drop your new wines JSON</strong><br>
-                    <small>JSON file with wine data (without IDs)</small>
+            <div class="section-title">Upload Wine Template JSON</div>
+            <div class="file-input" onclick="document.getElementById('wineTemplateFile').click()" id="wineTemplateInput">
+                <input type="file" id="wineTemplateFile" accept=".json" />
+                <div id="wineTemplateText">
+                    <strong>Click here or drag & drop your wine template JSON</strong><br>
+                    <small>Single wine object following the exact template format</small>
                 </div>
             </div>
-            <div id="newWinesPreview" class="preview" style="display: none;"></div>
+            <div id="wineTemplatePreview" class="preview" style="display: none;"></div>
 
             <div class="option-selector" id="optionSelector" style="display: none;">
-                <strong>How do you want to process these wines?</strong>
+                <strong>How do you want to add this wine?</strong>
                 <label>
                     <input type="radio" name="updateMethod" value="new" checked>
-                    Create new database (IDs start from 1)
+                    Create new database (this will be wine ID: 1)
                 </label>
                 <label>
                     <input type="radio" name="updateMethod" value="append">
@@ -335,7 +359,7 @@
             </div>
 
             <div id="existingFileSection" style="display: none;">
-                <div class="section-title">Upload Existing wines.json</div>
+                <div class="section-title">Upload Current wines.json</div>
                 <div class="file-input" onclick="document.getElementById('existingWinesFile').click()" id="existingWinesInput">
                     <input type="file" id="existingWinesFile" accept=".json" />
                     <div id="existingWinesText">
@@ -349,7 +373,7 @@
 
         <div class="conversion-panel">
             <div class="section-title">Process and Download</div>
-            <button class="btn" id="processBtn" disabled>Process Wines and Assign IDs</button>
+            <button class="btn" id="processBtn" disabled>Process Wine and Assign ID</button>
             <div class="progress" id="progressContainer">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
@@ -360,12 +384,23 @@
     </div>
 
     <script>
-        let newWinesData = null;
+        let wineTemplateData = null;
         let existingWinesData = null;
         let processedData = null;
 
+        // Required template fields
+        const requiredFields = [
+            'producer', 'vintage', 'denomination', 'grapes', 'alcohol_content', 'aging',
+            'serving_temperature', 'cellaring_potential', 'vintage_description', 'food_pairings',
+            'visual_notes', 'olfactory_notes', 'gustatory_notes', 'radar_body', 'radar_tannins',
+            'radar_alcohol', 'radar_persistence', 'radar_acidity', 'radar_complexity',
+            'aroma_1_type', 'aroma_1_value', 'aroma_2_type', 'aroma_2_value', 'aroma_3_type', 'aroma_3_value',
+            'aroma_4_type', 'aroma_4_value', 'aroma_5_type', 'aroma_5_value', 'aroma_6_type', 'aroma_6_value',
+            'aroma_7_type', 'aroma_7_value', 'color', 'theme'
+        ];
+
         // DOM Elements
-        const newWinesFile = document.getElementById('newWinesFile');
+        const wineTemplateFile = document.getElementById('wineTemplateFile');
         const existingWinesFile = document.getElementById('existingWinesFile');
         const processBtn = document.getElementById('processBtn');
         const downloadBtn = document.getElementById('downloadBtn');
@@ -374,9 +409,9 @@
         const existingFileSection = document.getElementById('existingFileSection');
 
         // File input handlers
-        newWinesFile.addEventListener('change', (e) => handleNewWinesFile(e.target.files[0]));
+        wineTemplateFile.addEventListener('change', (e) => handleWineTemplateFile(e.target.files[0]));
         existingWinesFile.addEventListener('change', (e) => handleExistingWinesFile(e.target.files[0]));
-        processBtn.addEventListener('click', processWines);
+        processBtn.addEventListener('click', processWine);
         downloadBtn.addEventListener('click', downloadProcessedJson);
 
         // Radio button handler
@@ -393,9 +428,9 @@
         });
 
         // Drag & Drop setup
-        const newWinesInput = document.getElementById('newWinesInput');
+        const wineTemplateInput = document.getElementById('wineTemplateInput');
         const existingWinesInput = document.getElementById('existingWinesInput');
-        setupDragDrop(newWinesInput, handleNewWinesFile);
+        setupDragDrop(wineTemplateInput, handleWineTemplateFile);
         setupDragDrop(existingWinesInput, handleExistingWinesFile);
 
         function setupDragDrop(element, handler) {
@@ -418,7 +453,7 @@
             });
         }
 
-        function handleNewWinesFile(file) {
+        function handleWineTemplateFile(file) {
             if (!file || !file.name.endsWith('.json')) {
                 showMessage('Please select a valid JSON file.', 'error');
                 return;
@@ -429,34 +464,73 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     
-                    // Handle both array format and object with wines array
-                    let wines = [];
-                    if (Array.isArray(data)) {
-                        wines = data;
-                    } else if (data.wines && Array.isArray(data.wines)) {
-                        wines = data.wines;
-                    } else {
-                        throw new Error('JSON must be an array of wines or an object with a "wines" array');
+                    // Validate template structure
+                    const validation = validateTemplate(data);
+                    if (!validation.isValid) {
+                        showMessage('Invalid template format: ' + validation.errors.join(', '), 'error');
+                        return;
                     }
                     
-                    newWinesData = wines;
+                    wineTemplateData = data;
                     
-                    document.getElementById('newWinesText').innerHTML = 
-                        `<strong>${file.name}</strong><br><small>Loaded successfully</small>`;
-                    document.getElementById('newWinesInput').classList.add('loaded');
+                    document.getElementById('wineTemplateText').innerHTML = 
+                        `<strong>${file.name}</strong><br><small>Template loaded successfully</small>`;
+                    document.getElementById('wineTemplateInput').classList.add('loaded');
                     
                     // Show preview and options
-                    showNewWinesPreview(wines);
+                    showWineTemplatePreview(data);
                     optionSelector.style.display = 'block';
                     
                     updateProcessButton();
-                    showMessage(`New wines loaded: ${wines.length} wines to process.`, 'success');
+                    showMessage('Wine template loaded and validated successfully!', 'success');
                     
                 } catch (error) {
-                    showMessage('Error parsing new wines JSON: ' + error.message, 'error');
+                    showMessage('Error parsing JSON: ' + error.message, 'error');
                 }
             };
             reader.readAsText(file);
+        }
+
+        function validateTemplate(wine) {
+            const errors = [];
+            
+            // Check if it has an ID (should not have one)
+            if (wine.hasOwnProperty('id')) {
+                errors.push('Template should not include an "id" field (will be auto-assigned)');
+            }
+            
+            // Check required fields
+            for (const field of requiredFields) {
+                if (!wine.hasOwnProperty(field)) {
+                    errors.push(`Missing required field: "${field}"`);
+                }
+            }
+            
+            // Validate food_pairings is array
+            if (wine.food_pairings && !Array.isArray(wine.food_pairings)) {
+                errors.push('food_pairings must be an array');
+            }
+            
+            // Validate radar values are numbers 1-5
+            const radarFields = ['radar_body', 'radar_tannins', 'radar_alcohol', 'radar_persistence', 'radar_acidity', 'radar_complexity'];
+            for (const field of radarFields) {
+                if (wine[field] && (typeof wine[field] !== 'number' || wine[field] < 1 || wine[field] > 5)) {
+                    errors.push(`${field} must be a number between 1 and 5`);
+                }
+            }
+            
+            // Validate aroma values
+            for (let i = 1; i <= 7; i++) {
+                const valueField = `aroma_${i}_value`;
+                if (wine[valueField] && (typeof wine[valueField] !== 'number' || wine[valueField] < 0 || wine[valueField] > 5)) {
+                    errors.push(`${valueField} must be a number between 0 and 5`);
+                }
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
         }
 
         function handleExistingWinesFile(file) {
@@ -479,7 +553,7 @@
                     showExistingWinesPreview(data);
                     
                     updateProcessButton();
-                    showMessage(`Existing database loaded: ${data.wines ? data.wines.length : 0} wines in database.`, 'success');
+                    showMessage(`Existing database loaded: ${data.wines ? data.wines.length : 0} wines found.`, 'success');
                     
                 } catch (error) {
                     showMessage('Error parsing existing wines JSON: ' + error.message, 'error');
@@ -492,26 +566,22 @@
             const selectedMethod = document.querySelector('input[name="updateMethod"]:checked').value;
             
             if (selectedMethod === 'new') {
-                processBtn.disabled = !newWinesData;
+                processBtn.disabled = !wineTemplateData;
             } else {
-                processBtn.disabled = !newWinesData || !existingWinesData;
+                processBtn.disabled = !wineTemplateData || !existingWinesData;
             }
         }
 
-        function showNewWinesPreview(wines) {
-            const preview = document.getElementById('newWinesPreview');
-            let html = `<strong>New wines to process: ${wines.length}</strong><br><br>`;
+        function showWineTemplatePreview(wine) {
+            const preview = document.getElementById('wineTemplatePreview');
+            let html = `<strong>Wine Template Preview</strong><br><br>`;
             
-            wines.slice(0, 3).forEach((wine, index) => {
-                html += `<div class="wine-item">
-                    <strong>${wine.producer || 'N/A'}</strong> - ${wine.vintage || 'N/A'}<br>
-                    <small>${wine.denomination || 'N/A'} | No ID (will be auto-assigned)</small>
-                </div>`;
-            });
-            
-            if (wines.length > 3) {
-                html += `<div class="wine-item">... and ${wines.length - 3} more wines</div>`;
-            }
+            html += `<div class="wine-item">
+                <strong>${wine.producer || 'N/A'}</strong> - ${wine.vintage || 'N/A'}<br>
+                <small>${wine.denomination || 'N/A'}</small><br>
+                <small>Grapes: ${wine.grapes || 'N/A'} | Alcohol: ${wine.alcohol_content || 'N/A'}%</small><br>
+                <small>Theme: ${wine.theme || 'N/A'} | Color: ${wine.color || 'N/A'}</small>
+            </div>`;
             
             preview.innerHTML = html;
             preview.style.display = 'block';
@@ -526,22 +596,22 @@
             
             let html = `<strong>Existing database: ${wines.length} wines (Last ID: ${maxId})</strong><br><br>`;
             
-            wines.slice(-3).forEach((wine) => {
+            wines.slice(-2).forEach((wine) => {
                 html += `<div class="wine-item">
                     <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
                     <small>${wine.denomination || 'N/A'}</small>
                 </div>`;
             });
             
-            html += `<br><strong>Next IDs will start from: ${maxId + 1}</strong>`;
+            html += `<br><strong>New wine will get ID: ${maxId + 1}</strong>`;
             
             preview.innerHTML = html;
             preview.style.display = 'block';
         }
 
-        function processWines() {
-            if (!newWinesData) {
-                showMessage('Please upload new wines JSON first.', 'error');
+        function processWine() {
+            if (!wineTemplateData) {
+                showMessage('Please upload wine template JSON first.', 'error');
                 return;
             }
 
@@ -553,34 +623,32 @@
             }
 
             showProgress(true);
-            showMessage('Processing wines and assigning IDs...', 'success');
+            showMessage('Processing wine and assigning ID...', 'success');
 
             try {
                 let allWines = [];
-                let startId = 1;
+                let newId = 1;
                 let previousCount = 0;
 
-                updateProgress(25);
+                updateProgress(33);
 
                 if (selectedMethod === 'append' && existingWinesData) {
                     const existingWines = existingWinesData.wines || [];
                     allWines = [...existingWines];
                     previousCount = existingWines.length;
-                    startId = existingWines.length > 0 ? Math.max(...existingWines.map(w => w.id || 0)) + 1 : 1;
+                    newId = existingWines.length > 0 ? Math.max(...existingWines.map(w => w.id || 0)) + 1 : 1;
                 }
 
-                updateProgress(50);
+                updateProgress(66);
 
-                // Assign IDs to new wines
-                const winesWithIds = newWinesData.map((wine, index) => ({
-                    id: startId + index,
-                    ...wine
-                }));
+                // Add ID to the wine template
+                const wineWithId = {
+                    id: newId,
+                    ...wineTemplateData
+                };
 
-                updateProgress(75);
-
-                // Add new wines to the collection
-                allWines = [...allWines, ...winesWithIds];
+                // Add new wine to collection
+                allWines.push(wineWithId);
 
                 // Create final data structure
                 processedData = {
@@ -592,8 +660,8 @@
                         processed_date: new Date().toISOString(),
                         method: selectedMethod,
                         previous_count: previousCount,
-                        added_count: newWinesData.length,
-                        last_id: startId + newWinesData.length - 1
+                        added_count: 1,
+                        last_id: newId
                     },
                     wines: allWines
                 };
@@ -606,15 +674,15 @@
                     downloadBtn.style.display = 'inline-block';
                     
                     if (selectedMethod === 'new') {
-                        showMessage(`New database created! ${newWinesData.length} wines with IDs 1 to ${newWinesData.length}.`, 'success');
+                        showMessage(`New database created with 1 wine (ID: 1)!`, 'success');
                     } else {
-                        showMessage(`Database updated! Added ${newWinesData.length} new wines with IDs ${startId} to ${startId + newWinesData.length - 1}. Total: ${allWines.length} wines.`, 'success');
+                        showMessage(`Wine added to database with ID: ${newId}. Total wines: ${allWines.length}`, 'success');
                     }
                 }, 500);
 
             } catch (error) {
                 showProgress(false);
-                showMessage('Error processing wines: ' + error.message, 'error');
+                showMessage('Error processing wine: ' + error.message, 'error');
             }
         }
 
@@ -622,24 +690,17 @@
             const preview = document.getElementById('processPreview');
             const wines = processedData.wines;
             const metadata = processedData.metadata;
+            const newWine = wines[wines.length - 1];
             
-            let html = `<strong>Processed Database</strong><br>
-                <small>Total wines: ${metadata.total_wines} | Method: ${metadata.method} | Added: ${metadata.added_count}</small><br><br>`;
+            let html = `<strong>Processed Wine Database</strong><br>
+                <small>Total wines: ${metadata.total_wines} | Method: ${metadata.method} | Last ID: ${metadata.last_id}</small><br><br>`;
             
-            // Show the newly processed wines
-            const newlyAdded = wines.slice(-metadata.added_count);
-            html += `<strong>Newly processed wines with IDs:</strong><br>`;
-            
-            newlyAdded.slice(0, 5).forEach((wine) => {
-                html += `<div class="wine-item">
-                    <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
-                    <small>${wine.denomination || 'N/A'}</small>
-                </div>`;
-            });
-            
-            if (newlyAdded.length > 5) {
-                html += `<div class="wine-item">... and ${newlyAdded.length - 5} more processed wines</div>`;
-            }
+            html += `<strong>Newly added wine:</strong><br>`;
+            html += `<div class="wine-item">
+                <strong>ID: ${newWine.id}</strong> - ${newWine.producer || 'N/A'} - ${newWine.vintage || 'N/A'}<br>
+                <small>${newWine.denomination || 'N/A'}</small><br>
+                <small>Theme: ${newWine.theme || 'N/A'} | Color: ${newWine.color || 'N/A'}</small>
+            </div>`;
             
             preview.innerHTML = html;
             preview.style.display = 'block';
