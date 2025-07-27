@@ -1,1189 +1,683 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-KW8B67X6H4"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-KW8B67X6H4');
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wine Card Generator - Create Your Custom Wine Card</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <title>Wine JSON Updater</title>
     <style>
-        body {
-            font-family: 'Garamond', serif;
+        :root {
+            --primary-gold: #D4B456;
+            --primary-gold-hover: #E0C472;
+            --primary-wine: #8E1C38;
+            --accent-red: #E27285;
+            --spiral-cream: #E6D7B9;
+            --text-color: #333;
+            --bg-white: #ffffff;
+            --bg-light: #f8f8f8;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background-color: #f9f7f3;
-            color: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: var(--text-color);
             line-height: 1.6;
-        }
-        
-        .edit-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-        }
-        
-        .edit-controls button {
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s;
-            font-size: 12px;
-        }
-        
-        .edit-btn {
-            background: #5e1914;
-            color: white;
-        }
-        
-        .edit-btn:hover {
-            background: #7a211b;
-        }
-        
-        .download-btn {
-            background: #2c5e19;
-            color: white;
-        }
-        
-        .download-btn:hover {
-            background: #387a25;
-        }
-        
-        .save-btn {
-            background: #e6d1a8;
-            color: #5e1914;
-        }
-        
-        .save-btn:hover {
-            background: #d4c194;
+            padding: 20px;
         }
 
-        .json-btn {
-            background: #1e40af;
-            color: white;
-        }
-
-        .json-btn:hover {
-            background: #2563eb;
-        }
-        
-        .editable {
-            transition: all 0.3s;
-            border-radius: 3px;
-            padding: 2px;
-        }
-        
-        .editable:hover {
-            background-color: rgba(94, 25, 20, 0.1);
-            cursor: pointer;
-        }
-        
-        .editable.editing {
-            background-color: #fff;
-            border: 2px solid #5e1914;
-            outline: none;
-            padding: 4px;
-        }
-        
-        .editable input,
-        .editable textarea {
-            border: none;
-            background: transparent;
-            font-family: inherit;
-            font-size: inherit;
-            color: inherit;
-            width: 100%;
-            outline: none;
-            resize: none;
-        }
-        
-        header {
-            background-color: #5e1914;
-            color: #ffffff;
-            padding: 15px;
-            text-align: center;
-        }
-
-        body.edit-mode header {
-            color: #000000;
-        }
-        
-        .content {
-            max-width: 1000px;
+        .container {
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
-        
-        .card-container {
-            position: relative;
-            margin-bottom: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            overflow: hidden;
-        }
-        
-        .wine-card {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 20px;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .logo-background {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            opacity: 0.5;
-            pointer-events: none;
-            text-align: center;
-        }
-        
-        .logo-background img {
-            width: 200px;
-            height: 200px;
-            object-fit: contain;
-            filter: brightness(0.7);
-        }
-        
-        .wine-info h1 {
-            color: #5e1914;
-            margin-top: 0;
-            border-bottom: 2px solid #e6d1a8;
-            padding-bottom: 10px;
-        }
-        
-        .wine-info h2 {
-            font-style: italic;
-            font-weight: normal;
-            margin-top: 5px;
-        }
-        
-        .specs {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        
-        .spec-item {
-            display: flex;
-        }
-        
-        .spec-item strong {
-            min-width: 120px;
-            color: #5e1914;
-        }
-        
-        .chart-container {
-            position: relative;
-            padding: 20px;
-            z-index: 2;
-            transition: min-height 0.3s ease;
-        }
-        
-        .chart-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            position: relative;
-            z-index: 3;
-        }
-        
-        .chart-title {
-            color: #5e1914;
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 20px;
-            position: relative;
-            z-index: 3;
-        }
-        
-        .radar-chart, .aroma-chart {
-            width: 100%;
-            height: auto;
-            position: relative;
-            z-index: 3;
-        }
-        
-        .flavor-profile {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            text-align: center;
-            position: relative;
-            z-index: 3;
-        }
-        
-        .flavor-category {
-            padding: 10px;
-        }
-        
-        .flavor-category h3 {
-            color: #5e1914;
-            margin-top: 0;
-        }
-        
-        footer {
-            background-color: #2c1e1d;
-            color: #e6d1a8;
-            text-align: center;
-            padding: 15px;
-            margin-top: 20px;
-        }
-        
-        .wine-type-indicator {
-            display: inline-block;
-            padding: 5px 10px;
-            background-color: #5e1914;
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
             color: white;
-            border-radius: 4px;
-            font-size: 12px;
-            margin-left: 10px;
-            vertical-align: middle;
-        }
-        
-        .chart-editor {
-            background: rgba(255,255,255,0.98);
-            border: 2px solid #5e1914;
-            border-radius: 8px;
-            padding: 20px;
-            margin-top: 15px;
-            display: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            max-width: 100%;
-            overflow: visible;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.3s ease;
-        }
-        
-        .chart-editor.active {
-            display: block;
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .chart-editor h4 {
-            margin: 0 0 15px 0;
-            color: #5e1914;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
             text-align: center;
-            font-size: 16px;
-        }
-        
-        .slider-group {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .slider-item {
-            display: grid;
-            grid-template-columns: 90px 1fr 30px;
-            align-items: center;
-            gap: 12px;
-            padding: 8px;
-            background: #f9f7f3;
-            border-radius: 6px;
-        }
-        
-        .slider-item label {
-            font-size: 13px;
-            color: #5e1914;
-            font-weight: 600;
-            text-align: left;
-        }
-        
-        .slider-item input[type="range"] {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #e6d1a8;
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-        
-        .slider-item input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #5e1914;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .slider-item input[type="range"]::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #5e1914;
-            cursor: pointer;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        
-        .slider-item span {
-            font-weight: bold;
-            color: #5e1914;
-            text-align: center;
-            font-size: 14px;
-            min-width: 25px;
         }
 
-        .aroma-name-input {
-            border: 1px solid #e6d1a8;
-            border-radius: 3px;
-            padding: 2px 4px;
-            font-family: inherit;
-            font-size: inherit;
-            color: inherit;
-            background: white;
-            width: 80px;
-            text-align: left;
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-gold);
         }
 
-        .aroma-name-input:focus {
-            outline: none;
-            border-color: #5e1914;
-            background: #fff;
-        }
-        
-        .edit-mode-indicator {
-            position: fixed;
-            top: 50%;
-            left: 20px;
-            transform: translateY(-50%);
-            background: #5e1914;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 12px;
-            display: none;
-        }
-        
-        .edit-mode-indicator.active {
-            display: block;
-        }
-
-        .workflow-info {
-            background: linear-gradient(135deg, #1e40af, #2563eb);
-            color: white;
-            padding: 15px;
-            margin: 20px;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
-        }
-
-        .workflow-info h3 {
-            margin: 0 0 10px 0;
-            font-size: 18px;
-        }
-
-        .workflow-info p {
-            margin: 5px 0;
-            font-size: 14px;
+        .header p {
+            font-size: 1.1rem;
             opacity: 0.9;
         }
-        
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--primary-gold);
+            color: var(--primary-wine);
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: var(--primary-gold-hover);
+            transform: translateY(-2px);
+        }
+
+        .conversion-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            color: var(--primary-wine);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--primary-gold);
+            padding-bottom: 0.5rem;
+        }
+
+        .file-input {
+            border: 2px dashed var(--spiral-cream);
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .file-input:hover {
+            border-color: var(--primary-gold);
+            background: rgba(212, 180, 86, 0.05);
+        }
+
+        .file-input.dragover {
+            border-color: var(--primary-wine);
+            background: rgba(142, 28, 56, 0.05);
+        }
+
+        .file-input.loaded {
+            border-color: #28a745;
+            background: rgba(40, 167, 69, 0.05);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        input[type="number"] {
+            width: 100px;
+            padding: 0.5rem;
+            border: 2px solid var(--spiral-cream);
+            border-radius: 5px;
+            font-size: 1rem;
+            margin: 0 0.5rem;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-wine) 0%, #7a2433 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--primary-gold) 0%, #E0C472 100%);
+            color: var(--text-color);
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .preview {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .wine-item {
+            margin: 0.5rem 0;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary-wine);
+            font-size: 0.9rem;
+        }
+
+        .wine-item strong {
+            color: var(--primary-wine);
+        }
+
+        .progress {
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--primary-wine), var(--primary-gold));
+            height: 20px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .instructions {
+            background: rgba(212, 180, 86, 0.1);
+            border: 1px solid var(--primary-gold);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .instructions h3 {
+            color: var(--primary-wine);
+            margin-bottom: 1rem;
+        }
+
+        .instructions ol {
+            margin-left: 1.5rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        .template-example {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            margin: 1rem 0;
+        }
+
+        .id-selector {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: var(--bg-light);
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .id-selector label {
+            display: block;
+            margin: 0.5rem 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .id-selector input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+
+        .manual-id-input {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(212, 180, 86, 0.05);
+            border-radius: 8px;
+            border: 1px solid var(--primary-gold);
+            display: none;
+        }
+
         @media (max-width: 768px) {
-            .content {
-                padding: 10px;
-            }
-
-            .wine-card,
-            .chart-row,
-            .specs,
-            .flavor-profile {
-                grid-template-columns: 1fr;
-            }
-
-            .chart-row {
-                gap: 30px; 
-            }
-
-            .spec-item {
-                flex-direction: column;
-                gap: 4px;
-            }
-
-            .spec-item strong {
-                min-width: auto;
-            }
-
-            .edit-controls {
-                position: static;
-                flex-direction: row;
-                justify-content: center;
-                flex-wrap: wrap;
-                margin-bottom: 20px;
-            }
-
-            .edit-mode-indicator {
-                position: static;
-                transform: none;
-                text-align: center;
-                margin-bottom: 10px;
-            }
-
-            .chart-container.editing,
-            .chart-row.editing {
-                min-height: unset;
-                padding-bottom: 0;
-                margin-bottom: 0;
-            }
-
-            .radar-chart,
-            .aroma-chart {
-                width: 100%;
-                height: auto;
-                aspect-ratio: 4 / 3;
-                margin: 0;
-            }
-
-            .chart-wrapper {
-                margin: 0;
-                padding: 0;
-            }
-            
-            .chart-wrapper:first-child {
-                padding-bottom: 20px;
-                border-bottom: 1px solid #e6d1a8;
-            }
-
-            .chart-editor {
-                margin-top: 15px;
-                padding: 15px;
-                width: 100%;
-                box-sizing: border-box;
-            }
-            
-            .chart-editor.active {
-                margin-bottom: 20px;
-            }
-
-            .slider-item {
-                grid-template-columns: 80px 1fr 30px;
-                gap: 8px;
-                padding: 8px;
-            }
-
-            .slider-item label {
-                font-size: 12px;
-            }
-
-            .aroma-name-input {
-                width: 70px;
-                font-size: 12px;
+            .back-link {
+                position: relative;
+                top: auto;
+                left: auto;
+                display: inline-block;
+                margin-bottom: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="workflow-info">
-        <h3>🍷 Wine Card Creator - 3 Step Process</h3>
-        <p><strong>Step 1:</strong> Edit your wine card details and charts</p>
-        <p><strong>Step 2:</strong> Download Image & JSON file</p>
-        <p><strong>Step 3:</strong> Use the JSON Updater tool to add to your collection</p>
-    </div>
+    <a href="index.html" class="back-link">← Back to Wine List</a>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Wine JSON Updater</h1>
+            <p>Add wines using the exact template format with automatic or manual ID assignment</p>
+        </div>
 
-   <div class="edit-controls">
-        <button class="edit-btn" onclick="toggleEditMode()">✏️ Step 1: Edit Mode</button>
-        <button class="save-btn" onclick="saveChanges()" style="display: none;">💾 Save Changes</button>
-        <button class="download-btn" onclick="downloadCard()">📸 Step 2a: Download Image</button>
-        <button class="json-btn" onclick="downloadJSON()">📋 Step 2b: Download JSON</button>
-        <button class="edit-btn" onclick="resetToDefault()" style="background: #8b4513;">🔄 Reset</button>
-    </div>
-    
-    <div class="edit-mode-indicator" id="editIndicator">
-        ✏️ Edit Mode Active - Click on any text to edit
-    </div>
+        <div class="instructions">
+            <h3>Simple Wine Addition Process:</h3>
+            <ol>
+                <li><strong>Upload wine template:</strong> JSON file with your wine data (no ID needed)</li>
+                <li><strong>Choose ID method:</strong> Start new database or specify last existing ID</li>
+                <li><strong>Process automatically:</strong> Tool assigns the correct ID</li>
+                <li><strong>Download result:</strong> Get your wine ready to add to wines.json</li>
+            </ol>
+            
+            <div class="template-example">{
+  "producer": "Producer Name",
+  "vintage": "2017", 
+  "denomination": "DOC Barbera d'Alba",
+  "grapes": "Barbera 100%",
+  "alcohol_content": "14.5",
+  "aging": "12 months in French oak barrels with 30% new oak",
+  "serving_temperature": "16-18°C",
+  "cellaring_potential": "2020-2027",
+  "vintage_description": "Description text...",
+  "food_pairings": ["Risotto with porcini", "grilled meats"],
+  "visual_notes": "Deep ruby red with purple highlights...",
+  "olfactory_notes": "Aromatic profile of black cherry...",
+  "gustatory_notes": "Medium to full-bodied with integrated tannins...",
+  "radar_body": 3,
+  "radar_tannins": 3,
+  "radar_alcohol": 4,
+  "radar_persistence": 3,
+  "radar_acidity": 4,
+  "radar_complexity": 3,
+  "aroma_1_type": "Red Fruit",
+  "aroma_1_value": 2,
+  "aroma_2_type": "Black Fruit",
+  "aroma_2_value": 2,
+  "aroma_3_type": "Floral",
+  "aroma_3_value": 1,
+  "aroma_4_type": "Vanilla",
+  "aroma_4_value": 2,
+  "aroma_5_type": "Spice",
+  "aroma_5_value": 2,
+  "aroma_6_type": "Earth",
+  "aroma_6_value": 1,
+  "aroma_7_type": "Coffee",
+  "aroma_7_value": 1,
+  "color": "#8B0000",
+  "theme": "Modern Classic"
+}</div>
+        </div>
 
-    <header>
-        <h1><span class="editable" data-field="winery">Producer</span> - <span class="editable" data-field="wineName">Barbera d'Alba</span> <span class="editable" data-field="vintage">2017</span> <span class="wine-type-indicator editable" data-field="wineType">Red</span></h1>
-    </header>
-    
-    <div class="content" id="wineCard">
-        <div class="card-container">
-            <div class="logo-background">
-                <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+        <div class="conversion-panel">
+            <div class="section-title">Upload Wine Template JSON</div>
+            <div class="file-input" onclick="document.getElementById('wineTemplateFile').click()" id="wineTemplateInput">
+                <input type="file" id="wineTemplateFile" accept=".json" />
+                <div id="wineTemplateText">
+                    <strong>Click here or drag & drop your wine template JSON</strong><br>
+                    <small>Single wine object following the exact template format</small>
+                </div>
             </div>
-            <div class="wine-card">
-                <div class="wine-info">
-                    <h1 class="editable" data-field="fullWineName">Barbera d'Alba 2017</h1>
-                    <h2 class="editable" data-field="classification">DOC Barbera d'Alba</h2>
-                    <div class="specs">
-                        <div class="spec-item">
-                            <strong>Producer:</strong>
-                            <span class="editable" data-field="producer">Producer</span>
-                        </div>
-                        <div class="spec-item">
-                            <strong>Grapes:</strong>
-                            <span class="editable" data-field="grapes">Barbera 100%</span>
-                        </div>
-                        <div class="spec-item">
-                            <strong>Vintage:</strong>
-                            <span class="editable" data-field="vintageSpec">2017</span>
-                        </div>
-                        <div class="spec-item">
-                            <strong>Alcohol Content:</strong>
-                            <span class="editable" data-field="alcohol">14.5%</span>
-                        </div>
-                        <div class="spec-item">
-                            <strong>Aging:</strong>
-                            <span class="editable" data-field="aging">12 months in French oak barrels with 30% new oak</span>
-                        </div>
-                        <div class="spec-item">
-                            <strong>Serving Temperature:</strong>
-                            <span class="editable" data-field="servingTemp">16-18°C</span>
-                        </div>
-                        <div class="spec-item">
-                            <strong>Cellaring Potential:</strong>
-                            <span class="editable" data-field="cellaring">2020-2027</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="wine-summary">
-                    <h3>Vintage <span class="editable" data-field="vintageYear">2017</span></h3>
-                    <p class="editable" data-field="vintageDescription">Warm vintage with drought conditions yielding concentrated grapes with ripe fruit character and moderate acidity</p>
-                    <h3>Ideal Food Pairings</h3>
-                    <p class="editable" data-field="foodPairings">Risotto with porcini, grilled meats, aged cheeses, rich pasta dishes</p>
-                </div>
+            <div id="wineTemplatePreview" class="preview" style="display: none;"></div>
+
+            <div class="id-selector" id="idSelector" style="display: none;">
+                <strong>How should I assign the wine ID?</strong>
+                <label>
+                    <input type="radio" name="idMethod" value="new" checked>
+                    Start new database (this will be wine ID: 1)
+                </label>
+                <label>
+                    <input type="radio" name="idMethod" value="manual">
+                    I know my last wine ID number (manual entry)
+                </label>
+            </div>
+
+            <div id="manualIdInput" class="manual-id-input">
+                <strong>Enter your current last wine ID:</strong><br>
+                <small>Your new wine will get ID = this number + 1</small><br><br>
+                Last wine ID: <input type="number" id="lastIdNumber" min="1" value="1" />
+                <br><small>Example: If your last wine is ID 25, enter 25. New wine will get ID 26.</small>
             </div>
         </div>
-        
-        <div class="card-container">
-            <div class="logo-background">
-                <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
+
+        <div class="conversion-panel">
+            <div class="section-title">Process and Download</div>
+            <button class="btn" id="processBtn" disabled>Process Wine and Assign ID</button>
+            <div class="progress" id="progressContainer">
+                <div class="progress-bar" id="progressBar"></div>
             </div>
-            <div class="chart-container">
-                <h2 class="chart-title">Organoleptic Profile</h2>
-                <div class="chart-row">
-                    <div class="chart-wrapper">
-                        <div class="radar-chart" class="chart-clickable">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%" id="radarChart">
-                                <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Body and Structure</text>
-                                
-                                <polygon points="200,70 270,110 270,190 200,230 130,190 130,110" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <polygon points="200,90 250,120 250,180 200,210 150,180 150,120" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <polygon points="200,110 230,130 230,170 200,190 170,170 170,130" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                
-                                <line x1="200" y1="150" x2="200" y2="70" stroke="#888888" stroke-width="1"/>
-                                <line x1="200" y1="150" x2="270" y2="190" stroke="#888888" stroke-width="1"/>
-                                <line x1="200" y1="150" x2="270" y2="110" stroke="#888888" stroke-width="1"/>
-                                <line x1="200" y1="150" x2="200" y2="230" stroke="#888888" stroke-width="1"/>
-                                <line x1="200" y1="150" x2="130" y2="190" stroke="#888888" stroke-width="1"/>
-                                <line x1="200" y1="150" x2="130" y2="110" stroke="#888888" stroke-width="1"/>
-                                
-                                <text x="200" y="65" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Body</text>
-                                <text x="280" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Tannins</text>
-                                <text x="280" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="start">Alcohol</text>
-                                <text x="200" y="240" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="middle">Persistence</text>
-                                <text x="120" y="190" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Acidity</text>
-                                <text x="120" y="110" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Complexity</text>
-                                
-                                <polygon id="dataPolygon" points="200,102 241.56799999999998,126 255.424,182 200,198 144.576,182 158.43200000000002,126" fill="rgba(94,25,20,0.5)" stroke="#5e1914" stroke-width="2"/>
-                                
-                                <circle id="point1" cx="200" cy="102" r="4" fill="#5e1914"/>
-                                <circle id="point2" cx="241.56799999999998" cy="126" r="4" fill="#5e1914"/>
-                                <circle id="point3" cx="255.424" cy="182" r="4" fill="#5e1914"/>
-                                <circle id="point4" cx="200" cy="198" r="4" fill="#5e1914"/>
-                                <circle id="point5" cx="144.576" cy="182" r="4" fill="#5e1914"/>
-                                <circle id="point6" cx="158.43200000000002" cy="126" r="4" fill="#5e1914"/>
-                                
-                                <foreignObject x="50%" y="260" width="500" height="50" transform="translate(-250, 0)">
-                                  <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; background-color: #ffffff; border: 1px solid #e6d1a8; border-radius: 5px; padding: 5px 15px; white-space: nowrap; transform: translateX(-50%); position: relative; left: 50%;">
-                                    <div style="display: flex; align-items: center;">
-                                      <div style="width: 10px; height: 10px; background-color: rgba(94,25,20,0.5); border: 1px solid #5e1914; margin-right: 10px;"></div>
-                                      <span style="font-family: Garamond; font-size: 12px; color: #2c1e1d;" class="editable" data-field="chartLegend">Barbera d'Alba 2017</span>
-                                    </div>
-                                  </div>
-                                </foreignObject>
-                            </svg>
-                        </div>
-                        <div class="chart-editor" id="radarEditor">
-                            <h4>Edit Structure Profile</h4>
-                            <div class="slider-group">
-                                <div class="slider-item">
-                                    <label>Body:</label>
-                                    <input type="range" min="1" max="10" value="6" id="bodySlider">
-                                    <span id="bodyValue">6</span>
-                                </div>
-                                <div class="slider-item">
-                                    <label>Tannins:</label>
-                                    <input type="range" min="1" max="10" value="5" id="tanninsSlider">
-                                    <span id="tanninsValue">5</span>
-                                </div>
-                                <div class="slider-item">
-                                    <label>Alcohol:</label>
-                                    <input type="range" min="1" max="10" value="7" id="alcoholSlider">
-                                    <span id="alcoholValue">7</span>
-                                </div>
-                                <div class="slider-item">
-                                    <label>Persistence:</label>
-                                    <input type="range" min="1" max="10" value="6" id="persistenceSlider">
-                                    <span id="persistenceValue">6</span>
-                                </div>
-                                <div class="slider-item">
-                                    <label>Acidity:</label>
-                                    <input type="range" min="1" max="10" value="7" id="aciditySlider">
-                                    <span id="acidityValue">7</span>
-                                </div>
-                                <div class="slider-item">
-                                    <label>Complexity:</label>
-                                    <input type="range" min="1" max="10" value="6" id="complexitySlider">
-                                    <span id="complexityValue">6</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chart-wrapper">
-                        <div class="aroma-chart" class="chart-clickable">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 350" width="100%" height="100%" id="aromaChart">
-                                <text x="200" y="30" font-family="Garamond" font-size="18" fill="#5e1914" text-anchor="middle" font-weight="bold">Aromatic Profile</text>
-                                
-                                <rect x="120" y="70" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <rect x="120" y="105" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <rect x="120" y="140" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <rect x="120" y="175" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <rect x="120" y="210" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <rect x="120" y="245" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                <rect x="120" y="280" width="200" height="25" fill="#f9f7f3" stroke="#e6d1a8" stroke-width="1"/>
-                                
-                                <text id="aromaLabel1" x="115" y="87" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Red Fruit</text>
-                                <text id="aromaLabel2" x="115" y="122" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Black Fruit</text>
-                                <text id="aromaLabel3" x="115" y="157" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Floral</text>
-                                <text id="aromaLabel4" x="115" y="192" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Vanilla</text>
-                                <text id="aromaLabel5" x="115" y="227" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Spice</text>
-                                <text id="aromaLabel6" x="115" y="262" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Earth</text>
-                                <text id="aromaLabel7" x="115" y="297" font-family="Garamond" font-size="14" fill="#2c1e1d" text-anchor="end">Coffee</text>
-                                
-                                <rect id="redFruitBar" x="120" y="70" width="80" height="25" fill="rgba(94,25,20,0.7)"/>
-                                <rect id="blackFruitBar" x="120" y="105" width="80" height="25" fill="rgba(94,25,20,0.7)"/>
-                                <rect id="floralBar" x="120" y="140" width="40" height="25" fill="rgba(94,25,20,0.7)"/>
-                                <rect id="vanillaBar" x="120" y="175" width="60" height="25" fill="rgba(94,25,20,0.7)"/>
-                                <rect id="spiceBar" x="120" y="210" width="60" height="25" fill="rgba(94,25,20,0.7)"/>
-                                <rect id="earthBar" x="120" y="245" width="40" height="25" fill="rgba(94,25,20,0.7)"/>
-                                <rect id="coffeeBar" x="120" y="280" width="40" height="25" fill="rgba(94,25,20,0.7)"/>
-                                
-                                <text x="120" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d">Low</text>
-                                <text x="220" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="middle">Medium</text>
-                                <text x="320" y="325" font-family="Garamond" font-size="12" fill="#2c1e1d" text-anchor="end">High</text>
-                                <line x1="120" y1="330" x2="320" y2="330" stroke="#888888" stroke-width="1"/>
-                                <line x1="120" y1="328" x2="120" y2="332" stroke="#888888" stroke-width="1"/>
-                                <line x1="220" y1="328" x2="220" y2="332" stroke="#888888" stroke-width="1"/>
-                                <line x1="320" y1="328" x2="320" y2="332" stroke="#888888" stroke-width="1"/>
-                            </svg>
-                        </div>
-                        <div class="chart-editor" id="aromaEditor">
-                            <h4>Edit Aromatic Profile</h4>
-                            <div class="slider-group">
-                                <div class="slider-item">
-                                    <input type="text" class="aroma-name-input" id="redFruitName" value="Red Fruit">
-                                    <input type="range" min="0" max="200" value="80" id="redFruitSlider">
-                                    <span id="redFruitValue">4</span>
-                                </div>
-                                <div class="slider-item">
-                                    <input type="text" class="aroma-name-input" id="blackFruitName" value="Black Fruit">
-                                    <input type="range" min="0" max="200" value="80" id="blackFruitSlider">
-                                    <span id="blackFruitValue">4</span>
-                                </div>
-                                <div class="slider-item">
-                                    <input type="text" class="aroma-name-input" id="floralName" value="Floral">
-                                    <input type="range" min="0" max="200" value="40" id="floralSlider">
-                                    <span id="floralValue">2</span>
-                                </div>
-                                <div class="slider-item">
-                                    <input type="text" class="aroma-name-input" id="vanillaName" value="Vanilla">
-                                    <input type="range" min="0" max="200" value="60" id="vanillaSlider">
-                                    <span id="vanillaValue">3</span>
-                                </div>
-                                <div class="slider-item">
-                                    <input type="text" class="aroma-name-input" id="spiceName" value="Spice">
-                                    <input type="range" min="0" max="200" value="60" id="spiceSlider">
-                                    <span id="spiceValue">3</span>
-                                </div>
-                                <div class="slider-item">
-                                    <input type="text" class="aroma-name-input" id="earthName" value="Earth">
-                                    <input type="range" min="0" max="200" value="40" id="earthSlider">
-                                    <span id="earthValue">2</span>
-                                </div>
-                                <div class="slider-item">
-                                    <input type="text" class="aroma-name-input" id="coffeeName" value="Coffee">
-                                    <input type="range" min="0" max="200" value="40" id="coffeeSlider">
-                                    <span id="coffeeValue">2</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="card-container">
-            <div class="logo-background">
-                <img src="https://raw.githubusercontent.com/S4ng4/WineCArd/refs/heads/main/logoNoSfondo.png" alt="Wine logo" onerror="this.style.display='none'">
-            </div>
-            <div class="chart-container">
-                <h2 class="chart-title">Tasting Notes</h2>
-                <div class="flavor-profile">
-                    <div class="flavor-category">
-                        <h3>Visual</h3>
-                        <p class="editable" data-field="visual">Deep ruby red with purple highlights and good viscosity</p>
-                    </div>
-                    <div class="flavor-category">
-                        <h3>Olfactory</h3>
-                        <p class="editable" data-field="olfactory">Aromatic profile of black cherry, plum, blackberry jam, vanilla, and subtle spice notes with hints of violets and earth</p>
-                    </div>
-                    <div class="flavor-category">
-                        <h3>Gustatory</h3>
-                        <p class="editable" data-field="gustatory">Medium to full-bodied with integrated tannins, bright acidity, rich dark fruit flavors, balanced oak influence, and a long, clean finish with subtle coffee notes</p>
-                    </div>
-                </div>
-            </div>
+            <div id="statusMessage"></div>
+            <div id="processPreview" class="preview" style="display: none;"></div>
+            <button class="btn btn-success" id="downloadBtn" style="display: none;">Download Wine JSON</button>
         </div>
     </div>
-    
-    <footer>
-        <p>&copy;<span class="editable" data-field="author">Andrea Sangalli</span> <span class="editable" data-field="year">2025</span> - <span class="editable" data-field="footerWinery">Producer</span> - <span class="editable" data-field="footerWine">Barbera d'Alba</span>. Consume responsibly.</p>
-    </footer>
 
     <script>
-        let editMode = false;
-        let wineData = {
-            radar: {
-                body: 6,
-                tannins: 5,
-                alcohol: 7,
-                persistence: 6,
-                acidity: 7,
-                complexity: 6
-            },
-            aroma: {
-                redFruit: 80,
-                blackFruit: 80,
-                floral: 40,
-                vanilla: 60,
-                spice: 60,
-                earth: 40,
-                coffee: 40
-            },
-            aromaNames: {
-                redFruit: "Red Fruit",
-                blackFruit: "Black Fruit",
-                floral: "Floral",
-                vanilla: "Vanilla",
-                spice: "Spice",
-                earth: "Earth",
-                coffee: "Coffee"
-            }
-        };
+        let wineTemplateData = null;
+        let processedData = null;
 
-        // Collect all wine data and convert to JSON format
-        function collectWineData() {
-            // Get all editable field values
-            const getFieldValue = (field) => {
-                const element = document.querySelector(`[data-field="${field}"]`);
-                return element ? element.textContent.trim() : '';
-            };
+        // Required template fields
+        const requiredFields = [
+            'producer', 'vintage', 'denomination', 'grapes', 'alcohol_content', 'aging',
+            'serving_temperature', 'cellaring_potential', 'vintage_description', 'food_pairings',
+            'visual_notes', 'olfactory_notes', 'gustatory_notes', 'radar_body', 'radar_tannins',
+            'radar_alcohol', 'radar_persistence', 'radar_acidity', 'radar_complexity',
+            'aroma_1_type', 'aroma_1_value', 'aroma_2_type', 'aroma_2_value', 'aroma_3_type', 'aroma_3_value',
+            'aroma_4_type', 'aroma_4_value', 'aroma_5_type', 'aroma_5_value', 'aroma_6_type', 'aroma_6_value',
+            'aroma_7_type', 'aroma_7_value', 'color', 'theme'
+        ];
 
-            // Parse food pairings from text to array
-            const foodPairingsText = getFieldValue('foodPairings');
-            const foodPairings = foodPairingsText
-                .split(',')
-                .map(item => item.trim())
-                .filter(item => item.length > 0);
+        // DOM Elements
+        const wineTemplateFile = document.getElementById('wineTemplateFile');
+        const processBtn = document.getElementById('processBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const idSelector = document.getElementById('idSelector');
+        const manualIdInput = document.getElementById('manualIdInput');
+        const lastIdNumber = document.getElementById('lastIdNumber');
 
-            // Convert radar values from 1-10 scale to 1-5 scale
-            const convertRadarValue = (value) => Math.ceil(value / 2);
+        // File input handlers
+        wineTemplateFile.addEventListener('change', (e) => handleWineTemplateFile(e.target.files[0]));
+        processBtn.addEventListener('click', processWine);
+        downloadBtn.addEventListener('click', downloadProcessedJson);
 
-            // Convert aroma values from 0-200 scale to 1-5 scale
-            const convertAromaValue = (value) => Math.ceil(value / 40) || 1;
-
-            // Determine wine color based on type
-            const wineType = getFieldValue('wineType').toLowerCase();
-            const wineColor = wineType.includes('red') ? '#8B0000' : 
-                             wineType.includes('white') ? '#FFD700' : '#DDA0DD';
-
-            // Generate theme based on wine characteristics
-            const generateTheme = () => {
-                const producer = getFieldValue('producer').toLowerCase();
-                const denomination = getFieldValue('classification').toLowerCase();
-                
-                if (denomination.includes('barolo') || denomination.includes('barbaresco')) {
-                    return 'Elegant Tradition';
-                } else if (denomination.includes('chianti') || denomination.includes('brunello')) {
-                    return 'Tuscan Heritage';
-                } else if (denomination.includes('champagne') || denomination.includes('prosecco')) {
-                    return 'Sparkling Elegance';
+        // Radio button handler
+        document.addEventListener('change', (e) => {
+            if (e.target.name === 'idMethod') {
+                if (e.target.value === 'manual') {
+                    manualIdInput.style.display = 'block';
                 } else {
-                    return 'Modern Classic';
+                    manualIdInput.style.display = 'none';
                 }
-            };
-
-            // Clean alcohol content (remove % symbol)
-            const alcoholContent = getFieldValue('alcohol').replace('%', '').trim();
-
-            return {
-                producer: getFieldValue('producer'),
-                vintage: getFieldValue('vintageSpec'),
-                denomination: getFieldValue('classification'),
-                grapes: getFieldValue('grapes'),
-                alcohol_content: alcoholContent,
-                aging: getFieldValue('aging'),
-                serving_temperature: getFieldValue('servingTemp'),
-                cellaring_potential: getFieldValue('cellaring'),
-                vintage_description: getFieldValue('vintageDescription'),
-                food_pairings: foodPairings,
-                visual_notes: getFieldValue('visual'),
-                olfactory_notes: getFieldValue('olfactory'),
-                gustatory_notes: getFieldValue('gustatory'),
-                radar_body: convertRadarValue(wineData.radar.body),
-                radar_tannins: convertRadarValue(wineData.radar.tannins),
-                radar_alcohol: convertRadarValue(wineData.radar.alcohol),
-                radar_persistence: convertRadarValue(wineData.radar.persistence),
-                radar_acidity: convertRadarValue(wineData.radar.acidity),
-                radar_complexity: convertRadarValue(wineData.radar.complexity),
-                aroma_1_type: wineData.aromaNames.redFruit,
-                aroma_1_value: convertAromaValue(wineData.aroma.redFruit),
-                aroma_2_type: wineData.aromaNames.blackFruit,
-                aroma_2_value: convertAromaValue(wineData.aroma.blackFruit),
-                aroma_3_type: wineData.aromaNames.floral,
-                aroma_3_value: convertAromaValue(wineData.aroma.floral),
-                aroma_4_type: wineData.aromaNames.vanilla,
-                aroma_4_value: convertAromaValue(wineData.aroma.vanilla),
-                aroma_5_type: wineData.aromaNames.spice,
-                aroma_5_value: convertAromaValue(wineData.aroma.spice),
-                aroma_6_type: wineData.aromaNames.earth,
-                aroma_6_value: convertAromaValue(wineData.aroma.earth),
-                aroma_7_type: wineData.aromaNames.coffee,
-                aroma_7_value: convertAromaValue(wineData.aroma.coffee),
-                color: wineColor,
-                theme: generateTheme()
-            };
-        }
-
-        // Download JSON file
-        function downloadJSON() {
-            try {
-                const wineJson = collectWineData();
-                const jsonString = JSON.stringify(wineJson, null, 2);
-                
-                const blob = new Blob([jsonString], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `${wineJson.producer}_${wineJson.vintage}_wine.json`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                URL.revokeObjectURL(url);
-                
-                alert('JSON file downloaded! Next step: Use the JSON Updater tool to add this wine to your collection.');
-            } catch (error) {
-                console.error('Error generating JSON:', error);
-                alert('Error generating JSON file. Please check your wine data.');
             }
-        }
+        });
 
-        // Toggle edit mode
-        function toggleEditMode() {
-            editMode = !editMode;
-            const editables = document.querySelectorAll('.editable');
-            const editIndicator = document.getElementById('editIndicator');
-            const saveBtn = document.querySelector('.save-btn');
-            const editBtn = document.querySelector('.edit-btn');
-            const chartEditors = document.querySelectorAll('.chart-editor');
-            const chartContainers = document.querySelectorAll('.chart-container');
-            const chartRows = document.querySelectorAll('.chart-row');
-            const body = document.body;
+        // Drag & Drop setup
+        const wineTemplateInput = document.getElementById('wineTemplateInput');
+        setupDragDrop(wineTemplateInput, handleWineTemplateFile);
 
-            if (editMode) {
-                editIndicator.classList.add('active');
-                saveBtn.style.display = 'block';
-                editBtn.textContent = '❌ Exit Edit';
-                editBtn.style.backgroundColor = '#c44536';
-                body.classList.add('edit-mode');
-                
-                chartContainers.forEach(container => {
-                    container.classList.add('editing');
-                });
-                chartRows.forEach(row => {
-                    row.classList.add('editing');
-                });
+        function setupDragDrop(element, handler) {
+            element.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                element.classList.add('dragover');
+            });
 
-                chartEditors.forEach(editor => {
-                    editor.classList.add('active');
-                });
+            element.addEventListener('dragleave', () => {
+                element.classList.remove('dragover');
+            });
 
-                editables.forEach(element => {
-                    element.setAttribute('contenteditable', 'true');
-                    element.classList.add('editing');
-                });
-            } else {
-                editIndicator.classList.remove('active');
-                saveBtn.style.display = 'none';
-                editBtn.textContent = '✏️ Step 1: Edit Mode';
-                editBtn.style.backgroundColor = '#5e1914';
-                body.classList.remove('edit-mode');
-
-                chartContainers.forEach(container => {
-                    container.classList.remove('editing');
-                });
-                chartRows.forEach(row => {
-                    row.classList.remove('editing');
-                });
-
-                chartEditors.forEach(editor => {
-                    editor.classList.remove('active');
-                });
-
-                editables.forEach(element => {
-                    element.removeAttribute('contenteditable');
-                    element.classList.remove('editing');
-                });
-            }
-        }
-
-        // Function to download the wine card as an image
-        function downloadCard() {
-            const cardElement = document.getElementById('wineCard');
-            const editControls = document.querySelector('.edit-controls');
-            const editIndicator = document.getElementById('editIndicator');
-            const wasInEditMode = editMode;
-
-            if(wasInEditMode) {
-                toggleEditMode();
-            }
-
-            editControls.style.display = 'none';
-            
-            html2canvas(cardElement, {
-                scale: 2,
-                useCORS: true, 
-                logging: true,
-                allowTaint: true 
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'wine-card.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-
-                editControls.style.display = 'flex';
-            }).catch(error => {
-                console.error("Error generating image:", error);
-                editControls.style.display = 'flex';
+            element.addEventListener('drop', (e) => {
+                e.preventDefault();
+                element.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handler(files[0]);
+                }
             });
         }
 
-        function saveChanges() {
-            toggleEditMode();
-        }
-
-        function resetToDefault() {
-            const defaultValues = {
-                winery: "Producer",
-                wineName: "Barbera d'Alba",
-                vintage: "2017",
-                wineType: "Red",
-                fullWineName: "Barbera d'Alba 2017",
-                classification: "DOC Barbera d'Alba",
-                producer: "Producer",
-                grapes: "Barbera 100%",
-                vintageSpec: "2017",
-                alcohol: "14.5%",
-                aging: "12 months in French oak barrels with 30% new oak",
-                servingTemp: "16-18°C",
-                cellaring: "2020-2027",
-                vintageYear: "2017",
-                vintageDescription: "Warm vintage with drought conditions yielding concentrated grapes with ripe fruit character and moderate acidity",
-                foodPairings: "Risotto with porcini, grilled meats, aged cheeses, rich pasta dishes",
-                chartLegend: "Barbera d'Alba 2017",
-                visual: "Deep ruby red with purple highlights and good viscosity",
-                olfactory: "Aromatic profile of black cherry, plum, blackberry jam, vanilla, and subtle spice notes with hints of violets and earth",
-                gustatory: "Medium to full-bodied with integrated tannins, bright acidity, rich dark fruit flavors, balanced oak influence, and a long, clean finish with subtle coffee notes",
-                author: "Andrea Sangalli",
-                year: "2025",
-                footerWinery: "Producer",
-                footerWine: "Barbera d'Alba"
-            };
-
-            for (const field in defaultValues) {
-                const element = document.querySelector(`[data-field="${field}"]`);
-                if (element) {
-                    element.textContent = defaultValues[field];
-                }
+        function handleWineTemplateFile(file) {
+            if (!file || !file.name.endsWith('.json')) {
+                showMessage('Please select a valid JSON file.', 'error');
+                return;
             }
 
-            wineData.radar = {
-                body: 6,
-                tannins: 5,
-                alcohol: 7,
-                persistence: 6,
-                acidity: 7,
-                complexity: 6
-            };
-            wineData.aroma = {
-                redFruit: 80,
-                blackFruit: 80,
-                floral: 40,
-                vanilla: 60,
-                spice: 60,
-                earth: 40,
-                coffee: 40
-            };
-            wineData.aromaNames = {
-                redFruit: "Red Fruit",
-                blackFruit: "Black Fruit",
-                floral: "Floral",
-                vanilla: "Vanilla",
-                spice: "Spice",
-                earth: "Earth",
-                coffee: "Coffee"
-            };
-
-            updateRadarChart();
-            updateAromaChart();
-
-            document.getElementById('bodySlider').value = wineData.radar.body;
-            document.getElementById('bodyValue').textContent = wineData.radar.body;
-            document.getElementById('tanninsSlider').value = wineData.radar.tannins;
-            document.getElementById('tanninsValue').textContent = wineData.radar.tannins;
-            document.getElementById('alcoholSlider').value = wineData.radar.alcohol;
-            document.getElementById('alcoholValue').textContent = wineData.radar.alcohol;
-            document.getElementById('persistenceSlider').value = wineData.radar.persistence;
-            document.getElementById('persistenceValue').textContent = wineData.radar.persistence;
-            document.getElementById('aciditySlider').value = wineData.radar.acidity;
-            document.getElementById('acidityValue').textContent = wineData.radar.acidity;
-            document.getElementById('complexitySlider').value = wineData.radar.complexity;
-            document.getElementById('complexityValue').textContent = wineData.radar.complexity;
-
-            document.getElementById('redFruitSlider').value = wineData.aroma.redFruit;
-            document.getElementById('redFruitValue').textContent = Math.round(wineData.aroma.redFruit / 20);
-            document.getElementById('blackFruitSlider').value = wineData.aroma.blackFruit;
-            document.getElementById('blackFruitValue').textContent = Math.round(wineData.aroma.blackFruit / 20);
-            document.getElementById('floralSlider').value = wineData.aroma.floral;
-            document.getElementById('floralValue').textContent = Math.round(wineData.aroma.floral / 20);
-            document.getElementById('vanillaSlider').value = wineData.aroma.vanilla;
-            document.getElementById('vanillaValue').textContent = Math.round(wineData.aroma.vanilla / 20);
-            document.getElementById('spiceSlider').value = wineData.aroma.spice;
-            document.getElementById('spiceValue').textContent = Math.round(wineData.aroma.spice / 20);
-            document.getElementById('earthSlider').value = wineData.aroma.earth;
-            document.getElementById('earthValue').textContent = Math.round(wineData.aroma.earth / 20);
-            document.getElementById('coffeeSlider').value = wineData.aroma.coffee;
-            document.getElementById('coffeeValue').textContent = Math.round(wineData.aroma.coffee / 20);
-
-            document.getElementById('redFruitName').value = wineData.aromaNames.redFruit;
-            document.getElementById('blackFruitName').value = wineData.aromaNames.blackFruit;
-            document.getElementById('floralName').value = wineData.aromaNames.floral;
-            document.getElementById('vanillaName').value = wineData.aromaNames.vanilla;
-            document.getElementById('spiceName').value = wineData.aromaNames.spice;
-            document.getElementById('earthName').value = wineData.aromaNames.earth;
-            document.getElementById('coffeeName').value = wineData.aromaNames.coffee;
-        }
-
-        document.querySelectorAll('.chart-clickable').forEach(chart => {
-            chart.addEventListener('click', function() {
-                if (editMode) {
-                    const editor = this.nextElementSibling;
-                    if (editor && editor.classList.contains('chart-editor')) {
-                        editor.classList.toggle('active');
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    
+                    // Validate template structure
+                    const validation = validateTemplate(data);
+                    if (!validation.isValid) {
+                        showMessage('Invalid template format: ' + validation.errors.join(', '), 'error');
+                        return;
                     }
+                    
+                    wineTemplateData = data;
+                    
+                    document.getElementById('wineTemplateText').innerHTML = 
+                        `<strong>${file.name}</strong><br><small>Template loaded successfully</small>`;
+                    document.getElementById('wineTemplateInput').classList.add('loaded');
+                    
+                    // Show preview and options
+                    showWineTemplatePreview(data);
+                    idSelector.style.display = 'block';
+                    processBtn.disabled = false;
+                    
+                    showMessage('Wine template loaded and validated successfully!', 'success');
+                    
+                } catch (error) {
+                    showMessage('Error parsing JSON: ' + error.message, 'error');
                 }
-            });
-        });
-
-        const radarSliders = ['body', 'tannins', 'alcohol', 'persistence', 'acidity', 'complexity'];
-        radarSliders.forEach(metric => {
-            const slider = document.getElementById(`${metric}Slider`);
-            const valueSpan = document.getElementById(`${metric}Value`);
-            slider.addEventListener('input', () => {
-                wineData.radar[metric] = parseInt(slider.value);
-                valueSpan.textContent = slider.value;
-                updateRadarChart();
-            });
-        });
-
-        function updateRadarChart() {
-            const values = radarSliders.map(metric => wineData.radar[metric]);
-            const centerX = 200;
-            const centerY = 150;
-            const radius = 80;
-            const angleIncrement = (Math.PI * 2) / 6;
-
-            let points = [];
-            values.forEach((value, i) => {
-                const angle = i * angleIncrement - Math.PI / 2;
-                const r = (value / 10) * radius;
-                const x = centerX + r * Math.cos(angle);
-                const y = centerY + r * Math.sin(angle);
-                points.push(`${x},${y}`);
-                document.getElementById(`point${i + 1}`).setAttribute('cx', x);
-                document.getElementById(`point${i + 1}`).setAttribute('cy', y);
-            });
-            document.getElementById('dataPolygon').setAttribute('points', points.join(' '));
+            };
+            reader.readAsText(file);
         }
 
-        const aromaSliders = ['redFruit', 'blackFruit', 'floral', 'vanilla', 'spice', 'earth', 'coffee'];
-        aromaSliders.forEach(aroma => {
-            const slider = document.getElementById(`${aroma}Slider`);
-            const valueSpan = document.getElementById(`${aroma}Value`);
-            const nameInput = document.getElementById(`${aroma}Name`);
+        function validateTemplate(wine) {
+            const errors = [];
             
-            slider.addEventListener('input', () => {
-                wineData.aroma[aroma] = parseInt(slider.value);
-                valueSpan.textContent = Math.round(slider.value / 20);
-                updateAromaChart();
-            });
-
-            nameInput.addEventListener('input', () => {
-                wineData.aromaNames[aroma] = nameInput.value;
-                updateAromaChart();
-            });
-        });
-
-        function updateAromaChart() {
-            aromaSliders.forEach((aroma, index) => {
-                const bar = document.getElementById(`${aroma}Bar`);
-                const label = document.getElementById(`aromaLabel${index + 1}`);
-                const width = wineData.aroma[aroma];
-                
-                bar.setAttribute('width', width);
-                label.textContent = wineData.aromaNames[aroma];
-            });
+            // Check if it has an ID (should not have one)
+            if (wine.hasOwnProperty('id')) {
+                errors.push('Template should not include an "id" field (will be auto-assigned)');
+            }
+            
+            // Check required fields
+            for (const field of requiredFields) {
+                if (!wine.hasOwnProperty(field)) {
+                    errors.push(`Missing required field: "${field}"`);
+                }
+            }
+            
+            // Validate food_pairings is array
+            if (wine.food_pairings && !Array.isArray(wine.food_pairings)) {
+                errors.push('food_pairings must be an array');
+            }
+            
+            // Validate radar values are numbers 1-5
+            const radarFields = ['radar_body', 'radar_tannins', 'radar_alcohol', 'radar_persistence', 'radar_acidity', 'radar_complexity'];
+            for (const field of radarFields) {
+                if (wine[field] && (typeof wine[field] !== 'number' || wine[field] < 1 || wine[field] > 5)) {
+                    errors.push(`${field} must be a number between 1 and 5`);
+                }
+            }
+            
+            // Validate aroma values
+            for (let i = 1; i <= 7; i++) {
+                const valueField = `aroma_${i}_value`;
+                if (wine[valueField] && (typeof wine[valueField] !== 'number' || wine[valueField] < 0 || wine[valueField] > 5)) {
+                    errors.push(`${valueField} must be a number between 0 and 5`);
+                }
+            }
+            
+            return {
+                isValid: errors.length === 0,
+                errors: errors
+            };
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            updateRadarChart();
-            updateAromaChart();
-        });
+        function showWineTemplatePreview(wine) {
+            const preview = document.getElementById('wineTemplatePreview');
+            let html = `<strong>Wine Template Preview</strong><br><br>`;
+            
+            html += `<div class="wine-item">
+                <strong>${wine.producer || 'N/A'}</strong> - ${wine.vintage || 'N/A'}<br>
+                <small>${wine.denomination || 'N/A'}</small><br>
+                <small>Grapes: ${wine.grapes || 'N/A'} | Alcohol: ${wine.alcohol_content || 'N/A'}%</small><br>
+                <small>Theme: ${wine.theme || 'N/A'} | Color: ${wine.color || 'N/A'}</small>
+            </div>`;
+            
+            preview.innerHTML = html;
+            preview.style.display = 'block';
+        }
+
+        function processWine() {
+            if (!wineTemplateData) {
+                showMessage('Please upload wine template JSON first.', 'error');
+                return;
+            }
+
+            const selectedMethod = document.querySelector('input[name="idMethod"]:checked').value;
+            
+            showProgress(true);
+            showMessage('Processing wine and assigning ID...', 'success');
+
+            try {
+                let newId = 1;
+                let previousCount = 0;
+
+                updateProgress(33);
+
+                if (selectedMethod === 'manual') {
+                    const lastId = parseInt(lastIdNumber.value) || 0;
+                    if (lastId < 1) {
+                        showProgress(false);
+                        showMessage('Please enter a valid last ID number (must be 1 or greater).', 'error');
+                        return;
+                    }
+                    newId = lastId + 1;
+                    previousCount = lastId;
+                }
+
+                updateProgress(66);
+
+                // Add ID to the wine template
+                const wineWithId = {
+                    id: newId,
+                    ...wineTemplateData
+                };
+
+                // Create final data structure
+                processedData = {
+                    metadata: {
+                        last_updated: new Date().toISOString().split('T')[0],
+                        total_wines: newId,
+                        version: "2.0.0",
+                        format: "Professional SipCard Format",
+                        processed_date: new Date().toISOString(),
+                        method: selectedMethod,
+                        previous_count: previousCount,
+                        added_count: 1,
+                        last_id: newId,
+                        note: selectedMethod === 'manual' ? `Added to existing database after ID ${previousCount}` : 'New database started'
+                    },
+                    wines: [wineWithId]
+                };
+
+                updateProgress(100);
+
+                setTimeout(() => {
+                    showProgress(false);
+                    showProcessPreview();
+                    downloadBtn.style.display = 'inline-block';
+                    
+                    if (selectedMethod === 'new') {
+                        showMessage(`New wine created with ID: 1. Start of new database!`, 'success');
+                    } else {
+                        showMessage(`Wine processed with ID: ${newId}. Add this to your existing wines.json!`, 'success');
+                    }
+                }, 500);
+
+            } catch (error) {
+                showProgress(false);
+                showMessage('Error processing wine: ' + error.message, 'error');
+            }
+        }
+
+        function showProcessPreview() {
+            const preview = document.getElementById('processPreview');
+            const wine = processedData.wines[0];
+            const metadata = processedData.metadata;
+            
+            let html = `<strong>Processed Wine</strong><br>
+                <small>Method: ${metadata.method} | Assigned ID: ${metadata.last_id}</small><br><br>`;
+            
+            html += `<div class="wine-item">
+                <strong>ID: ${wine.id}</strong> - ${wine.producer || 'N/A'} - ${wine.vintage || 'N/A'}<br>
+                <small>${wine.denomination || 'N/A'}</small><br>
+                <small>Theme: ${wine.theme || 'N/A'} | Color: ${wine.color || 'N/A'}</small><br>
+                <small>Ready to add to your wines.json database!</small>
+            </div>`;
+            
+            preview.innerHTML = html;
+            preview.style.display = 'block';
+        }
+
+        function downloadProcessedJson() {
+            if (!processedData) return;
+
+            const blob = new Blob([JSON.stringify(processedData, null, 2)], { 
+                type: 'application/json' 
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'new-wine.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showMessage('New wine JSON downloaded! Add this wine to your existing wines.json file.', 'success');
+        }
+
+        function showMessage(message, type) {
+            statusMessage.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        function showProgress(show) {
+            const progressContainer = document.getElementById('progressContainer');
+            progressContainer.style.display = show ? 'block' : 'none';
+            if (!show) {
+                updateProgress(0);
+            }
+        }
+
+        function updateProgress(percent) {
+            const progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percent + '%';
+        }
     </script>
 </body>
 </html>
