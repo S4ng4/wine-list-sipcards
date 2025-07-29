@@ -428,7 +428,9 @@
     "color": "#4B0C0C",
     "theme": "Iconic Elegance"
 },
-        "id": 11,
+        
+    {
+      "id": 11,
         "producer": "Test",
         "vintage": "2021",
         "denomination": "DOCG Barolo",
