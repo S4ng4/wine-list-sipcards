@@ -427,50 +427,7 @@
     "aroma_7_value": 2,
     "color": "#4B0C0C",
     "theme": "Iconic Elegance"
-},
-        
-    {
-      "id": 11,
-        "producer": "Test",
-        "vintage": "2021",
-        "denomination": "DOCG Barolo",
-        "grapes": "Nebbiolo 100%",
-        "alcohol_content": "14.5",
-        "aging": "24 months in Slavonian oak",
-        "serving_temperature": "18°C",
-        "cellaring_potential": "2026-2043",
-        "vintage_description": "Balanced vintage with warm days and cool nights, ideal for Nebbiolo's aromatic complexity",
-        "food_pairings": [
-            "Tajarin pasta with truffles",
-            "braised venison",
-            "aged Castelmagno cheese"
-        ],
-        "visual_notes": "Luminous garnet with orange rim",
-        "olfactory_notes": "Rose petal, wild cherry, licorice, crushed mint",
-        "gustatory_notes": "Structured yet refined, firm tannins, vibrant acidity, saline finish",
-        "radar_body": 4,
-        "radar_tannins": 4,
-        "radar_alcohol": 4,
-        "radar_persistence": 4,
-        "radar_acidity": 4,
-        "radar_complexity": 4,
-        "aroma_1_type": "Floral (rose)",
-        "aroma_1_value": 4,
-        "aroma_2_type": "Red fruit (cherry)",
-        "aroma_2_value": 4,
-        "aroma_3_type": "Herbal (mint)",
-        "aroma_3_value": 3,
-        "aroma_4_type": "Spice (white pepper)",
-        "aroma_4_value": 3,
-        "aroma_5_type": "Mineral (graphite)",
-        "aroma_5_value": 2,
-        "aroma_6_type": "Earth (truffle)",
-        "aroma_6_value": 2,
-        "aroma_7_type": "Leather",
-        "aroma_7_value": 1,
-        "color": "#c06377",
-        "theme": "Elegant Tradition"
-    },
+}
 
   ]
 }
