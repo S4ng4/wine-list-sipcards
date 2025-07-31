@@ -71,6 +71,10 @@
 
         .header-actions {
             margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
         }
 
         .add-wine-btn {
@@ -142,6 +146,7 @@
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 20px;
+            width: 100%;
         }
 
         .search-panel {
@@ -174,9 +179,15 @@
 
         .search-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: 1fr;
             gap: 1.5rem;
             margin-bottom: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .search-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
         }
 
         .form-group {
@@ -261,13 +272,21 @@
             color: var(--primary-wine);
             font-size: 1.1rem;
             letter-spacing: 1px;
+            word-wrap: break-word;
         }
 
         .wine-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
-            gap: 2.5rem;
+            grid-template-columns: 1fr;
+            gap: 2rem;
             margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .wine-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         /* Wine Card Styles - Based on your template */
@@ -281,6 +300,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            min-height: 400px;
         }
 
         .wine-card:hover {
@@ -307,22 +327,25 @@
         }
 
         .wine-card-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            display: flex;
+            flex-direction: column;
             padding: 20px;
             position: relative;
             z-index: 2;
             flex: 1;
-            display: flex;
-            flex-direction: column;
         }
 
         .wine-card-main {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 20px;
             flex: 1;
+        }
+
+        @media (min-width: 768px) {
+            .wine-card-main {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         .wine-info h1 {
@@ -354,16 +377,16 @@
         }
 
         .specs {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
             margin-top: 1rem;
         }
 
         .spec-item {
             display: flex;
             flex-direction: column;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.3rem;
         }
 
         .spec-item strong {
@@ -455,6 +478,7 @@
             position: relative;
             width: 100%;
             box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            margin: 1rem;
         }
 
         .modal-close {
@@ -525,10 +549,16 @@
 
         .chart-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 20px;
             position: relative;
             z-index: 3;
+        }
+
+        @media (min-width: 768px) {
+            .chart-row {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         .chart-title {
@@ -550,11 +580,17 @@
 
         .flavor-profile {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: 1fr;
             gap: 15px;
             text-align: center;
             position: relative;
             z-index: 3;
+        }
+
+        @media (min-width: 768px) {
+            .flavor-profile {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
         .flavor-category {
@@ -572,25 +608,29 @@
             line-height: 1.6;
         }
 
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .search-grid {
+                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            }
+        }
+
         @media (max-width: 768px) {
             .wine-grid {
-                grid-template-columns: 1fr;
+                gap: 1.5rem;
+                padding: 0 0.5rem;
             }
             
             .search-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .wine-card-main {
-                grid-template-columns: 1fr;
+                gap: 1rem;
             }
             
             .chart-row {
-                grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .flavor-profile {
-                grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .header h1 {
@@ -598,8 +638,8 @@
             }
 
             .modal-content {
-                padding: 2rem;
-                margin: 1rem;
+                padding: 1.5rem;
+                margin: 0.5rem;
             }
 
             .spec-item {
@@ -608,6 +648,91 @@
 
             .spec-item strong {
                 margin-bottom: 3px;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .search-panel {
+                padding: 1.5rem;
+                margin: 1rem auto;
+            }
+
+            .wine-card-content {
+                padding: 15px;
+            }
+
+            .view-sipcard-btn {
+                margin: 1rem 15px 15px 15px;
+                padding: 0.8rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .wine-grid {
+                gap: 1rem;
+                padding: 0 0.25rem;
+            }
+            
+            .search-panel {
+                padding: 1rem;
+                margin: 0.5rem auto;
+            }
+            
+            .wine-card-content {
+                padding: 10px;
+            }
+            
+            .wine-info h1 {
+                font-size: 1.5rem;
+            }
+            
+            .wine-info h2 {
+                font-size: 1rem;
+            }
+            
+            .spec-item strong {
+                font-size: 0.85rem;
+            }
+            
+            .spec-item span {
+                font-size: 0.8rem;
+            }
+            
+            .view-sipcard-btn {
+                margin: 0.5rem 10px 10px 10px;
+                padding: 0.7rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .header h2 {
+                font-size: 0.9rem;
+            }
+            
+            .add-wine-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 1rem;
+                margin: 0.5rem 0.25rem;
+            }
+
+            .stats-bar {
+                padding: 1rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .modal-content {
+                padding: 1rem;
+                margin: 0.5rem;
+                border-radius: 20px;
+            }
+
+            .container {
+                padding: 0 10px;
             }
         }
     </style>
