@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prometheus Template Prompt Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        color: #333;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    
+    .header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+    
+    .header h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    
+    .header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+    }
+    
+    .content {
+        padding: 40px;
+    }
+    
+    .phase {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+    
+    .phase:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    }
+    
+    .phase h2 {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .phase-number {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
+    
+    .input-group {
+        margin-bottom: 20px;
+    }
+    
+    .input-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+        font-size: 1rem;
+    }
+    
+    .input-group input,
+    .input-group textarea,
+    .input-group select {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e1e5e9;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: #fafbfc;
+    }
+    
+    .input-group input:focus,
+    .input-group textarea:focus,
+    .input-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        background: white;
+    }
+    
+    .input-group textarea {
+        min-height: 120px;
+        resize: vertical;
+        font-family: inherit;
+    }
+    
+    .input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+        .input-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .generate-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        padding: 18px 40px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 40px auto;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+    
+    .generate-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    .generate-btn:active {
+        transform: translateY(0);
+    }
+    
+    .output {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 15px;
+        padding: 30px;
+        margin-top: 30px;
+        font-family: 'Courier New', monospace;
+        white-space: pre-wrap;
+        max-height: 600px;
+        overflow-y: auto;
+        line-height: 1.6;
+    }
+    
+    .output h3 {
+        color: #2c3e50;
+        margin-bottom: 20px;
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 1.4rem;
+    }
+    
+    .copy-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .copy-btn:hover {
+        background: #218838;
+        transform: translateY(-1px);
+    }
+    
+    .example {
+        background: linear-gradient(135deg, #fff5f5, #f0fff4);
+        border-left: 4px solid #667eea;
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 10px;
+    }
+    
+    .example h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+    
+    .example-content {
+        font-size: 0.95rem;
+        line-height: 1.6;
+        color: #555;
+    }
+    
+    .hidden {
+        display: none;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Prometheus Template Generator</h1>
+            <p>Create powerful, structured prompts using the advanced Prometheus methodology</p>
+        </div>
+
+```
+    <div class="content">
+        <!-- Phase 1: Role and Objective -->
+        <div class="phase">
+            <h2><span class="phase-number">1</span>Role and Objective</h2>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="role">Specific Role:</label>
+                    <input type="text" id="role" placeholder="e.g., marketing expert, science fiction writer, fitness coach">
+                </div>
+                <div class="input-group">
+                    <label for="audience">Target Audience:</label>
+                    <input type="text" id="audience" placeholder="e.g., beginners, industry professionals, children">
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="objective">Task/Objective:</label>
+                <textarea id="objective" placeholder="Describe the specific and measurable objective..."></textarea>
+            </div>
+        </div>
+        
+        <!-- Phase 2: Context and Instructions -->
+        <div class="phase">
+            <h2><span class="phase-number">2</span>Context and Instructions</h2>
+            <div class="input-group">
+                <label for="context">Primary Context:</label>
+                <textarea id="context" placeholder="Insert context, background information, data, or key points..."></textarea>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="tone">Desired Tone:</label>
+                    <select id="tone">
+                        <option value="">Select a tone...</option>
+                        <option value="formal">Formal</option>
+                        <option value="friendly">Friendly</option>
+                        <option value="professional">Professional</option>
+                        <option value="casual">Casual</option>
+                        <option value="technical but simple">Technical but Simple</option>
+                        <option value="conversational">Conversational</option>
+                        <option value="authoritative">Authoritative</option>
+                        <option value="empathetic">Empathetic</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="style">Response Style:</label>
+                    <select id="style">
+                        <option value="">Select a style...</option>
+                        <option value="analytical">Analytical</option>
+                        <option value="narrative">Narrative</option>
+                        <option value="bullet-point based">Bullet-point Based</option>
+                        <option value="step-by-step">Step-by-step</option>
+                        <option value="comparative">Comparative</option>
+                        <option value="detailed explanation">Detailed Explanation</option>
+                        <option value="concise summary">Concise Summary</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="structure">Response Structure:</label>
+                <textarea id="structure" placeholder="Indicate desired structure (e.g., Start with a summary, then analyze points one by one, conclude with recommendations...)"></textarea>
+            </div>
+        </div>
+        
+        <!-- Phase 3: Context Engineering -->
+        <div class="phase">
+            <h2><span class="phase-number">3</span>Context Engineering</h2>
+            <div class="input-group">
+                <label for="questions">Number of Key Questions (3-5 recommended):</label>
+                <select id="questions">
+                    <option value="3">3 Questions</option>
+                    <option value="4">4 Questions</option>
+                    <option value="5">5 Questions</option>
+                </select>
+            </div>
+        </div>
+        
+        <!-- Phase 4: Final Request -->
+        <div class="phase">
+            <h2><span class="phase-number">4</span>Final Request</h2>
+            <div class="input-group">
+                <label for="final-request">Additional Instructions (Optional):</label>
+                <textarea id="final-request" placeholder="Any additional specific requirements or constraints..."></textarea>
+            </div>
+        </div>
+        
+        <button class="generate-btn" onclick="generatePrompt()">Generate Prometheus Prompt</button>
+        
+        <div id="output" class="output hidden">
+            <h3>Your Generated Prometheus Prompt:</h3>
+            <button class="copy-btn" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+            <div id="prompt-output"></div>
+        </div>
+        
+        <!-- Example Section -->
+        <div class="example">
+            <h3>💡 Example Usage</h3>
+            <div class="example-content">
+                <strong>Role:</strong> Digital marketing expert<br>
+                <strong>Audience:</strong> Internal marketing team<br>
+                <strong>Objective:</strong> Create a social media launch plan for a new product<br>
+                <strong>Context:</strong> The product is a new meditation app called "MindFlow," targeting a young audience (18-25 years old)<br>
+                <strong>Tone:</strong> Professional<br>
+                <strong>Style:</strong> Analytical<br>
+                <strong>Structure:</strong> Start with a plan summary, then define channels and strategies, conclude with success metrics
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function generatePrompt() {
+        const role = document.getElementById('role').value;
+        const audience = document.getElementById('audience').value;
+        const objective = document.getElementById('objective').value;
+        const context = document.getElementById('context').value;
+        const tone = document.getElementById('tone').value;
+        const style = document.getElementById('style').value;
+        const structure = document.getElementById('structure').value;
+        const questionsCount = document.getElementById('questions').value;
+        const finalRequest = document.getElementById('final-request').value;
+        
+        if (!role || !audience || !objective) {
+            alert('Please fill in at least the Role, Audience, and Objective fields.');
+            return;
+        }
+        
+        let prompt = `# Prometheus Template
+```
+
+**[Phase 1: Role and Objective]**
+
+- Act as a ${role}.
+- Your task is ${objective}.
+- Your target audience is ${audience}.
+
+**[Phase 2: Context and Instructions]**
+`;
+
+```
+        if (context) {
+            prompt += `
+```
+
+- To complete this task, use the following information as primary context: ${context}.`;
+  }
+  
+  ```
+        if (tone && style) {
+            prompt += `
+  ```
+- Adopt a ${tone} tone and a ${style} style.`; } else if (tone) { prompt += `
+- Adopt a ${tone} tone.`; } else if (style) { prompt += `
+- Use a ${style} style.`;
+  }
+  
+  ```
+        if (structure) {
+            prompt += `
+  ```
+- Follow this structure for your response: ${structure}.`;
+  }
+  
+  ```
+        prompt += `
+  ```
+
+**[Phase 3: Context Engineering (Simulated)]**
+
+- Before generating the final response, create your internal context by asking yourself ${questionsCount} key questions that will help you develop the best solution. List these questions before proceeding.
+
+**[Phase 4: Final Question/Request]**
+`;
+
+```
+        if (finalRequest) {
+            prompt += `
+```
+
+- Additional instructions: ${finalRequest}`;
+  }
+  
+  ```
+        prompt += `
+  ```
+- Based on all the instructions and context provided, generate the final response.`;
+  
+  ```
+        document.getElementById('prompt-output').textContent = prompt;
+        document.getElementById('output').classList.remove('hidden');
+        document.getElementById('output').scrollIntoView({ behavior: 'smooth' });
+    }
+    
+    function copyToClipboard() {
+        const promptText = document.getElementById('prompt-output').textContent;
+        navigator.clipboard.writeText(promptText).then(function() {
+            const btn = document.querySelector('.copy-btn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '✅ Copied!';
+            btn.style.background = '#28a745';
+            
+            setTimeout(function() {
+                btn.innerHTML = originalText;
+                btn.style.background = '#28a745';
+            }, 2000);
+        }).catch(function(err) {
+            alert('Failed to copy prompt. Please select and copy manually.');
+        });
+    }
+    
+    // Auto-save form data to localStorage
+    const inputs = ['role', 'audience', 'objective', 'context', 'tone', 'style', 'structure', 'questions', 'final-request'];
+    
+    inputs.forEach(id => {
+        const element = document.getElementById(id);
+        // Load saved data
+        const savedValue = localStorage.getItem('prometheus_' + id);
+        if (savedValue) {
+            element.value = savedValue;
+        }
+        
+        // Save on change
+        element.addEventListener('input', function() {
+            localStorage.setItem('prometheus_' + id, this.value);
+        });
+    });
+  ```
+  
+    </script>
+
+</body>
+</html>
